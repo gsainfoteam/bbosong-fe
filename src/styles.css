@@ -174,8 +174,8 @@ html:active-view-transition-type(reload) {
   }
   &::view-transition-new(root) {
     animation:
-        fade-in var(--anim-fast) both 0.25s,
-        scale-up var(--anim-fast) both 0.25s;
+        fade-in var(--anim-fast) both var(--anim-fast),
+        scale-up var(--anim-fast) both var(--anim-fast);
   }
 }
 

@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import type { ReactNode } from 'react';
 
 // import { useTranslation } from 'react-i18next';
 
@@ -21,7 +21,7 @@ export function Layout({ className, children }: Layout.Props) {
 export namespace Layout {
   export type Props = {
     className?: string;
-    onMenuOpen?: () => void;
-    children: ReactElement;
+    // onMenuOpen?: () => void;
+    children: ReactNode;
   };
 }
