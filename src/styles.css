@@ -6,21 +6,216 @@
 html {
   @apply m-0;
   font-family:
-    'Pretendard Variable',
-    Pretendard,
-    -apple-system,
-    BlinkMacSystemFont,
-    system-ui,
-    Roboto,
-    'Helvetica Neue',
-    'Segoe UI',
-    'Apple SD Gothic Neo',
-    'Noto Sans KR',
-    'Malgun Gothic',
-    'Apple Color Emoji',
-    'Segoe UI Emoji',
-    'Segoe UI Symbol',
-    sans-serif;
+      'Pretendard Variable',
+      Pretendard,
+      -apple-system,
+      BlinkMacSystemFont,
+      system-ui,
+      Roboto,
+      'Helvetica Neue',
+      'Segoe UI',
+      'Apple SD Gothic Neo',
+      'Noto Sans KR',
+      'Malgun Gothic',
+      'Apple Color Emoji',
+      'Segoe UI Emoji',
+      'Segoe UI Symbol',
+      sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+@theme {
+  /* Typography — 6-step scale */
+  --text-display: 24px;
+  --text-display--font-weight: 700;
+  --text-display--line-height: 29px;
+
+  --text-heading: 20px;
+  --text-heading--font-weight: 600;
+  --text-heading--line-height: 26px;
+
+  --text-body-lg: 16px;
+  --text-body-lg--font-weight: 500;
+  --text-body-lg--line-height: 22px;
+
+  --text-body: 14px;
+  --text-body--font-weight: 400;
+  --text-body--line-height: 20px;
+
+  --text-label: 13px;
+  --text-label--font-weight: 500;
+  --text-label--line-height: 18px;
+
+  --text-caption: 11px;
+  --text-caption--font-weight: 400;
+  --text-caption--line-height: 15px;
+
+  /* Primary (brown + yellow) */
+  --color-primary: #d68f2a;
+  --color-primary-light: #fff9e3;
+  --color-primary-muted: #fae29a;
+
+  /* Text */
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #666666;
+  --color-text-muted: #9ca3af;
+  --color-text-white: #ffffff;
+
+  /* Background */
+  --color-bg: #0B0742;
+  --color-bg-surface: #f5f5f5;
+  --color-bg-subtle: #fafafa;
+
+  /* Border */
+  --color-border: #e5e5e5;
+  --color-border-strong: #d1d1d1;
+
+  /* Icon */
+  --color-icon: #b4b4b4;
+  --color-icon-muted: #e5e5e5;
+
+  /* Status */
+  --color-status-pass: #22c55e;
+  --color-status-fail: #ef4444;
+  --color-status-pending: #f97316;
+  --color-status-progress: #3b82f6;
+  --color-status-inactive: #9ca3af;
+  --color-status-pass-light: #f0fdf4;
+  --color-status-fail-light: #fef2f2;
+}
+
+h1 {
+  font-size: var(--text-display);
+  font-weight: var(--text-display--font-weight);
+  line-height: var(--text-display--line-height);
+}
+
+h2 {
+  font-size: var(--text-heading);
+  font-weight: var(--text-heading--font-weight);
+  line-height: var(--text-heading--line-height);
+}
+
+body,
+p {
+  font-size: var(--text-body-lg);
+  font-weight: var(--text-body-lg--font-weight);
+  line-height: var(--text-body-lg--line-height);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+/* View Transitions */
+
+.no-transition {
+  view-transition-name: none;
+}
+
+.vt-layout-card {
+  view-transition-name: layout-card;
+}
+
+:root {
+  --anim-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --anim-medium: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --anim-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html:active-view-transition-type(forwards),
+html:active-view-transition-type(backwards) {
+  &::view-transition-old(root),
+  &::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+/* forwards */
+html:active-view-transition-type(forwards) {
+  &::view-transition-old(layout-card) {
+    animation: slide-out-to-left var(--anim-medium) both;
+  }
+  &::view-transition-new(layout-card) {
+    animation: slide-in-from-right var(--anim-medium) both;
+  }
+}
+
+/* backwards */
+html:active-view-transition-type(backwards) {
+  &::view-transition-old(layout-card) {
+    animation: slide-out-to-right var(--anim-medium) both;
+  }
+  &::view-transition-new(layout-card) {
+    animation: slide-in-from-left var(--anim-medium) both;
+  }
+}
+
+/* reload */
+html:active-view-transition-type(reload) {
+  &::view-transition-old(root) {
+    animation:
+        fade-out var(--anim-fast) both,
+        scale-down var(--anim-fast) both;
+  }
+  &::view-transition-new(root) {
+    animation:
+        fade-in var(--anim-fast) both var(--anim-fast),
+        scale-up var(--anim-fast) both var(--anim-fast);
+  }
+}
+
+@keyframes slide-out-to-left {
+  to {
+    transform: translateX(-100vw);
+  }
+}
+@keyframes slide-in-from-right {
+  from {
+    transform: translateX(100vw);
+  }
+}
+@keyframes slide-out-to-right {
+  to {
+    transform: translateX(100vw);
+  }
+}
+@keyframes slide-in-from-left {
+  from {
+    transform: translateX(-100vw);
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes scale-down {
+  to {
+    scale: 0.95;
+  }
+}
+@keyframes scale-up {
+  from {
+    scale: 0.95;
+  }
 }
