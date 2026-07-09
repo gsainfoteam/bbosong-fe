@@ -1,5 +1,6 @@
 {
-  "name": "template-csr-fe",
+  "name": "bbosong-fe",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -28,18 +29,21 @@
     "@tanstack/router-plugin": "^1.132.0",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.20",
+    "es-toolkit": "^1.49.0",
     "i18next": "^25.10.3",
     "i18next-browser-languagedetector": "^8.2.1",
     "i18next-http-backend": "^3.0.2",
     "lucide-react": "^0.545.0",
+    "motion": "^12.42.2",
     "openapi-fetch": "^0.17.0",
     "openapi-react-query": "^0.5.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-i18next": "^16.6.0",
-    "storybook": "10.3.1",
     "tailwind-merge": "^3.5.0",
-    "tailwindcss": "^4.1.18"
+    "tailwind-variants": "^3.2.2",
+    "tailwindcss": "^4.1.18",
+    "vite-plugin-pwa": "^1.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -71,6 +75,7 @@
     "openapi-typescript": "^7.13.0",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
+    "storybook": "10.3.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.57.1",
     "vite": "^7.3.1",
