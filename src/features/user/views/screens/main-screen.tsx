@@ -1,5 +1,3 @@
 export function MainScreen() {
-  return (
-    <div>Main Screen</div>
-  );
+  return <div>Main Screen</div>;
 }
