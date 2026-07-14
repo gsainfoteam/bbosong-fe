@@ -5,7 +5,9 @@ export const Route = createFileRoute('/_auth-required')({
 });
 
 function AuthRequiredLayout() {
-  return <div>
-    <Outlet />
-  </div>;
+  return (
+    <div>
+      <Outlet />
+    </div>
+  );
 }
