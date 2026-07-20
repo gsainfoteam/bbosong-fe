@@ -28,7 +28,8 @@ export function ToggleBoolean({
   };
 
   return (
-    <div
+    <button
+      type='button'
       onClick={handleClick}
       className={cn(
         'relative inline-flex shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none',
@@ -39,6 +40,7 @@ export function ToggleBoolean({
       )}
       role="switch"
       aria-checked={state}
+      disabled={!available}
       {...props}
     >
       <span
@@ -48,7 +50,7 @@ export function ToggleBoolean({
           sizeClasses[size].translate,
         )}
       />
-    </div>
+    </button>
   );
 }
 

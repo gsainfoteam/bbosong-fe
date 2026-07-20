@@ -1,4 +1,4 @@
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/common/utils';
 import { RoomStatusBox } from '@/features/user';
@@ -12,6 +12,8 @@ export function RoomStatusGrid({
   className,
   ...props
 }: RoomStatusGrid.Props) {
+  const { t } = useTranslation();
+
   return (
     <div className={cn('', className)} {...props}>
       <p className='mb-3'>{t('user.mypage.roomStatusTitle')}</p>

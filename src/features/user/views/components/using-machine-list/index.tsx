@@ -9,9 +9,10 @@ export function UsingMachineList({ userName, machineList, className, ...props }:
 
   return (
     <div className={cn('', className)} {...props}>
-      <p className='mb-3'>{t('user.mypage.usingMachineTitle', {name: userName})}</p>
+      <p className="mb-3">{t('user.mypage.usingMachineTitle', { name: userName })}</p>
       {machineList.map((item) => (
         <UsingMachineBox
+          key={`${item.location}-${item.machine.type}-${item.machine.id}`}
           machine={item.machine}
           location={item.location}
           onClear={item.onClear}

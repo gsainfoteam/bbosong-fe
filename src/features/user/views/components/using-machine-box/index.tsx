@@ -29,7 +29,7 @@ export function UsingMachineBox({ machine, location, onClear, className, ...prop
         </h2>
         <span className='text-sm'>{`${t(LOCATION_KEYS[location])} ${t('location.laundryRoom')}`}</span>
       </div>
-      <div className='px-2 py-1 rounded-xl bg-bg text-white text-xs' onClick={onClear}>{t('user.mypage.clear')}</div>
+      <button type='button' className='px-2 py-1 rounded-xl bg-bg text-white text-xs' onClick={onClear}>{t('user.mypage.clear')}</button>
     </div>
   );
 }
