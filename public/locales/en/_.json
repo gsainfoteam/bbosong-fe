@@ -1,7 +1,25 @@
 {
+  "location": {
+    "a": "Bldg A",
+    "b": "Bldg B",
+    "laundryRoom": "Laundry Room"
+  },
+  "machine": {
+    "dryer": "Dryer",
+    "washer": "Washer"
+  },
   "nav": {
     "map": "Map",
     "mypage": "My Page",
     "status": "Status"
+  },
+  "user": {
+    "mypage": {
+      "clear": "Clear",
+      "count": "",
+      "roomStatusTitle": "Status of available machines",
+      "usingMachineTitle": "Machines currently being used by {{name}}",
+      "welcome": "Welcome, {{name}}"
+    }
   }
 }

@@ -1,7 +1,25 @@
 {
+  "location": {
+    "a": "A동",
+    "b": "B동",
+    "laundryRoom": "세탁실"
+  },
+  "machine": {
+    "dryer": "건조기",
+    "washer": "세탁기"
+  },
   "nav": {
     "map": "약도",
     "mypage": "마이페이지",
     "status": "세탁실 현황"
+  },
+  "user": {
+    "mypage": {
+      "clear": "해제",
+      "count": "대",
+      "roomStatusTitle": "비어있는 기기 현황",
+      "usingMachineTitle": "현재 {{name}}님께서 사용중인 기기",
+      "welcome": "{{name}}님, 환영합니다."
+    }
   }
 }

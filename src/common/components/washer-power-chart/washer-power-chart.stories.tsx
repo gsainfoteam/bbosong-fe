@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { WasherPowerChart } from './washer-power-chart';
+import { WasherPowerChart } from '.';
+
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
   title: 'Common/WasherPowerChart',

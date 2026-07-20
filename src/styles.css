@@ -65,10 +65,10 @@ html {
   --text-caption--font-weight: 400;
   --text-caption--line-height: 15px;
 
-  /* Primary (brown + yellow) */
-  --color-primary: #d68f2a;
-  --color-primary-light: #fff9e3;
-  --color-primary-muted: #fae29a;
+  /* Primary (Electric Cyan & Neon Blue) */
+  --color-primary: #50FFFF;
+  --color-primary-light: #e0f7fa;
+  --color-primary-muted: #90e0ef;
 
   /* Text */
   --color-text-primary: #1a1a1a;
