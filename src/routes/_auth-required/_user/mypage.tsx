@@ -1,11 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createFileRoute('/_auth-required/_user/mypage')({
-  component: RouteComponent,
-});
+import { MypageFrame } from '@/features/user';
 
-function RouteComponent() {
-  return (
-    <span>My Page</span>
-  );
-}
+export const Route = createFileRoute('/_auth-required/_user/mypage')({
+  component: MypageFrame,
+});
