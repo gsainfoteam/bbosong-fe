@@ -1,4 +1,10 @@
 {
+  "auth": {
+    "female": "여성",
+    "male": "남성",
+    "start": "시작",
+    "title": "기숙사 세탁 시스템"
+  },
   "location": {
     "a": "A동",
     "b": "B동",

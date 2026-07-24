@@ -1,4 +1,10 @@
 {
+  "auth": {
+    "female": "Female",
+    "male": "Male",
+    "start": "Start",
+    "title": "Dorm Laundry System"
+  },
   "location": {
     "a": "Bldg A",
     "b": "Bldg B",

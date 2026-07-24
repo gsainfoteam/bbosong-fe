@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 
-import { NavButton } from '@/common/components/ui/nav-button';
 import { cn } from '@/common/utils';
 
+import { NavButton } from '../ui';
 import { NAV_ITEMS } from './constants';
 
 
