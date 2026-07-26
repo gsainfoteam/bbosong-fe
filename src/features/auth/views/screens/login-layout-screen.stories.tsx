@@ -1,6 +1,6 @@
-import { GenderSelect, IdpLoginButton, LoginLayoutScreen } from '@/features/auth';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import { GenderSelect, IdpLoginButton, LoginLayoutScreen } from '@/features/auth';
 
 const meta = {
   title: 'Auth/LoginLayoutScreen',

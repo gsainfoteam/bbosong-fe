@@ -15,6 +15,7 @@ export function IdpLoginButton({ onLogin }: IdpLoginButton.Props) {
         setClicked(true);
         onLogin();
       }}
+      disabled={clicked}
       className={cn(
         'bg-bg flex h-12 w-full items-center justify-center rounded-lg text-lg text-white',
       )}
