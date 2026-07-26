@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { LoginFrame } from '@/features/auth';
+import { GenderSelectFrame } from '@/features/auth';
 
 export const Route = createFileRoute('/auth/login/gender')({
-  component: LoginFrame,
+  component: GenderSelectFrame,
 });

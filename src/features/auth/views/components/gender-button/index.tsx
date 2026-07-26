@@ -5,6 +5,7 @@ import { cn } from '@/common/utils';
 export function GenderButton({
   children,
   selected,
+  disabled = false,
   onClick,
   className,
   ...props
@@ -17,6 +18,7 @@ export function GenderButton({
         className,
       )}
       onClick={onClick}
+      disabled={disabled}
       {...props}
     >
       {children}
@@ -28,6 +30,7 @@ export namespace GenderButton {
   export type Props = {
     children: ReactNode;
     selected: boolean;
+    disabled?: boolean;
     onClick: () => void;
     className?: string;
   };

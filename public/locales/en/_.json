@@ -1,6 +1,8 @@
 {
   "auth": {
     "female": "Female",
+    "genderAlert": "You must select your gender upon your first login.",
+    "login": "Login with Infoteam Account",
     "male": "Male",
     "start": "Start",
     "title": "Dorm Laundry System"
