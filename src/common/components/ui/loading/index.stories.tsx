@@ -1,6 +1,6 @@
-import { Loading } from '.';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Loading } from '.';
 
 const meta: Meta<typeof Loading> = {
   title: 'Common/UI/Loading',
