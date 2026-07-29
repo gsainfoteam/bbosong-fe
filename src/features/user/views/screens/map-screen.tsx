@@ -1,7 +1,9 @@
 import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/common/utils';
-import { type Machine, LaundryRoomMap, Indicator } from '@/features/user';
+import { LaundryRoomMap, Indicator } from '@/features/user';
+
+import { type LaundryRoomLayout } from '../../viewmodels';
 
 export function MapScreen({ laundryRoomLayouts, className }: MapScreen.Props) {
   const { t } = useTranslation();
@@ -13,7 +15,7 @@ export function MapScreen({ laundryRoomLayouts, className }: MapScreen.Props) {
       </div>
 
       {laundryRoomLayouts.map((layout) => (
-        <div className="w-full">
+        <div key={layout.label} className="w-full">
           <p className="mb-1.5">
             {t(layout.label)} {t('location.laundryRoom')}
           </p>
@@ -25,14 +27,8 @@ export function MapScreen({ laundryRoomLayouts, className }: MapScreen.Props) {
 }
 
 export namespace MapScreen {
-  interface LaundryRoomMachines {
-    label: 'location.a' | 'location.b';
-    machines: Machine[];
-    doorX?: number;
-  }
-
   export type Props = {
-    laundryRoomLayouts: LaundryRoomMachines[];
+    laundryRoomLayouts: LaundryRoomLayout[];
     className?: string;
   };
 }

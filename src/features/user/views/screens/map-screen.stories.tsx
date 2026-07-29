@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { type Machine, MapScreen } from '@/features/map';
+import { type Machine, MapScreen } from '@/features/user';
 
 const meta = {
   title: 'Map/MapScreen',

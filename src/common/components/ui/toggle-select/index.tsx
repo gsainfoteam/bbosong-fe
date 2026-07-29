@@ -7,6 +7,11 @@ export function ToggleSelect({
   onChange,
   className,
 }: ToggleSelect.Props) {
+  // stateList 및 state의 정합성 가드 검사
+  if (!stateList || stateList.length === 0 || !stateList.includes(state)) {
+    return null;
+  }
+
   // 현재 활성화된 탭의 인덱스 탐색
   const activeIndex = stateList.indexOf(state);
 
@@ -14,7 +19,7 @@ export function ToggleSelect({
     <div
       className={cn(
         'bg-bg-surface relative inline-flex w-full max-w-sm rounded-full p-1 select-none',
-        !available && 'pointer-events-none opacity-50',
+        !available && 'opacity-50',
         className,
       )}
     >
@@ -34,6 +39,8 @@ export function ToggleSelect({
           <button
             key={item}
             type="button"
+            disabled={!available}
+            aria-pressed={isActive}
             onClick={() => available && onChange(item)}
             className={cn(
               'relative z-10 flex-1 rounded-full px-4 py-1.5 text-center text-sm font-medium transition-colors duration-300',
