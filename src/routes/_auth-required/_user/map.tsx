@@ -1,11 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createFileRoute('/_auth-required/_user/map')({
-  component: RouteComponent,
-});
+import { MapFrame } from '@/features/user';
 
-function RouteComponent() {
-  return (
-    <span>Map</span>
-  );
-}
+export const Route = createFileRoute('/_auth-required/_user/map')({
+  component: MapFrame,
+});

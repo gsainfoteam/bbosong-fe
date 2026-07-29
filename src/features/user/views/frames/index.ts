@@ -1,2 +1,3 @@
-export * from './main-frame.tsx';
-export * from './mypage-frame.tsx';
+export * from './main-frame';
+export * from './mypage-frame';
+export * from './map-frame';
