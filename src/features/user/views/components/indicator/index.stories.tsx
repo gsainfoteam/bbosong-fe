@@ -1,10 +1,10 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { Loading } from '.';
+import { Indicator } from './';
 
-const meta: Meta<typeof Loading> = {
-  title: 'Common/Loading',
-  component: Loading,
+const meta: Meta<typeof Indicator> = {
+  title: 'Map/Indicator',
+  component: Indicator,
   parameters: {
     layout: 'centered',
   },
@@ -12,6 +12,6 @@ const meta: Meta<typeof Loading> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof Loading>;
+type Story = StoryObj<typeof Indicator>;
 
 export const Default: Story = {};

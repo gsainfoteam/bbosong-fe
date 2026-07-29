@@ -5,9 +5,9 @@ import { cn } from '@/common/utils';
 
 export function Layout({ className, children }: Layout.Props) {
   return (
-    <div className={cn('bg-bg-surface h-dvh px-5', className)}>
-      <div className="bg-bg mx-auto flex h-full min-h-0 w-full max-w-100 flex-col gap-5 text-white">
-        <NavBar className={'mx-10 border-b border-b-white'} />
+    <div className={cn('bg-bg-surface h-dvh', className)}>
+      <div className="bg-bg mx-auto px-10 flex h-full min-h-0 w-full max-w-100 flex-col gap-5 text-white">
+        <NavBar className={'border-b border-b-white'} />
         {children}
       </div>
     </div>

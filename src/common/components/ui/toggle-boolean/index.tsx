@@ -29,13 +29,13 @@ export function ToggleBoolean({
 
   return (
     <button
-      type='button'
+      type="button"
       onClick={handleClick}
       className={cn(
         'relative inline-flex shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none',
         sizeClasses[size].track,
         state ? 'bg-primary' : 'bg-border-strong',
-        !available && 'opacity-50 cursor-not-allowed pointer-events-none',
+        !available && 'pointer-events-none cursor-not-allowed opacity-50',
         className,
       )}
       role="switch"
