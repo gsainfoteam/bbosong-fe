@@ -12,7 +12,13 @@ const LOCATION_KEYS = {
   b: 'location.b',
 } as const;
 
-export function UsingMachineBox({ machine, location, onClear, className, ...props }: UsingMachineBox.Props) {
+export function UsingMachineBox({
+  machine,
+  location,
+  onClear,
+  className,
+  ...props
+}: UsingMachineBox.Props) {
   const { t } = useTranslation();
 
   // t('machine.washer')
@@ -22,14 +28,26 @@ export function UsingMachineBox({ machine, location, onClear, className, ...prop
   // t('location.laundryRoom')
 
   return (
-    <div className={cn('flex flex-row justify-between items-center p-3 rounded-lg bg-white', className)} {...props}>
-      <div className='text-bg'>
+    <div
+      className={cn(
+        'flex flex-row items-center justify-between rounded-lg bg-white p-3',
+        className,
+      )}
+      {...props}
+    >
+      <div className="text-bg">
         <h2>
           {t(MACHINE_KEYS[machine.type])} {machine.id}
         </h2>
-        <span className='text-sm'>{`${t(LOCATION_KEYS[location])} ${t('location.laundryRoom')}`}</span>
+        <span className="text-sm">{`${t(LOCATION_KEYS[location])} ${t('location.laundryRoom')}`}</span>
       </div>
-      <button type='button' className='px-2 py-1 rounded-xl bg-bg text-white text-xs' onClick={onClear}>{t('user.mypage.clear')}</button>
+      <button
+        type="button"
+        className="bg-bg rounded-xl px-2 py-1 text-xs text-white"
+        onClick={onClear}
+      >
+        {t('user.mypage.clear')}
+      </button>
     </div>
   );
 }

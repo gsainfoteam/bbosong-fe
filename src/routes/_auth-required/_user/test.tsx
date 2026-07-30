@@ -8,7 +8,7 @@ export const Route = createFileRoute('/_auth-required/_user/test')({
 
 function RouteComponent() {
   return (
-    <div className="min-h-screen bg-bg p-6">
+    <div className="bg-bg min-h-screen p-6">
       <div className="mx-auto max-w-5xl">
         <WasherPowerChart />
       </div>

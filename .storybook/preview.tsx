@@ -57,7 +57,15 @@ const preview: Preview = {
       const textColor = theme === 'dark' ? '#ffffff' : '#1a1a1a';
       return (
         <RouterContextProvider router={router}>
-          <div style={{ backgroundColor: bgColor, color: textColor, minHeight: '100vh', padding: '24px', transition: 'background-color 0.2s' }}>
+          <div
+            style={{
+              backgroundColor: bgColor,
+              color: textColor,
+              minHeight: '100vh',
+              padding: '24px',
+              transition: 'background-color 0.2s',
+            }}
+          >
             <div className="mx-auto w-full max-w-100">
               <Story />
             </div>

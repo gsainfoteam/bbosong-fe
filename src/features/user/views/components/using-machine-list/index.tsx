@@ -4,7 +4,12 @@ import { cn } from '@/common/utils';
 
 import { UsingMachineBox } from '../';
 
-export function UsingMachineList({ userName, machineList, className, ...props }: UsingMachineList.Props) {
+export function UsingMachineList({
+  userName,
+  machineList,
+  className,
+  ...props
+}: UsingMachineList.Props) {
   const { t } = useTranslation();
 
   return (

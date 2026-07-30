@@ -5,7 +5,5 @@ export const Route = createFileRoute('/_auth-required/_user/status')({
 });
 
 function RouteComponent() {
-  return (
-    <span>Status</span>
-  );
+  return <span>Status</span>;
 }

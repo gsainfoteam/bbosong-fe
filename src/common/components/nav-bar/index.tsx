@@ -5,8 +5,7 @@ import { cn } from '@/common/utils';
 import { NavButton } from '../ui';
 import { NAV_ITEMS } from './constants';
 
-
-export const NavBar = ({className, ...props}: NavBar.Props) => {
+export const NavBar = ({ className, ...props }: NavBar.Props) => {
   const { t } = useTranslation();
 
   return (
