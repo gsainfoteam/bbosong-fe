@@ -14,16 +14,13 @@ type WasherPowerChartProps = {
   title?: string;
 };
 
-export function WasherPowerChart({
-  title = '세탁기 전력 사용량',
-}: WasherPowerChartProps) {
+export function WasherPowerChart({ title = '세탁기 전력 사용량' }: WasherPowerChartProps) {
   const data = usePowerData();
 
   return (
-    <div className="w-full rounded-xl border border-border bg-white p-6 shadow-sm">
+    <div className="border-border w-full rounded-xl border bg-white p-6 shadow-sm">
       <div className="mb-6">
         <h2 className="text-heading text-text-primary">{title}</h2>
-        
       </div>
 
       <div className="h-80 w-full">
@@ -37,24 +34,13 @@ export function WasherPowerChart({
               bottom: 10,
             }}
           >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="#e5e5e5"
-            />
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
 
-            <XAxis
-              dataKey="time"
-              tick={{ fontSize: 12 }}
-            />
+            <XAxis dataKey="time" tick={{ fontSize: 12 }} />
 
-            <YAxis
-              unit="W"
-              tick={{ fontSize: 12 }}
-            />
+            <YAxis unit="W" tick={{ fontSize: 12 }} />
 
-            <Tooltip
-              formatter={(value) => [`${value} W`, '전력']}
-            />
+            <Tooltip formatter={(value) => [`${value} W`, '전력']} />
 
             <Line
               type="monotone"

@@ -1,13 +1,13 @@
-// import { useNavigate } from '@tanstack/react-router';
-
-import { type Gender, GenderSelect, LoginLayoutScreen } from '@/features/auth';
+import { type Gender, GenderSelect, LoginLayoutScreen, useAuth } from '@/features/auth';
 
 export function GenderSelectFrame() {
-  // const navigate = useNavigate();
+  const { logInWithGender } = useAuth();
 
+  // 성별 최종 선택 완료 시 뷰모델의 전용 로그인 가동 (DTO 의존 제거)
   const handleGenderSelect = (gender: Gender) => {
-    console.log(`gender selected: ${gender} in GenderSelectFrame`);
-    // navigate({ to: '/' });
+    if (!gender) return;
+
+    logInWithGender(gender);
   };
 
   return (

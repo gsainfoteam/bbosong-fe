@@ -1,9 +1,7 @@
 import { defineConfig } from 'i18next-cli';
 
-import { LANGUAGES } from '@/common/lib';
-
 export default defineConfig({
-  locales: [...LANGUAGES],
+  locales: ['ko', 'en'],
 
   extract: {
     input: ['src/**/*.{ts,tsx}'],

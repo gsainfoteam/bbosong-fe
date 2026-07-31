@@ -16,8 +16,8 @@ export function RoomStatusGrid({
 
   return (
     <div className={cn('', className)} {...props}>
-      <p className='mb-3'>{t('user.mypage.roomStatusTitle')}</p>
-      <div className='grid grid-cols-2 gap-2'>
+      <p className="mb-3">{t('user.mypage.roomStatusTitle')}</p>
+      <div className="grid grid-cols-2 gap-2">
         <RoomStatusBox
           building="a"
           machine="washer"

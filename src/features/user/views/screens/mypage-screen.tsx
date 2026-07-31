@@ -3,8 +3,13 @@ import { RoomStatusGrid, WelcomeMessage } from '@/features/user';
 
 import { UsingMachineList } from '../';
 
-export function MypageScreen({userName, usingMachineList, roomStatusList, className, ...props}: MyPageScreen.Props) {
-
+export function MypageScreen({
+  userName,
+  usingMachineList,
+  roomStatusList,
+  className,
+  ...props
+}: MyPageScreen.Props) {
   return (
     <div className={cn('flex flex-col gap-10', className)} {...props}>
       <WelcomeMessage text={userName} />
@@ -26,5 +31,5 @@ export namespace MyPageScreen {
     usingMachineList: UsingMachineList.Props['machineList'];
     roomStatusList: RoomStatusGrid.Props;
     className?: string;
-  }
+  };
 }

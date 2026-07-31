@@ -20,13 +20,7 @@ export const Default: Story = {
   },
   render: (args) => {
     const [state, setState] = useState(args.state);
-    return (
-      <ToggleBoolean
-        {...args}
-        state={state}
-        onChange={() => setState((prev) => !prev)}
-      />
-    );
+    return <ToggleBoolean {...args} state={state} onChange={() => setState((prev) => !prev)} />;
   },
 };
 
@@ -37,13 +31,7 @@ export const Active: Story = {
   },
   render: (args) => {
     const [state, setState] = useState(args.state);
-    return (
-      <ToggleBoolean
-        {...args}
-        state={state}
-        onChange={() => setState((prev) => !prev)}
-      />
-    );
+    return <ToggleBoolean {...args} state={state} onChange={() => setState((prev) => !prev)} />;
   },
 };
 
@@ -55,13 +43,7 @@ export const Small: Story = {
   },
   render: (args) => {
     const [state, setState] = useState(args.state);
-    return (
-      <ToggleBoolean
-        {...args}
-        state={state}
-        onChange={() => setState((prev) => !prev)}
-      />
-    );
+    return <ToggleBoolean {...args} state={state} onChange={() => setState((prev) => !prev)} />;
   },
 };
 

@@ -1,13 +1,16 @@
-// import { useNavigate } from '@tanstack/react-router';
+import { useSearch } from '@tanstack/react-router';
 
-import { IdpLoginButton, LoginLayoutScreen } from '@/features/auth';
+import { IdpLoginButton, LoginLayoutScreen, useAuth, useAuthRedirect } from '@/features/auth';
 
 export function IdpLoginFrame() {
+  const { idpLogIn } = useAuth();
+  const { redirect } = useSearch({ from: '/auth' });
+
   // const navigate = useNavigate();
 
   const handleLogin = () => {
-    console.log('Login complete in IdpLoginFrame');
-    // navigate({ to: '/auth/login/gender' });
+    useAuthRedirect.getState().setRedirect(redirect);
+    idpLogIn();
   };
 
   return (
