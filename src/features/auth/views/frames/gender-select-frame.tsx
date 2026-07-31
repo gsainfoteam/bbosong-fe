@@ -1,10 +1,4 @@
-import {
-  type Gender,
-  GenderSelect,
-  LoginLayoutScreen,
-  PathsMachineSummaryGetParametersQueryGender,
-  useAuth,
-} from '@/features/auth';
+import { type Gender, GenderSelect, LoginLayoutScreen, ApiGender, useAuth } from '@/features/auth';
 
 export function GenderSelectFrame() {
   const { logIn } = useAuth();
@@ -15,10 +9,7 @@ export function GenderSelectFrame() {
 
     logIn({
       body: {
-        gender:
-          gender === 'male'
-            ? PathsMachineSummaryGetParametersQueryGender.MALE
-            : PathsMachineSummaryGetParametersQueryGender.FEMALE,
+        gender: gender === 'male' ? ApiGender.MALE : ApiGender.FEMALE,
         agreedToTerms: true,
         agreedToPrivacy: true,
         termsVersion: '260301',

@@ -72,8 +72,8 @@ export const useAuth = ({ showToast = false }: { showToast?: boolean } = {}) => 
         body: {
           agreedToTerms: true,
           agreedToPrivacy: true,
-          termsVersion: '260301',
-          privacyVersion: '260301',
+          termsVersion: '260731',
+          privacyVersion: '260731',
         },
       });
     }
