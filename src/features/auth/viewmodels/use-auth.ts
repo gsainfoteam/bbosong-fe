@@ -37,7 +37,7 @@ export const useAuth = ({ showToast = false }: { showToast?: boolean } = {}) => 
   // 성별 값을 주입받아 DTO 조립 및 API 로그인을 대행 처리하는 뷰모델 메서드
   const logInWithGender = useCallback(
     (gender: 'male' | 'female') => {
-      return logInMutate({
+      return logIn({
         body: {
           gender: gender === 'male' ? ApiGender.MALE : ApiGender.FEMALE,
           agreedToTerms: true,
@@ -47,7 +47,7 @@ export const useAuth = ({ showToast = false }: { showToast?: boolean } = {}) => 
         },
       });
     },
-    [logInMutate],
+    [logIn],
   );
 
   // OIDC idpToken 갱신 시 전역 토큰 스토어에 동기화
