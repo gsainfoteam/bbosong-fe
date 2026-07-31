@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuthContext } from 'react-oauth2-code-pkce';
 import { toast } from 'sonner';
 
-import { useToken } from '@/features/auth';
+import { ApiGender, useToken } from '@/features/auth';
 
 import { useLogin, useLogout, useUser } from '.';
 
@@ -32,6 +32,22 @@ export const useAuth = ({ showToast = false }: { showToast?: boolean } = {}) => 
       return logInMutate(...args);
     },
     [idpToken, navigate, showToast, t, logInMutate],
+  );
+
+  // 성별 값을 주입받아 DTO 조립 및 API 로그인을 대행 처리하는 뷰모델 메서드
+  const logInWithGender = useCallback(
+    (gender: 'male' | 'female') => {
+      return logInMutate({
+        body: {
+          gender: gender === 'male' ? ApiGender.MALE : ApiGender.FEMALE,
+          agreedToTerms: true,
+          agreedToPrivacy: true,
+          termsVersion: '260301',
+          privacyVersion: '260301',
+        },
+      });
+    },
+    [logInMutate],
   );
 
   // OIDC idpToken 갱신 시 전역 토큰 스토어에 동기화
@@ -72,8 +88,8 @@ export const useAuth = ({ showToast = false }: { showToast?: boolean } = {}) => 
         body: {
           agreedToTerms: true,
           agreedToPrivacy: true,
-          termsVersion: '260731',
-          privacyVersion: '260731',
+          termsVersion: '260301',
+          privacyVersion: '260301',
         },
       });
     }
@@ -99,6 +115,7 @@ export const useAuth = ({ showToast = false }: { showToast?: boolean } = {}) => 
     idpLogIn,
     idpLogOut,
     logIn,
+    logInWithGender,
     logOut,
     logInMutation,
     logOutMutation,
