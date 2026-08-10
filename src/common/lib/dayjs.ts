@@ -26,7 +26,7 @@ const handleChangeLanguage = async (lng: Language) => {
     }
 
     if (prevLng !== lng) {
-      i18n.changeLanguage(lng);
+      await i18n.changeLanguage(lng);
     }
   } catch {
     dayjs.locale(await import('dayjs/locale/ko'));
@@ -34,4 +34,15 @@ const handleChangeLanguage = async (lng: Language) => {
 };
 
 i18n.on('languageChanged', handleChangeLanguage);
-handleChangeLanguage(i18n.language as Language);
+
+const initLng = i18n.language as Language;
+dayjs.locale(initLng);
+const initLoader = loaderMap[initLng];
+if (initLoader && initLng !== 'en') {
+  try {
+    const locale = await initLoader();
+    dayjs.locale(locale);
+  } catch {
+    dayjs.locale(await import('dayjs/locale/ko'));
+  }
+}
