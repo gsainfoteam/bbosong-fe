@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 
 import { i18n } from './i18n';
@@ -14,7 +15,6 @@ const loaderMap: Record<Language, () => Promise<ILocale>> = {
 
 const handleChangeLanguage = async (lng: Language) => {
   try {
-    const prevLng = dayjs.locale();
     dayjs.locale(lng);
 
     const loader = loaderMap[lng];
@@ -24,17 +24,15 @@ const handleChangeLanguage = async (lng: Language) => {
       const locale = await loader();
       dayjs.locale(locale);
     }
-
-    if (prevLng !== lng) {
-      await i18n.changeLanguage(lng);
-    }
   } catch {
-    dayjs.locale(await import('dayjs/locale/ko'));
+    // 로케일 로드 실패 시 정적 임포트된 한국어로 동기식 대체
+    dayjs.locale('ko');
   }
 };
 
 i18n.on('languageChanged', handleChangeLanguage);
 
+// 최상위 스코프에서 직접 loader를 실행하여 로케일 초기화
 const initLng = i18n.language as Language;
 dayjs.locale(initLng);
 const initLoader = loaderMap[initLng];
@@ -43,6 +41,7 @@ if (initLoader && initLng !== 'en') {
     const locale = await initLoader();
     dayjs.locale(locale);
   } catch {
-    dayjs.locale(await import('dayjs/locale/ko'));
+    // 최상위 초기화 비동기 실패 시 한국어로 동기식 안전 복구
+    dayjs.locale('ko');
   }
 }

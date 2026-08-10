@@ -31,9 +31,16 @@ function AuthRequiredLayout() {
 
   if (user === undefined) return <Loading />;
 
-  if (shouldRedirect) {
+  // 정상적으로 인증이 통과된 사용자만 Outlet 렌더링을 허용
+  if (user !== null && !shouldRedirect) {
+    return <Outlet />;
+  }
+
+  // 미인증 및 퇴출 완료 시점에만 Navigate 탈출 가동
+  if (user === null && shouldRedirect) {
     return <Navigate to="/auth" search={{ redirect }} replace />;
   }
 
-  return <Outlet />;
+  // 싱크 갭 등의 대기 찰나에는 Outlet 노출 가드 후 대기
+  return <Loading />;
 }
