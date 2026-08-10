@@ -35,11 +35,9 @@ const middleware: Middleware = {
       }
 
       // 동시 호출 401 대처용 Promise 락 구성
-      if (!refreshPromise) {
-        refreshPromise = api
-          .POST(ApiPaths.AuthController_refresh)
-          .finally(() => (refreshPromise = null));
-      }
+      refreshPromise ??= api
+        .POST(ApiPaths.AuthController_refresh)
+        .finally(() => (refreshPromise = null));
 
       try {
         const { data } = await refreshPromise;

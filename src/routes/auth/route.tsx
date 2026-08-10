@@ -30,7 +30,7 @@ function Redirect() {
     return () => useAuthRedirect.getState().clearRedirect();
   }, []);
 
-  return <Navigate to={redirect} />;
+  return <Navigate to={redirect} replace />;
 }
 
 function AuthLayout() {

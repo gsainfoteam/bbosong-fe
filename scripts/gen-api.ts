@@ -1,5 +1,5 @@
-import { mkdirSync, writeFileSync } from 'fs';
-import { dirname, join } from 'path';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 
 import openapiTS, { astToString } from 'openapi-typescript';
 import ts from 'typescript';
