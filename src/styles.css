@@ -65,38 +65,38 @@ html {
   --text-caption--font-weight: 400;
   --text-caption--line-height: 15px;
 
-  /* Primary (Electric Cyan & Neon Blue) */
-  --color-primary: #50ffff;
+  /* Primary */
+  --color-primary: #f69da1;
   --color-primary-light: #e0f7fa;
-  --color-primary-muted: #90e0ef;
+  /*--color-primary-muted: #90e0ef;*/
 
   /* Text */
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: #666666;
-  --color-text-muted: #9ca3af;
+  --color-text-primary: #090909;
+  /*--color-text-secondary: #666666;*/
+  /*--color-text-muted: #9ca3af;*/
   --color-text-white: #ffffff;
 
   /* Background */
-  --color-bg: #0b0742;
-  --color-bg-surface: #e5e5e5;
-  --color-bg-subtle: #d9d9d9;
+  --color-bg: #ffffff;
+  --color-bg-surface: #b6b6b6;
+  --color-bg-subtle: #090909;
 
   /* Border */
-  --color-border: #e5e5e5;
-  --color-border-strong: #d1d1d1;
+  /*--color-border: #e5e5e5;*/
+  /*--color-border-strong: #d1d1d1;*/
 
   /* Icon */
-  --color-icon: #b4b4b4;
-  --color-icon-muted: #e5e5e5;
+  /*--color-icon: #b4b4b4;*/
+  /*--color-icon-muted: #e5e5e5;*/
 
   /* Status */
-  --color-status-pass: #22c55e;
-  --color-status-fail: #ef4444;
-  --color-status-pending: #f97316;
-  --color-status-progress: #3b82f6;
-  --color-status-inactive: #9ca3af;
-  --color-status-pass-light: #f0fdf4;
-  --color-status-fail-light: #fef2f2;
+  /*--color-status-pass: #22c55e;*/
+  /*--color-status-fail: #ef4444;*/
+  /*--color-status-pending: #f97316;*/
+  /*--color-status-progress: #3b82f6;*/
+  /*--color-status-inactive: #9ca3af;*/
+  /*--color-status-pass-light: #f0fdf4;*/
+  /*--color-status-fail-light: #fef2f2;*/
 }
 
 h1 {
