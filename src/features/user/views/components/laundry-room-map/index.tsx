@@ -19,8 +19,8 @@ export function LaundryRoomMap({
         <rect width="800" height="400" fill="#d9d9d9" />
 
         {/* 하단 양개형 출입문 실루엣 */}
-        <path d={leftDoorPath} fill="#0b0742" />
-        <path d={rightDoorPath} fill="#0b0742" />
+        <path d={leftDoorPath} fill="#000000" />
+        <path d={rightDoorPath} fill="#000000" />
 
         {/* 기기 배치도 렌더링 레이어 */}
         <g>
@@ -40,11 +40,11 @@ export function LaundryRoomMap({
                     width={50}
                     height={50}
                     fill="#ffffff"
-                    stroke="#0b0742"
+                    stroke="#000000"
                     strokeWidth={3}
                   />
                 ) : (
-                  <circle cx={x} cy={y} r={25} fill="#ffffff" stroke="#0b0742" strokeWidth={3} />
+                  <circle cx={x} cy={y} r={25} fill="#ffffff" stroke="#000000" strokeWidth={3} />
                 )}
 
                 {/* 기기 식별 숫자 (id) */}

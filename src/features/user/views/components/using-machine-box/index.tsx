@@ -30,12 +30,12 @@ export function UsingMachineBox({
   return (
     <div
       className={cn(
-        'flex flex-row items-center justify-between rounded-lg bg-white p-3',
+        'flex flex-row items-center justify-between rounded-lg bg-bg-surface p-3',
         className,
       )}
       {...props}
     >
-      <div className="text-bg">
+      <div className="text-text-primary">
         <h2>
           {t(MACHINE_KEYS[machine.type])} {machine.id}
         </h2>
@@ -43,7 +43,7 @@ export function UsingMachineBox({
       </div>
       <button
         type="button"
-        className="bg-bg rounded-xl px-2 py-1 text-xs text-white"
+        className="bg-bg-subtle rounded-xl px-2 py-1 text-xs text-white"
         onClick={onClear}
       >
         {t('user.mypage.clear')}

@@ -1,9 +1,9 @@
 {
   "auth": {
-    "female": "여성",
+    "female": "여",
     "genderAlert": "첫 로그인 시 성별을 선택해야 합니다.",
     "login": "인포팀 계정으로 로그인",
-    "male": "남성",
+    "male": "남",
     "start": "시작",
     "title": "기숙사 세탁 시스템"
   },

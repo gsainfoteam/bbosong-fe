@@ -13,7 +13,7 @@ export function GenderButton({
   return (
     <button
       className={cn(
-        'w-full rounded-lg py-2 text-sm transition-all duration-150',
+        'w-full rounded-lg py-2 text-lg transition-all duration-150',
         selected ? 'bg-bg text-white' : 'bg-bg-surface',
         className,
       )}
