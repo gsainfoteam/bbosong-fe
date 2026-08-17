@@ -1,6 +1,28 @@
 import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { extendTailwindMerge } from 'tailwind-merge';
+import { createTV } from 'tailwind-variants';
+
+const tokens = [
+  'text-display',
+  'text-heading',
+  'text-body-lg',
+  'text-body',
+  'text-label',
+  'text-caption',
+] as const;
+
+const twMergeConfig = {
+  extend: {
+    classGroups: {
+      'font-size': tokens,
+    },
+  },
+};
+
+const twMerge = extendTailwindMerge(twMergeConfig);
 
 export function cn(...classes: ClassValue[]) {
   return twMerge(clsx(classes));
 }
+
+export const cv = createTV({ twMerge: true, twMergeConfig });

@@ -30,7 +30,7 @@ export function UsingMachineBox({
   return (
     <div
       className={cn(
-        'flex flex-row items-center justify-between rounded-lg bg-bg-surface p-3',
+        'bg-bg-surface flex flex-row items-center justify-between rounded-lg p-3',
         className,
       )}
       {...props}

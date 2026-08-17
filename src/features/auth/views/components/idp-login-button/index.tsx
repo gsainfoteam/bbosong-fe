@@ -3,25 +3,28 @@ import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { cn } from '@/common/utils';
+// import { cn } from '@/common/utils';
+import { Button } from '@/common/components/ui/button';
 
 export function IdpLoginButton({ onLogin }: IdpLoginButton.Props) {
   const { t } = useTranslation();
   const [clicked, setClicked] = useState(false);
 
   return (
-    <button
+    <Button
       onClick={() => {
         setClicked(true);
         onLogin();
       }}
       disabled={clicked}
-      className={cn(
-        'bg-bg-surface flex h-12 w-full items-center justify-center rounded-lg text-lg text-text-primary',
-      )}
+      className="flex h-12 w-full items-center justify-center"
     >
-      {!clicked ? t('auth.login') : <Loader2 className="animate-spin text-text-primary" size={20} />}
-    </button>
+      {!clicked ? (
+        t('auth.login')
+      ) : (
+        <Loader2 className="text-text-primary animate-spin" size={20} />
+      )}
+    </Button>
   );
 }
 

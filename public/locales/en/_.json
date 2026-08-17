@@ -7,6 +7,10 @@
     "start": "Start",
     "title": "Dorm Laundry System"
   },
+  "common": {
+    "goBack": "Back",
+    "yes": "Yes"
+  },
   "error": {
     "loginFailed": "Login failed.",
     "logoutFailed": "Logout failed.",
@@ -33,6 +37,9 @@
       "roomStatusTitle": "Status of available machines",
       "usingMachineTitle": "Machines currently being used by {{name}}",
       "welcome": "Welcome, {{name}}"
+    },
+    "registerMachine": {
+      "message": ""
     }
   }
 }

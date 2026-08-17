@@ -5,3 +5,4 @@ export * from './using-machine-list';
 export * from './room-status-grid';
 export * from './indicator';
 export * from './laundry-room-map';
+export * from './machine-register-message';
