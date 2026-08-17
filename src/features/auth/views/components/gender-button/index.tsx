@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 
+import { Button } from '@/common/components/ui/button';
 import { cn } from '@/common/utils';
 
 export function GenderButton({
@@ -11,10 +12,9 @@ export function GenderButton({
   ...props
 }: GenderButton.Props) {
   return (
-    <button
+    <Button
       className={cn(
-        'w-full rounded-lg py-2 text-lg transition-all duration-150',
-        selected ? 'bg-bg text-white' : 'bg-bg-surface',
+        selected ? 'bg-bg text-white' : 'bg-bg-surface text-text-primary',
         className,
       )}
       onClick={onClick}
@@ -22,7 +22,7 @@ export function GenderButton({
       {...props}
     >
       {children}
-    </button>
+    </Button>
   );
 }
 
