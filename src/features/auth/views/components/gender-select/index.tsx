@@ -28,7 +28,10 @@ export function GenderSelect({ onLogin, className, ...props }: GenderSelect.Prop
   return (
     <>
       {/*<p className="text-status-fail mb-3">{t('auth.genderAlert')}</p>*/}
-      <div className={cn('px-10 mb-10 flex w-full flex-row items-center gap-1', className)} {...props}>
+      <div
+        className={cn('mb-10 flex w-full flex-row items-center gap-1 px-10', className)}
+        {...props}
+      >
         <GenderButton
           key="auth-gender-male"
           selected={selected === 'male'}

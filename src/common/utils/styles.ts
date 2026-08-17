@@ -12,10 +12,9 @@ const tokens = [
 ] as const;
 
 const twMergeConfig = {
-  override: {
+  extend: {
     classGroups: {
       'font-size': tokens,
-      'font-weight': tokens,
     },
   },
 };

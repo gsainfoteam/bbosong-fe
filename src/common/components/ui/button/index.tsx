@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { cv } from '@/common/utils';
 
 import { Slot } from '../slot';
@@ -16,6 +14,26 @@ export function Button({
 }: Button.Props & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   const Comp = asChild ? Slot : 'button';
 
+  // asChild와 disabled 속성이 동시 활성화될 때 비버튼 자식 엘리먼트의 진입 차단 및 aria 속성 대행 주입
+  const disabledProps =
+    asChild && props.disabled
+      ? {
+          'aria-disabled': true,
+          tabIndex: -1,
+          onClick: (e: React.MouseEvent) => {
+            e.preventDefault();
+            e.stopPropagation();
+          },
+          onKeyDown: (e: React.KeyboardEvent) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              e.stopPropagation();
+            }
+          },
+          style: { pointerEvents: 'none' as const, ...props.style },
+        }
+      : {};
+
   return (
     <Comp
       className={Button.styles({
@@ -24,6 +42,7 @@ export function Button({
         className,
       })}
       {...props}
+      {...disabledProps}
     >
       {children}
     </Comp>

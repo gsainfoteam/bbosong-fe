@@ -10,8 +10,8 @@ export function MachineRegisterMessage({ lang, machine, location }: MachineRegis
 
   if (lang === 'ko')
     return (
-      <div className='flex flex-col items-center gap-2'>
-        <div className='flex flex-row items-baseline gap-1'>
+      <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-row items-baseline gap-1">
           <h1>{t(`location.${location}`)}</h1>
           <p>{t('location.laundryRoom')}</p>
           <h1>{machine.id}</h1>

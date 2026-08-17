@@ -13,10 +13,7 @@ export function GenderButton({
 }: GenderButton.Props) {
   return (
     <Button
-      className={cn(
-        selected ? 'bg-bg text-white' : 'bg-bg-surface text-text-primary',
-        className,
-      )}
+      className={cn(selected ? 'bg-bg text-white' : 'bg-bg-surface text-text-primary', className)}
       onClick={onClick}
       disabled={disabled}
       {...props}

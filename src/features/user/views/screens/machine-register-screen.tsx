@@ -12,7 +12,7 @@ export function MachineRegisterScreen({
   const { i18n, t } = useTranslation();
 
   return (
-    <div className='h-dvh'>
+    <div className="h-dvh">
       <div className="h-1/2 content-center p-10">
         <div className="bg-bg-surface flex aspect-square w-full flex-col justify-end p-5">
           <img src={machineRegister} alt="machineRegister" />

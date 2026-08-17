@@ -17,7 +17,7 @@ export function IdpLoginButton({ onLogin }: IdpLoginButton.Props) {
         onLogin();
       }}
       disabled={clicked}
-      className="w-full h-12 flex items-center justify-center"
+      className="flex h-12 w-full items-center justify-center"
     >
       {!clicked ? (
         t('auth.login')
