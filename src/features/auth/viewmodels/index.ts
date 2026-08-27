@@ -1,3 +1,3 @@
-export * from './stores';
-export * from './queries';
 export * from './use-auth';
+export * from './queries/index';
+export * from './stores/index';

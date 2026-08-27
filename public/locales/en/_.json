@@ -12,9 +12,13 @@
     "yes": "Yes"
   },
   "error": {
+    "forbidden": "",
+    "internalServerError": "",
     "loginFailed": "Login failed.",
     "logoutFailed": "Logout failed.",
-    "noIdpToken": "Login error"
+    "noIdpToken": "Login error",
+    "notFound": "",
+    "unauthorized": ""
   },
   "location": {
     "a": "Bldg A",
@@ -24,6 +28,11 @@
   "machine": {
     "dryer": "Dryer",
     "washer": "Washer"
+  },
+  "machineRegister": {
+    "error": {
+      "alreadyUsing": ""
+    }
   },
   "nav": {
     "map": "Map",

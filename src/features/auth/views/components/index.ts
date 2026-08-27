@@ -1,3 +1,3 @@
-export * from './gender-button';
-export * from './gender-select';
-export * from './idp-login-button';
+export * from './gender-button/index';
+export * from './gender-select/index';
+export * from './idp-login-button/index';

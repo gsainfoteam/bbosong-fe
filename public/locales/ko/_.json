@@ -12,9 +12,13 @@
     "yes": "예"
   },
   "error": {
+    "forbidden": "",
+    "internalServerError": "",
     "loginFailed": "로그인에 실패했습니다.",
     "logoutFailed": "로그아웃에 실패했습니다.",
-    "noIdpToken": "로그인 오류"
+    "noIdpToken": "로그인 오류",
+    "notFound": "",
+    "unauthorized": ""
   },
   "location": {
     "a": "A동",
@@ -24,6 +28,11 @@
   "machine": {
     "dryer": "건조기",
     "washer": "세탁기"
+  },
+  "machineRegister": {
+    "error": {
+      "alreadyUsing": ""
+    }
   },
   "nav": {
     "map": "약도",
