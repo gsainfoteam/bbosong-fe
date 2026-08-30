@@ -39,7 +39,7 @@
       "welcome": "{{name}}님, 환영합니다."
     },
     "registerMachine": {
-      "message": "사용중인 기기로 등록합니다."
+      "message": "사용중인 기기로 등록합니다. "
     }
   }
 }
