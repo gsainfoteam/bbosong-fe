@@ -7,6 +7,7 @@ export function MachineRegisterMessage({ lang, machine, location }: MachineRegis
   // t('machine.dryer')
   // t('location.a')
   // t('location.b')
+  // t('adsf')
 
   if (lang === 'ko')
     return (
