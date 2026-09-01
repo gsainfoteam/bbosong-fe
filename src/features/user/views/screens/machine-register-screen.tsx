@@ -11,7 +11,7 @@ export function MachineRegisterScreen({
   location,
   onRegister,
 }: MachineRegisterScreen.Props) {
-  const { i18n, t } = useTranslation();
+  const { i18n, t } = useTranslation('common');
   const navigate = useNavigate();
 
   return (
@@ -24,8 +24,8 @@ export function MachineRegisterScreen({
       <div className="flex h-1/2 w-full flex-col items-center justify-between px-10 py-15">
         <MachineRegisterMessage lang={i18n.language} machine={machine} location={location} />
         <div className="flex w-full flex-row items-center justify-between gap-2 p-5">
-          <Button onClick={() => navigate({ to: '/' })}>{t('common.goBack')}</Button>
-          <Button onClick={onRegister}>{t('common.yes')}</Button>
+          <Button onClick={() => navigate({ to: '/' })}>{t('goBack')}</Button>
+          <Button onClick={onRegister}>{t('yes')}</Button>
         </div>
       </div>
     </div>

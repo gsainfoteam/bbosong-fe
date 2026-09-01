@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/common/utils';
 
 export function LoginLayoutScreen({ className, children, ...props }: LoginLayoutScreen.Props) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('auth');
 
   return (
     <div
@@ -13,7 +13,7 @@ export function LoginLayoutScreen({ className, children, ...props }: LoginLayout
       {...props}
     >
       <div className="h-1/2 content-center">
-        <span className="text-text-primary mb-10 text-4xl font-bold">{t('auth.title')}</span>
+        <span className="text-text-primary mb-10 text-4xl font-bold">{t('title')}</span>
       </div>
       <div className="h-1/2 w-full px-15 text-center">{children}</div>
     </div>

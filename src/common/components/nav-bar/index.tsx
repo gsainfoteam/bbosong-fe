@@ -6,7 +6,7 @@ import { NavButton } from '../ui';
 import { NAV_ITEMS } from './constants';
 
 export const NavBar = ({ className, ...props }: NavBar.Props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('nav');
 
   return (
     <div className={cn('flex flex-row justify-around', className)} {...props}>

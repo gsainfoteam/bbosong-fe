@@ -8,13 +8,13 @@ import { ApiPaths } from '../../models';
 import { useToken } from '../stores';
 
 export const useLogout = ({ showToast = false }: { showToast?: boolean } = {}) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('error');
   const { logOut: idpLogOut } = useAuthContext();
 
   return $api.useMutation('post', ApiPaths.AuthController_logout, {
     onError: () => {
       if (showToast) {
-        toast.error(t('error.logoutFailed'));
+        toast.error(t('logoutFailed'));
       }
     },
     onSettled: () => {

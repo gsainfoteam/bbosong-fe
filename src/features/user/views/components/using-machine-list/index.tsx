@@ -10,11 +10,11 @@ export function UsingMachineList({
   className,
   ...props
 }: UsingMachineList.Props) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('mypage');
 
   return (
     <div className={cn('', className)} {...props}>
-      <p className="mb-3">{t('user.mypage.usingMachineTitle', { name: userName })}</p>
+      <p className="mb-3">{t('usingMachineTitle', { name: userName })}</p>
       {machineList.map((item) => (
         <UsingMachineBox
           key={`${item.location}-${item.machine.type}-${item.machine.id}`}

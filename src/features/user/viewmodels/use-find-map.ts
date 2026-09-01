@@ -6,7 +6,7 @@ export type MapMachine = {
 };
 
 export type LaundryRoomLayout = {
-  label: 'location.a' | 'location.b';
+  label: 'a' | 'b';
   machines: MapMachine[];
   doorX?: number;
 };
@@ -35,12 +35,12 @@ export function useFindMap() {
   // A동 및 B동 세탁실 맵 구성
   const laundryRoomLayouts: LaundryRoomLayout[] = [
     {
-      label: 'location.a',
+      label: 'a',
       machines: mockDevices,
       doorX: 150,
     },
     {
-      label: 'location.b',
+      label: 'b',
       machines: mockDevices,
       doorX: 400,
     },

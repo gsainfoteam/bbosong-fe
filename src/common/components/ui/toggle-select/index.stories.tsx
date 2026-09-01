@@ -23,10 +23,10 @@ export const Default: Story = {
     onChange: () => {},
   },
   render: (args) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation(['nav', 'location']);
 
     // i18n 번역 키 목록 정의
-    const translatedStates = [t('nav.status'), t('nav.mypage'), t('nav.map')];
+    const translatedStates = [t('status'), t('mypage'), t('map')];
 
     // TS2345 에러 방지를 위해 제네릭 <string> 명시
     const [state, setState] = useState<string>(translatedStates[0]);
@@ -54,10 +54,10 @@ export const BuildingSelect: Story = {
     onChange: () => {},
   },
   render: (args) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation(['nav', 'location']);
 
     // A동, B동 번역 연동
-    const bldgStates = [t('location.a'), t('location.b')];
+    const bldgStates = [t('location:a'), t('location:b')];
 
     // TS2345 에러 방지를 위해 제네릭 <string> 명시
     const [state, setState] = useState<string>(bldgStates[0]);

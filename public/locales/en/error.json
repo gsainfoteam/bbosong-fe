@@ -1,0 +1,11 @@
+{
+  "badRequest": "",
+  "forbidden": "",
+  "generic": "",
+  "internalServerError": "",
+  "loginFailed": "Login failed.",
+  "logoutFailed": "Logout failed.",
+  "noIdpToken": "Login error",
+  "notFound": "",
+  "unauthorized": ""
+}

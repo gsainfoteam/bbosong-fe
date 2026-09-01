@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/common/components/ui/button';
 
 export function IdpLoginButton({ onLogin }: IdpLoginButton.Props) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('auth');
   const [clicked, setClicked] = useState(false);
 
   return (
@@ -20,7 +20,7 @@ export function IdpLoginButton({ onLogin }: IdpLoginButton.Props) {
       className="flex h-12 w-full items-center justify-center"
     >
       {!clicked ? (
-        t('auth.login')
+        t('login')
       ) : (
         <Loader2 className="text-text-primary animate-spin" size={20} />
       )}
