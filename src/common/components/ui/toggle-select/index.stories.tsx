@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useTranslation } from 'react-i18next';
 
 import { ToggleSelect } from './index';
 
@@ -14,7 +13,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-// 기본 메뉴형 탭 데모 (i18n 연동)
+// 기본 메뉴형 탭 데모
 export const Default: Story = {
   args: {
     available: true,
@@ -23,10 +22,8 @@ export const Default: Story = {
     onChange: () => {},
   },
   render: (args) => {
-    const { t } = useTranslation(['nav', 'location']);
-
-    // i18n 번역 키 목록 정의
-    const translatedStates = [t('status'), t('mypage'), t('map')];
+    // 데모용 정적 표시 문자열 목록
+    const translatedStates = ['세탁실 현황', '마이페이지', '약도'];
 
     // TS2345 에러 방지를 위해 제네릭 <string> 명시
     const [state, setState] = useState<string>(translatedStates[0]);
@@ -45,7 +42,7 @@ export const Default: Story = {
   },
 };
 
-// A동, B동 두 개 요소만 있는 빌딩 탭 데모 (i18n 연동)
+// A동, B동 두 개 요소만 있는 빌딩 탭 데모
 export const BuildingSelect: Story = {
   args: {
     available: true,
@@ -54,10 +51,8 @@ export const BuildingSelect: Story = {
     onChange: () => {},
   },
   render: (args) => {
-    const { t } = useTranslation(['nav', 'location']);
-
-    // A동, B동 번역 연동
-    const bldgStates = [t('location:a'), t('location:b')];
+    // A동, B동 데모용 정적 표시 문자열
+    const bldgStates = ['A동', 'B동'];
 
     // TS2345 에러 방지를 위해 제네릭 <string> 명시
     const [state, setState] = useState<string>(bldgStates[0]);
