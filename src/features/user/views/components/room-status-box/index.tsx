@@ -31,7 +31,7 @@ export function RoomStatusBox({
           <span className="text-lg font-bold">{t(`machine:${machine}`)}</span>
         </div>
         <span className="text-primary text-3xl font-bold">{count}</span>
-        <span className="text-lg font-bold">{t('count')}</span>
+        <span className="text-lg font-bold">{t('count', { count })}</span>
       </div>
       <div>
         <ToggleBoolean size="sm" state={toggleState} onChange={onChange} />
