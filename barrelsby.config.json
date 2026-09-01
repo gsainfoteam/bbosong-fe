@@ -1,0 +1,21 @@
+{
+  "directory": [
+    "src/features/user/viewmodels",
+    "src/features/user/views",
+    "src/features/user/views/components",
+    "src/features/user/views/frames",
+    "src/features/user/views/screens",
+    "src/features/auth/viewmodels",
+    "src/features/auth/viewmodels/queries",
+    "src/features/auth/viewmodels/stores",
+    "src/features/auth/views",
+    "src/features/auth/views/components",
+    "src/features/auth/views/frames",
+    "src/features/auth/views/screens"
+  ],
+  "delete": true,
+  "location": "replace",
+  "singleQuotes": true,
+  "noHeader": true,
+  "exclude": ["\\.test\\.ts$", "\\.stories\\.tsx$"]
+}

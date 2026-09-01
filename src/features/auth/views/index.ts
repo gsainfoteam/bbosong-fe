@@ -1,3 +1,3 @@
-export * from './components';
-export * from './frames';
-export * from './screens';
+export * from './components/index';
+export * from './frames/index';
+export * from './screens/index';

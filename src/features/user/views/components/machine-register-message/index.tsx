@@ -26,9 +26,18 @@ export function MachineRegisterMessage({ lang, machine, location }: MachineRegis
     );
 
   return (
-    <div>
-      <div></div>
-      <div></div>
+    <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-row items-baseline gap-1">
+        <p>Register</p>
+        <h1>{t(`machine.${machine.type}`)}</h1>
+        <p>No.</p>
+        <h1>{machine.id}</h1>
+      </div>
+      <div className="flex flex-row items-baseline gap-1">
+        <p>in laundry room </p>
+        <h1>{location.toUpperCase()}</h1>
+        <p>as in use.</p>
+      </div>
     </div>
   );
 }

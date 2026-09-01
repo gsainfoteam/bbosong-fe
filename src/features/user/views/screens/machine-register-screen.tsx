@@ -1,3 +1,5 @@
+import { useNavigate } from '@tanstack/react-router';
+
 import { useTranslation } from 'react-i18next';
 
 import machineRegister from '@/assets/machine-register.svg';
@@ -10,6 +12,7 @@ export function MachineRegisterScreen({
   onRegister,
 }: MachineRegisterScreen.Props) {
   const { i18n, t } = useTranslation();
+  const navigate = useNavigate();
 
   return (
     <div className="h-dvh">
@@ -21,7 +24,7 @@ export function MachineRegisterScreen({
       <div className="flex h-1/2 w-full flex-col items-center justify-between px-10 py-15">
         <MachineRegisterMessage lang={i18n.language} machine={machine} location={location} />
         <div className="flex w-full flex-row items-center justify-between gap-2 p-5">
-          <Button>{t('common.goBack')}</Button>
+          <Button onClick={() => navigate({ to: '/' })}>{t('common.goBack')}</Button>
           <Button onClick={onRegister}>{t('common.yes')}</Button>
         </div>
       </div>

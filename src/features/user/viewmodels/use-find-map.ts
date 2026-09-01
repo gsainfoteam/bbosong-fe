@@ -11,7 +11,7 @@ export type LaundryRoomLayout = {
   doorX?: number;
 };
 
-export function useMapViewModel() {
+export function useFindMap() {
   // 세탁기 및 건조기 배치 모의 데이터
   const mockDevices: MapMachine[] = [
     { id: 1, type: 'WASHER', x: 85, y: 75 },
