@@ -12,7 +12,9 @@
     "yes": "예"
   },
   "error": {
+    "badRequest": "",
     "forbidden": "",
+    "generic": "",
     "internalServerError": "",
     "loginFailed": "로그인에 실패했습니다.",
     "logoutFailed": "로그아웃에 실패했습니다.",

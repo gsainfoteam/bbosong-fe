@@ -30,6 +30,8 @@ export function useFindMachineByUuid(uuid: string) {
       toast.error(t('error.forbidden'));
     } else if (error?.statusCode === 404) {
       toast.error(t('error.notFound'));
+    } else if (error?.statusCode === 400) {
+      toast.error(t('error.badRequest'));
     } else if (error?.statusCode === 500) {
       toast.error(t('error.internalServerError'));
     }

@@ -30,6 +30,8 @@ export function useRegisterMachine() {
         toast.error(t('error.forbidden'));
       } else if (err?.statusCode === 500) {
         toast.error(t('error.internalServerError'));
+      } else {
+        toast.error(t('error.generic'));
       }
     },
   });

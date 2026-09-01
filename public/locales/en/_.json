@@ -12,7 +12,9 @@
     "yes": "Yes"
   },
   "error": {
+    "badRequest": "",
     "forbidden": "",
+    "generic": "",
     "internalServerError": "",
     "loginFailed": "Login failed.",
     "logoutFailed": "Logout failed.",
