@@ -1,5 +1,4 @@
 {
-  "adsf": "",
   "auth": {
     "female": "여",
     "genderAlert": "첫 로그인 시 성별을 선택해야 합니다.",
@@ -32,8 +31,9 @@
   },
   "machineRegister": {
     "error": {
-      "alreadyUsing": ""
-    }
+      "alreadyUsing": "다른 사용자에게 등록된 기기입니다."
+    },
+    "success": "기기를 등록하였습니다."
   },
   "nav": {
     "map": "약도",

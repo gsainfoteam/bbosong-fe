@@ -1,3 +1,5 @@
+import { useNavigate } from '@tanstack/react-router';
+
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -7,11 +9,15 @@ import { ApiPaths } from '../models';
 
 export function useRegisterMachine() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   return $api.useMutation('post', ApiPaths.MachineController_registerMachineUsage, {
     onSuccess: (data) => {
       if (!data.success) {
         toast.error(t('machineRegister.error.alreadyUsing'));
+      } else {
+        toast.success(t('machineRegister.success'));
+        navigate({ to: '/' });
       }
     },
     onError: (error) => {

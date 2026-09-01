@@ -1,5 +1,4 @@
 {
-  "adsf": "",
   "auth": {
     "female": "Female",
     "genderAlert": "You must select your gender upon your first login.",
@@ -33,7 +32,8 @@
   "machineRegister": {
     "error": {
       "alreadyUsing": ""
-    }
+    },
+    "success": ""
   },
   "nav": {
     "map": "Map",
