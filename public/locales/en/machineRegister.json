@@ -1,7 +1,7 @@
 {
   "error": {
-    "alreadyUsing": ""
+    "alreadyUsing": "This machine is already registered by another user."
   },
-  "message": "",
-  "success": ""
+  "message": "Registering as a machine in use.",
+  "success": "Machine registered successfully."
 }

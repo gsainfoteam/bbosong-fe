@@ -1,6 +1,6 @@
 {
   "clear": "Clear",
-  "count": "",
+  "count": "units",
   "roomStatusTitle": "Status of available machines",
   "usingMachineTitle": "Machines currently being used by {{name}}",
   "welcome": "Welcome, {{name}}"
