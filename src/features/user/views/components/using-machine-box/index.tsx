@@ -3,13 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/common/utils';
 
 const MACHINE_KEYS = {
-  washer: 'machine.washer',
-  dryer: 'machine.dryer',
+  washer: 'machine:washer',
+  dryer: 'machine:dryer',
 } as const;
 
 const LOCATION_KEYS = {
-  a: 'location.a',
-  b: 'location.b',
+  a: 'location:a',
+  b: 'location:b',
 } as const;
 
 export function UsingMachineBox({
@@ -19,13 +19,13 @@ export function UsingMachineBox({
   className,
   ...props
 }: UsingMachineBox.Props) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['mypage', 'machine', 'location']);
 
-  // t('machine.washer')
-  // t('machine.dryer')
-  // t('location.a')
-  // t('location.b')
-  // t('location.laundryRoom')
+  // t('machine:washer')
+  // t('machine:dryer')
+  // t('location:a')
+  // t('location:b')
+  // t('location:laundryRoom')
 
   return (
     <div
@@ -39,14 +39,14 @@ export function UsingMachineBox({
         <h2>
           {t(MACHINE_KEYS[machine.type])} {machine.id}
         </h2>
-        <span className="text-sm">{`${t(LOCATION_KEYS[location])} ${t('location.laundryRoom')}`}</span>
+        <span className="text-sm">{`${t(LOCATION_KEYS[location])} ${t('location:laundryRoom')}`}</span>
       </div>
       <button
         type="button"
         className="bg-bg-subtle rounded-xl px-2 py-1 text-xs text-white"
         onClick={onClear}
       >
-        {t('user.mypage.clear')}
+        {t('clear')}
       </button>
     </div>
   );

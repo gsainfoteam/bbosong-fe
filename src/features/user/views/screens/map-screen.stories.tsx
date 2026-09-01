@@ -40,12 +40,12 @@ export const Default: Story = {
   args: {
     laundryRoomLayouts: [
       {
-        label: 'location.a',
+        label: 'a',
         machines: mockDevices,
         doorX: 150,
       },
       {
-        label: 'location.b',
+        label: 'b',
         machines: mockDevices,
         doorX: 400,
       },

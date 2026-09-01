@@ -16,7 +16,7 @@ export const useAuth = ({ showToast = false }: { showToast?: boolean } = {}) => 
   const { mutate: logOut, ...logOutMutation } = useLogout({ showToast });
   const { token } = useToken();
   const { data: userData, isLoading, error: userError, refetch: refetchUser } = useUser();
-  const { t } = useTranslation();
+  const { t } = useTranslation('error');
   const navigate = useNavigate();
 
   const logIn = useCallback(
@@ -24,7 +24,7 @@ export const useAuth = ({ showToast = false }: { showToast?: boolean } = {}) => 
       if (!idpToken) {
         navigate({ to: '/auth' });
         if (showToast) {
-          toast.error(t('error.noIdpToken'));
+          toast.error(t('noIdpToken'));
         }
         return;
       }

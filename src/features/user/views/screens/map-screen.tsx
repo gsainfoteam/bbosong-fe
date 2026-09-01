@@ -6,7 +6,7 @@ import { LaundryRoomMap, Indicator } from '@/features/user';
 import { type LaundryRoomLayout } from '../../viewmodels';
 
 export function MapScreen({ laundryRoomLayouts, className }: MapScreen.Props) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('location');
 
   return (
     <div className={cn('flex flex-col gap-4', className)}>
@@ -17,7 +17,7 @@ export function MapScreen({ laundryRoomLayouts, className }: MapScreen.Props) {
       {laundryRoomLayouts.map((layout) => (
         <div key={layout.label} className="w-full">
           <p className="mb-1.5">
-            {t(layout.label)} {t('location.laundryRoom')}
+            {t(layout.label)} {t('laundryRoom')}
           </p>
           <LaundryRoomMap machines={layout.machines} doorX={layout.doorX} />
         </div>

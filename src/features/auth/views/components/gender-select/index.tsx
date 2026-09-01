@@ -7,7 +7,7 @@ import { cn } from '@/common/utils';
 import { type Gender, GenderButton } from '@/features/auth';
 
 export function GenderSelect({ onLogin, className, ...props }: GenderSelect.Props) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('auth');
 
   const [selected, setSelected] = useState<Gender>(null);
   const [clicked, setClicked] = useState(false);
@@ -27,7 +27,7 @@ export function GenderSelect({ onLogin, className, ...props }: GenderSelect.Prop
 
   return (
     <>
-      {/*<p className="text-status-fail mb-3">{t('auth.genderAlert')}</p>*/}
+      {/*<p className="text-status-fail mb-3">{t('genderAlert')}</p>*/}
       <div
         className={cn('mb-10 flex w-full flex-row items-center gap-1 px-10', className)}
         {...props}
@@ -38,7 +38,7 @@ export function GenderSelect({ onLogin, className, ...props }: GenderSelect.Prop
           disabled={clicked}
           onClick={() => changeGender('male')}
         >
-          {t('auth.male')}
+          {t('male')}
         </GenderButton>
         <GenderButton
           key="auth-gender-female"
@@ -46,15 +46,16 @@ export function GenderSelect({ onLogin, className, ...props }: GenderSelect.Prop
           disabled={clicked}
           onClick={() => changeGender('female')}
         >
-          {t('auth.female')}
+          {t('female')}
         </GenderButton>
       </div>
       <button
+        type='button'
         className="bg-bg rounded-sm px-8 py-2 text-base font-semibold text-white"
         onClick={clickLogin}
         disabled={clicked}
       >
-        {!clicked ? t('auth.start') : <Loader2 className="animate-spin text-white" />}
+        {!clicked ? t('start') : <Loader2 className="animate-spin text-white" />}
         {}
       </button>
     </>

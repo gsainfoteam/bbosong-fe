@@ -1,0 +1,11 @@
+{
+  "badRequest": "Bad request.",
+  "forbidden": "You do not have permission.",
+  "generic": "An error occurred.",
+  "internalServerError": "Internal server error.",
+  "loginFailed": "Login failed.",
+  "logoutFailed": "Logout failed.",
+  "noIdpToken": "Login error",
+  "notFound": "Not found.",
+  "unauthorized": "Login required."
+}

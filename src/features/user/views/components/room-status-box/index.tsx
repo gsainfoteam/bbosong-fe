@@ -12,13 +12,13 @@ export function RoomStatusBox({
   className,
   ...props
 }: RoomStatusBox.Props) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['mypage', 'location', 'machine']);
 
-  // t('location.a')
-  // t('location.b')
-  // t('machine.washer')
-  // t('machine.dryer')
-  // t('user.mypage.count')
+  // t('location:a')
+  // t('location:b')
+  // t('machine:washer')
+  // t('machine:dryer')
+  // t('count')
 
   return (
     <div
@@ -27,11 +27,11 @@ export function RoomStatusBox({
     >
       <div className="flex flex-row items-end gap-1">
         <div className="flex flex-col">
-          <span className="text-sm">{t(`location.${building}`)}</span>
-          <span className="text-lg font-bold">{t(`machine.${machine}`)}</span>
+          <span className="text-sm">{t(`location:${building}`)}</span>
+          <span className="text-lg font-bold">{t(`machine:${machine}`)}</span>
         </div>
         <span className="text-primary text-3xl font-bold">{count}</span>
-        <span className="text-lg font-bold">{t('user.mypage.count')}</span>
+        <span className="text-lg font-bold">{t('count', { count })}</span>
       </div>
       <div>
         <ToggleBoolean size="sm" state={toggleState} onChange={onChange} />

@@ -7,7 +7,7 @@ export default defineConfig({
     input: ['src/**/*.{ts,tsx}'],
     output: 'public/locales/{{language}}/{{namespace}}.json',
 
-    defaultNS: '_',
+    defaultNS: 'common',
     nsSeparator: ':',
     keySeparator: '.',
 

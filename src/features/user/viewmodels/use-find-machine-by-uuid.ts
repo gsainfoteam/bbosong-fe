@@ -9,7 +9,7 @@ import { ApiPaths } from '../models';
 
 
 export function useFindMachineByUuid(uuid: string) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('error');
   const { data, error, isError, isLoading } = $api.useQuery(
     'get',
     ApiPaths.MachineController_getMachine,
@@ -25,15 +25,15 @@ export function useFindMachineByUuid(uuid: string) {
   useEffect(() => {
     if (!isError) return;
     if (error?.statusCode === 401) {
-      toast.error(t('error.unauthorized'));
+      toast.error(t('unauthorized'));
     } else if (error?.statusCode === 403) {
-      toast.error(t('error.forbidden'));
+      toast.error(t('forbidden'));
     } else if (error?.statusCode === 404) {
-      toast.error(t('error.notFound'));
+      toast.error(t('notFound'));
     } else if (error?.statusCode === 400) {
-      toast.error(t('error.badRequest'));
+      toast.error(t('badRequest'));
     } else if (error?.statusCode === 500) {
-      toast.error(t('error.internalServerError'));
+      toast.error(t('internalServerError'));
     }
   }, [error, isError, t]);
 

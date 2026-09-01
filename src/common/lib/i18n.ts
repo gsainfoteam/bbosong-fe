@@ -17,7 +17,8 @@ await i18n
   .init({
     supportedLngs: LANGUAGES,
     fallbackLng: 'ko',
-    defaultNS: '_',
+    defaultNS: 'common',
+    ns: ['common', 'auth', 'error', 'location', 'machine', 'machineRegister', 'nav', 'mypage'],
     nsSeparator: ':',
     keySeparator: '.',
     backend: {

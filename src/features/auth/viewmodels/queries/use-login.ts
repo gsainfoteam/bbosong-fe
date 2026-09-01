@@ -10,7 +10,7 @@ import { useToken } from '@/features/auth';
 import { ApiPaths } from '../../models';
 
 export const useLogin = ({ showToast = false }: { showToast?: boolean } = {}) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('error');
   const { logOut: idpLogOut } = useAuthContext();
   const navigate = useNavigate();
 
@@ -31,7 +31,7 @@ export const useLogin = ({ showToast = false }: { showToast?: boolean } = {}) =>
       navigate({ to: '/auth' });
       console.error(error);
       if (showToast) {
-        toast.error(t('error.loginFailed'));
+        toast.error(t('loginFailed'));
       }
     },
   });
