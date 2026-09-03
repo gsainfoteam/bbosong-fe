@@ -3,7 +3,7 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import HttpBackend from 'i18next-http-backend';
 import { initReactI18next, useTranslation } from 'react-i18next';
 
-import { LANGUAGES, type Language } from './languages';
+import { SUPPORTED_LANGUAGES, type Language } from './languages.ts';
 
 export function useLanguage(): Language {
   const { i18n: i18nInstance } = useTranslation();
@@ -15,7 +15,7 @@ await i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    supportedLngs: LANGUAGES,
+    supportedLngs: SUPPORTED_LANGUAGES,
     fallbackLng: 'ko',
     defaultNS: 'common',
     ns: ['common', 'auth', 'error', 'location', 'machine', 'machineRegister', 'nav', 'mypage'],

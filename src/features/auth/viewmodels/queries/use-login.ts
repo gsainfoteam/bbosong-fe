@@ -5,9 +5,11 @@ import { useAuthContext } from 'react-oauth2-code-pkce';
 import { toast } from 'sonner';
 
 import { $api } from '@/common/lib';
-import { useToken } from '@/features/auth';
+import { useAuthPrompt, useToken } from '@/features/auth';
 
 import { ApiPaths } from '../../models';
+
+import type { ConsentRequiredErrorDto, GenderRequiredErrorDto } from '../../models';
 
 export const useLogin = ({ showToast = false }: { showToast?: boolean } = {}) => {
   const { t } = useTranslation('error');
@@ -19,11 +21,19 @@ export const useLogin = ({ showToast = false }: { showToast?: boolean } = {}) =>
       useToken.getState().saveToken(response.access_token);
     },
     onError: async (error) => {
-      const err = error as { statusCode?: number; status?: number };
-      const isGenderRequired = err?.statusCode === 403 || err?.status === 403;
+      const err = error as ConsentRequiredErrorDto | GenderRequiredErrorDto | { statusCode?: number };
 
-      if (isGenderRequired) {
+      if ('errorCode' in err && err.errorCode === 'GENDER_REQUIRED') {
         navigate({ to: '/auth/gender' });
+        return;
+      }
+
+      if (
+        'errorCode' in err &&
+        (err.errorCode === 'CONSENT_REQUIRED' || err.errorCode === 'CONSENT_UPDATE_REQUIRED')
+      ) {
+        useAuthPrompt.getState().setRequiredConsents(err.requiredConsents);
+        navigate({ to: '/auth/consent' });
         return;
       }
 

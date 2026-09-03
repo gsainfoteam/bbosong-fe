@@ -1,2 +1,2 @@
-export const LANGUAGES = ['ko', 'en'] as const;
-export type Language = (typeof LANGUAGES)[number];
+export const SUPPORTED_LANGUAGES = ['ko', 'en'] as const;
+export type Language = (typeof SUPPORTED_LANGUAGES)[number];
