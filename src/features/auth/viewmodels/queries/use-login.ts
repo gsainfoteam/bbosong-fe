@@ -7,9 +7,11 @@ import { toast } from 'sonner';
 import { $api } from '@/common/lib';
 import { useAuthPrompt, useToken } from '@/features/auth';
 
-import { ApiPaths } from '../../models';
-
-import type { ConsentRequiredErrorDto, GenderRequiredErrorDto } from '../../models';
+import {
+  ApiPaths,
+  type ConsentRequiredErrorDto,
+  type GenderRequiredErrorDto,
+} from '../../models';
 
 export const useLogin = ({ showToast = false }: { showToast?: boolean } = {}) => {
   const { t } = useTranslation('error');
@@ -19,6 +21,8 @@ export const useLogin = ({ showToast = false }: { showToast?: boolean } = {}) =>
   return $api.useMutation('post', ApiPaths.AuthController_login, {
     onSuccess: (response) => {
       useToken.getState().saveToken(response.access_token);
+      // 로그인이 최종 성공하면 더 이상 필요 없는 약관 요구 정보를 비운다
+      useAuthPrompt.getState().setRequiredConsents(undefined);
     },
     onError: async (error) => {
       const err = error as ConsentRequiredErrorDto | GenderRequiredErrorDto | { statusCode?: number };

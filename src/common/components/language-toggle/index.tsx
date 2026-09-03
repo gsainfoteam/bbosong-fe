@@ -13,28 +13,28 @@ export function LanguageToggle() {
     <div className="flex items-center justify-center gap-1.5 rounded-lg">
       <button
         type="button"
-        onClick={() => {
-          if (!isKorean) toggleLanguage();
-        }}
+        onClick={toggleLanguage}
+        disabled={isKorean}
+        aria-pressed={isKorean}
         className={cn(
           'text-body-lg uppercase transition-colors',
           isKorean ? 'text-primary font-bold' : 'text-text-secondary',
         )}
-        aria-label={t('switchToKorean')}
+        aria-label={isKorean ? undefined : t('switchToKorean')}
       >
         KOR
       </button>
       <div className="bg-primary h-4 w-0.5" />
       <button
         type="button"
-        onClick={() => {
-          if (isKorean) toggleLanguage();
-        }}
+        onClick={toggleLanguage}
+        disabled={!isKorean}
+        aria-pressed={!isKorean}
         className={cn(
           'text-body-lg uppercase transition-colors',
           !isKorean ? 'text-primary font-bold' : 'text-text-secondary',
         )}
-        aria-label={t('switchToEnglish')}
+        aria-label={isKorean ? t('switchToEnglish') : undefined}
       >
         ENG
       </button>
