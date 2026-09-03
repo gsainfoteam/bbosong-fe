@@ -5,9 +5,13 @@ import { useAuthContext } from 'react-oauth2-code-pkce';
 import { toast } from 'sonner';
 
 import { $api } from '@/common/lib';
-import { useToken } from '@/features/auth';
+import { useAuthPrompt, useToken } from '@/features/auth';
 
-import { ApiPaths } from '../../models';
+import {
+  ApiPaths,
+  type ConsentRequiredErrorDto,
+  type GenderRequiredErrorDto,
+} from '../../models';
 
 export const useLogin = ({ showToast = false }: { showToast?: boolean } = {}) => {
   const { t } = useTranslation('error');
@@ -17,13 +21,23 @@ export const useLogin = ({ showToast = false }: { showToast?: boolean } = {}) =>
   return $api.useMutation('post', ApiPaths.AuthController_login, {
     onSuccess: (response) => {
       useToken.getState().saveToken(response.access_token);
+      // 로그인이 최종 성공하면 더 이상 필요 없는 약관 요구 정보를 비운다
+      useAuthPrompt.getState().setRequiredConsents(undefined);
     },
     onError: async (error) => {
-      const err = error as { statusCode?: number; status?: number };
-      const isGenderRequired = err?.statusCode === 403 || err?.status === 403;
+      const err = error as ConsentRequiredErrorDto | GenderRequiredErrorDto | { statusCode?: number };
 
-      if (isGenderRequired) {
+      if ('errorCode' in err && err.errorCode === 'GENDER_REQUIRED') {
         navigate({ to: '/auth/gender' });
+        return;
+      }
+
+      if (
+        'errorCode' in err &&
+        (err.errorCode === 'CONSENT_REQUIRED' || err.errorCode === 'CONSENT_UPDATE_REQUIRED')
+      ) {
+        useAuthPrompt.getState().setRequiredConsents(err.requiredConsents);
+        navigate({ to: '/auth/consent' });
         return;
       }
 

@@ -4,7 +4,7 @@ import localizedFormat from 'dayjs/plugin/localizedFormat';
 
 import { i18n } from './i18n';
 
-import type { Language } from './languages';
+import type { Language } from './languages.ts';
 
 dayjs.extend(localizedFormat);
 

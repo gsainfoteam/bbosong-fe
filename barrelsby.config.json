@@ -1,5 +1,6 @@
 {
   "directory": [
+    "src/common/components",
     "src/features/user/viewmodels",
     "src/features/user/views",
     "src/features/user/views/components",
