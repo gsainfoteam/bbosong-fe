@@ -1,0 +1,30 @@
+on:
+  release:
+    types:
+      - released
+
+jobs:
+  production-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
+      - name: build
+        env:
+          VITE_AMPLITUDE_API_KEY: ${{ secrets.VITE_AMPLITUDE_API_KEY }}
+          VITE_IDP_CLIENT_ID: ${{ secrets.VITE_IDP_CLIENT_ID }}
+          SWAGGER_USER: ${{ secrets.SWAGGER_USER }}
+          SWAGGER_PASSWORD: ${{ secrets.SWAGGER_PASSWORD }}
+        run: |
+          bun install
+          bun run build -- --mode production
+      - name: Deploy to production
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: pages deploy dist --project-name bbosong-fe --branch main
+          gitHubToken: ${{ github.token }}
