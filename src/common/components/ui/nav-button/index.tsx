@@ -20,7 +20,7 @@ export function NavButton({ to, label, className, ...props }: NavButton.Props) {
               className="absolute inset-0 h-full w-full object-contain"
             />
           )}
-          <span className="text-caption z-10 text-xs font-semibold text-white">{label}</span>
+          <span className="text-caption z-10 text-xs font-semibold">{label}</span>
         </>
       )}
     </Link>
