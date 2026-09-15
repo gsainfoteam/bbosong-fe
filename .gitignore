@@ -13,6 +13,7 @@ dist-ssr
 __unconfig*
 todos.json
 .idea
+.repoclean-keep
 
 src/routeTree.gen.ts
 src/@types/*.ts

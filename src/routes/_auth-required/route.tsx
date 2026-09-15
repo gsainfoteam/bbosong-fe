@@ -4,6 +4,7 @@ import { createFileRoute, Navigate, Outlet, useRouter } from '@tanstack/react-ro
 
 import { Loading } from '@/common/components';
 import { useAuth } from '@/features/auth';
+import { usePushDeviceSync } from '@/features/push-notification';
 
 export const Route = createFileRoute('/_auth-required')({
   component: AuthRequiredLayout,
@@ -11,6 +12,8 @@ export const Route = createFileRoute('/_auth-required')({
 
 function AuthRequiredLayout() {
   const { user } = useAuth();
+  // 앱 실행 시점과 로그인 직후(계정 전환 포함)마다 푸시 디바이스를 재등록한다
+  usePushDeviceSync();
   const router = useRouter();
   const [shouldRedirect, setShouldRedirect] = useState(false);
 

@@ -5,4 +5,4 @@ export type Machine = {
   y: number;
 };
 
-export {ApiPaths} from '@/@types/api-schema';
+export { ApiPaths } from '@/@types/api-schema';

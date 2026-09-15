@@ -1,0 +1,28 @@
+{
+  "laundryRoom": {
+    "blockedByDenied": "Notifications are blocked, so you can't request an alert.",
+    "cancel": "Cancel alert request",
+    "dryer": "dryer",
+    "female": "women's",
+    "label": "{{type}} in the {{location}} {{gender}} laundry room",
+    "locationA": "Building A",
+    "locationB": "Building B",
+    "male": "men's",
+    "needsPermission": "Please allow notifications first.",
+    "request": "Request alert",
+    "washer": "washer"
+  },
+  "permission": {
+    "denied": "Notifications are blocked. Please allow notifications for this site in your browser settings.",
+    "description": "We'll let you know when your machine finishes or a machine frees up.",
+    "enable": "Turn on notifications",
+    "install": "Install app",
+    "installGuideFallback": "Install the app from the install icon in the address bar, then try again.",
+    "installGuideIOS": "Tap the Share button, choose \"Add to Home Screen\", then reopen the app from the Home Screen icon.",
+    "installing": "Installing...",
+    "needsInstall": "Install the app first to receive notifications. Installing means you won't miss alerts after closing the app.",
+    "requesting": "Requesting permission...",
+    "title": "Notifications",
+    "unsupported": "This browser does not support web push notifications."
+  }
+}

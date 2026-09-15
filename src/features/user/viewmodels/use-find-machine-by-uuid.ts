@@ -7,7 +7,6 @@ import { $api } from '@/common/lib';
 
 import { ApiPaths } from '../models';
 
-
 export function useFindMachineByUuid(uuid: string) {
   const { t } = useTranslation('error');
   const { data, error, isError, isLoading } = $api.useQuery(
