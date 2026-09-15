@@ -1,7 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router';
-
-import { MainFrame } from '@/features/user';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_auth-required/_user/')({
-  component: MainFrame,
+  beforeLoad: () => {
+    throw redirect({
+      to: '/status',
+      replace: true,
+    });
+  },
 });
