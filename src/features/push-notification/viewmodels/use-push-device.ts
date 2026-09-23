@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 
 import {
   canPromptInstall,
@@ -97,20 +97,50 @@ export function usePushDeviceSync(): void {
   }, [token]);
 }
 
+/**
+ * 알림 권한은 브라우저 전역 상태이므로 훅 인스턴스별 useState로 들고 있으면
+ * (예: 권한 카드와 빈 기기 토글이 동시에 떠 있을 때) 한쪽만 갱신되어 서로 어긋난다.
+ * 모든 인스턴스가 같은 값을 보도록 외부 스토어로 공유한다.
+ */
+const permissionListeners = new Set<() => void>();
+
+function emitPermissionChange() {
+  permissionListeners.forEach((listener) => listener());
+}
+
+function subscribePermission(listener: () => void): () => void {
+  permissionListeners.add(listener);
+
+  // 브라우저 설정에서 권한을 되돌린 경우를 따라잡기 위해 포커스 복귀 시 재조회
+  const handleFocus = () => listener();
+  window.addEventListener('focus', handleFocus);
+
+  // 지원 브라우저에서는 설정 변경을 즉시 반영한다 (Safari 등 미지원 시 focus 폴백)
+  let permissionStatus: PermissionStatus | null = null;
+  navigator.permissions
+    ?.query({ name: 'notifications' as PermissionName })
+    .then((status) => {
+      permissionStatus = status;
+      status.addEventListener('change', listener);
+    })
+    .catch(() => {});
+
+  return () => {
+    permissionListeners.delete(listener);
+    window.removeEventListener('focus', handleFocus);
+    permissionStatus?.removeEventListener('change', listener);
+  };
+}
+
+// 문자열 원시값이라 매번 읽어도 참조가 안정적이다
+const getPermissionSnapshot = () => getNotificationPermission();
+
 /** 알림 권한 상태와 권한 요청 액션 */
 export function usePushPermission() {
-  const [permission, setPermission] = useState<NotificationPermission>(getNotificationPermission);
+  const permission = useSyncExternalStore(subscribePermission, getPermissionSnapshot);
   const [isRequesting, setIsRequesting] = useState(false);
 
   const status = resolveStatus(permission);
-
-  // 브라우저 설정에서 권한을 되돌린 경우를 따라잡기 위해 포커스 복귀 시 재조회
-  useEffect(() => {
-    const syncPermission = () => setPermission(getNotificationPermission());
-
-    window.addEventListener('focus', syncPermission);
-    return () => window.removeEventListener('focus', syncPermission);
-  }, []);
 
   /** 사용자가 명시적으로 버튼을 누른 시점에만 호출할 것 */
   const requestPermission = useCallback(async () => {
@@ -120,7 +150,8 @@ export function usePushPermission() {
     setIsRequesting(true);
     try {
       const result = await requestNotificationPermission();
-      setPermission(result);
+      // 모든 훅 인스턴스가 새 권한 값을 다시 읽도록 알린다
+      emitPermissionChange();
 
       if (result !== 'granted') return;
 

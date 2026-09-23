@@ -3,6 +3,7 @@
     "blockedByDenied": "Notifications are blocked, so you can't request an alert.",
     "cancel": "Cancel alert request",
     "dryer": "dryer",
+    "failed": "Could not update the alert. Please try again in a moment.",
     "female": "women's",
     "label": "{{type}} in the {{location}} {{gender}} laundry room",
     "locationA": "Building A",

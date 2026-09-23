@@ -33,9 +33,15 @@ export function toLaundryRoomAlertKey({ location, gender, type }: LaundryRoomAle
  * 디바이스 푸시 구독을 등록/갱신한다.
  *
  * endpoint 유니크 키 기준 upsert이므로 멱등하다. 앱 실행/로그인마다 호출해도 안전하다.
+ *
  * User-Agent는 백엔드가 요청 헤더에서 직접 읽으므로 body에 넣지 않는다.
- * (브라우저는 fetch로 user-agent 헤더를 덮어쓰는 것을 금지하므로 아래 값은 타입 충족용이며
- *  실제 전송되는 값은 브라우저가 붙이는 원본 User-Agent이다.)
+ * Swagger가 user-agent를 필수 헤더 파라미터로 선언하지만 **프런트에서 설정하면 안 된다.**
+ * 브라우저가 알아서 붙이는 값인 데다, 직접 설정하면 CORS 프리플라이트의
+ * Access-Control-Request-Headers에 user-agent가 실리는데 백엔드의 허용 헤더는
+ * Content-Type,Authorization뿐이라 본 요청이 차단된다.
+ * (dev는 /api 프록시로 동일 출처라 드러나지 않고 배포 환경에서만 터진다)
+ * 그래서 params를 아예 넘기지 않고, 필수 파라미터 타입만 캐스팅으로 우회한다.
+ * body는 satisfies로 타입 검사를 유지한다.
  */
 export async function registerPushDevice(subscription: PushSubscription) {
   const { endpoint, keys } = subscription.toJSON();
@@ -44,10 +50,14 @@ export async function registerPushDevice(subscription: PushSubscription) {
     throw new Error('푸시 구독에서 endpoint 또는 암호화 키를 읽을 수 없습니다.');
   }
 
+  const body = {
+    endpoint,
+    keys: { p256dh: keys.p256dh, auth: keys.auth },
+  } satisfies components['schemas']['SubscribeReqDto'];
+
   const { data, error } = await api.POST(ApiPaths.NotificationController_registerPush, {
-    params: { header: { 'user-agent': navigator.userAgent } },
-    body: { endpoint, keys: { p256dh: keys.p256dh, auth: keys.auth } },
-  });
+    body,
+  } as never);
 
   if (error) throw error;
 

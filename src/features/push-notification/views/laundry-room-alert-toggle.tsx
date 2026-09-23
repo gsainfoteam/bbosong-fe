@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 import { ToggleBoolean } from '@/common/components';
 import { cn } from '@/common/utils';
@@ -53,7 +54,10 @@ export function LaundryRoomAlertToggle({
       <ToggleBoolean
         available={canSubscribe && !pending}
         state={active}
-        onChange={() => void toggle(target)}
+        onChange={() => {
+          // toggle은 실패 시 재throw하므로 여기서 잡지 않으면 unhandled rejection이 된다
+          toggle(target).catch(() => toast.error(t('laundryRoom.failed')));
+        }}
         aria-label={active ? t('laundryRoom.cancel') : t('laundryRoom.request')}
       />
     </div>

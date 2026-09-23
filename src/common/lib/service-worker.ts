@@ -145,7 +145,7 @@ export function getNotificationPermission(): NotificationPermission {
 /** VAPID 공개키(base64url) → applicationServerKey용 Uint8Array */
 export function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuffer> {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const base64 = (base64String + padding).replaceAll('-', '+').replaceAll('_', '/');
   const rawData = window.atob(base64);
 
   // applicationServerKey는 SharedArrayBuffer 기반 뷰를 받지 않으므로 ArrayBuffer로 명시 생성한다
@@ -175,11 +175,15 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
 async function getReadyRegistration(): Promise<ServiceWorkerRegistration | null> {
   if (!isPushSupported()) return null;
 
-  const registration = (await navigator.serviceWorker.getRegistration(SERVICE_WORKER_SCOPE))
-    ? await navigator.serviceWorker.ready
-    : await registerServiceWorker();
+  const existing = await navigator.serviceWorker.getRegistration(SERVICE_WORKER_SCOPE);
 
-  return registration ?? null;
+  // 등록이 없으면 먼저 등록한다. 실패하면 ready가 영영 resolve되지 않으므로 여기서 끊는다
+  if (!existing && !(await registerServiceWorker())) return null;
+
+  // register()가 반환하는 등록 객체는 아직 installing 상태일 수 있다.
+  // pushManager.subscribe()는 active worker가 없으면 InvalidStateError로 실패하므로
+  // active가 보장되는 ready를 기다려 반환한다
+  return navigator.serviceWorker.ready;
 }
 
 /** 현재 브라우저에 남아 있는 푸시 구독을 조회한다 */

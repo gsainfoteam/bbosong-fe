@@ -3,6 +3,7 @@
     "blockedByDenied": "알림이 차단되어 있어 신청할 수 없습니다.",
     "cancel": "알림 신청 취소",
     "dryer": "건조기",
+    "failed": "알림 설정에 실패했습니다. 잠시 후 다시 시도해 주세요.",
     "female": "여자",
     "label": "{{location}} {{gender}} 세탁실 {{type}}",
     "locationA": "A동",
