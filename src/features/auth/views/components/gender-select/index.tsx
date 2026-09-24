@@ -50,7 +50,7 @@ export function GenderSelect({ onLogin, className, ...props }: GenderSelect.Prop
         </GenderButton>
       </div>
       <button
-        type='button'
+        type="button"
         className="bg-bg rounded-sm px-8 py-2 text-base font-semibold text-white"
         onClick={clickLogin}
         disabled={clicked}

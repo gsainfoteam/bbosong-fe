@@ -18,7 +18,17 @@ await i18n
     supportedLngs: SUPPORTED_LANGUAGES,
     fallbackLng: 'ko',
     defaultNS: 'common',
-    ns: ['common', 'auth', 'error', 'location', 'machine', 'machineRegister', 'nav', 'mypage'],
+    ns: [
+      'common',
+      'auth',
+      'error',
+      'location',
+      'machine',
+      'machineRegister',
+      'nav',
+      'mypage',
+      'notification',
+    ],
     nsSeparator: ':',
     keySeparator: '.',
     backend: {

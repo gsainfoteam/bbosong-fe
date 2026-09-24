@@ -7,11 +7,7 @@ import { toast } from 'sonner';
 import { $api } from '@/common/lib';
 import { useAuthPrompt, useToken } from '@/features/auth';
 
-import {
-  ApiPaths,
-  type ConsentRequiredErrorDto,
-  type GenderRequiredErrorDto,
-} from '../../models';
+import { ApiPaths, type ConsentRequiredErrorDto, type GenderRequiredErrorDto } from '../../models';
 
 export const useLogin = ({ showToast = false }: { showToast?: boolean } = {}) => {
   const { t } = useTranslation('error');
@@ -25,7 +21,8 @@ export const useLogin = ({ showToast = false }: { showToast?: boolean } = {}) =>
       useAuthPrompt.getState().setRequiredConsents(undefined);
     },
     onError: async (error) => {
-      const err = error as ConsentRequiredErrorDto | GenderRequiredErrorDto | { statusCode?: number };
+      const err = error as
+        ConsentRequiredErrorDto | GenderRequiredErrorDto | { statusCode?: number };
 
       if ('errorCode' in err && err.errorCode === 'GENDER_REQUIRED') {
         navigate({ to: '/auth/gender' });

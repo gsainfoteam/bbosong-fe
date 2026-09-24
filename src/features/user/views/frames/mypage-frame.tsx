@@ -1,6 +1,13 @@
+// import { PushPermissionCard } from '@/features/push-notification';
+
 // import { MypageScreen } from '../screens';
 
 export function MypageFrame() {
   // return <MypageScreen />;
-  return <p>MypageScreen</p>;
+  return (
+    <>
+      {/* <PushPermissionCard /> */}
+      <p>MypageScreen</p>
+    </>
+  );
 }

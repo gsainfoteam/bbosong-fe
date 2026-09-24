@@ -11,12 +11,7 @@ import { ApiGender, useAuthPrompt, useToken } from '@/features/auth';
 import { useLogin, useLogout, useUser } from '.';
 
 export const useAuth = ({ showToast = false }: { showToast?: boolean } = {}) => {
-  const {
-    token: idpToken,
-    logIn: idpLogIn,
-    logOut: idpLogOut,
-    loginInProgress,
-  } = useAuthContext();
+  const { token: idpToken, logIn: idpLogIn, logOut: idpLogOut, loginInProgress } = useAuthContext();
   const { mutate: logInMutate, ...logInMutation } = useLogin({ showToast: true });
   const { mutate: logOut, ...logOutMutation } = useLogout({ showToast });
   const { token } = useToken();
