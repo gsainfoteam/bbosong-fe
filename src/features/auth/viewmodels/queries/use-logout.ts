@@ -16,10 +16,12 @@ export const useLogout = ({ showToast = false }: { showToast?: boolean } = {}) =
     // 순서가 뒤바뀌면 401로 실패해 그 기기에 이전 계정의 알림이 계속 발송된다.
     // (push-notification -> common/lib/api -> features/auth 순환 참조를 피하려고 동적 import를 쓴다)
     onMutate: async () => {
-      const { unregisterPushDeviceFromServer } = await import('@/features/push-notification');
-
-      // 내부에서 예외를 삼키므로 해제 실패가 로그아웃을 막지 않는다
-      await unregisterPushDeviceFromServer();
+      try {
+        const { unregisterPushDeviceFromServer } = await import('@/features/push-notification');
+        await unregisterPushDeviceFromServer();
+      } catch (e) {
+        console.error('Failed to load push module. ', e);
+      }
     },
     onError: () => {
       if (showToast) {
