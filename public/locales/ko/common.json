@@ -1,4 +1,8 @@
 {
+  "bbosong": "뽀송",
+  "dropDown": {
+    "placeholder": "선택해 주세요"
+  },
   "goBack": "돌아가기",
   "switchToEnglish": "영어로 전환",
   "switchToKorean": "한국어로 전환",

@@ -1,4 +1,8 @@
 {
+  "bbosong": "Bbosong",
+  "dropDown": {
+    "placeholder": "Please select"
+  },
   "goBack": "Back",
   "switchToEnglish": "Switch to English",
   "switchToKorean": "Switch to Korean",

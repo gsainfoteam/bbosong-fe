@@ -19,7 +19,7 @@ export function TermsDetailScreen({ title, termsUrl, onBack }: TermsDetailScreen
           <h2 className="text-body-lg text-text-primary text-center font-semibold">{title}</h2>
         </div>
 
-        <div className="border-border bg-bg min-h-0 flex-1 overflow-hidden rounded-2xl border p-3 shadow-[0_6px_24px_rgba(0,0,0,0.04)]">
+        <div className="border-border bg-bg min-h-0 flex-1 overflow-hidden rounded-2xl border shadow-[0_6px_24px_rgba(0,0,0,0.04)]">
           <iframe src={termsUrl} title={title} className="h-full w-full rounded-xl bg-white" />
         </div>
       </div>

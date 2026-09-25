@@ -25,7 +25,7 @@ export const Checkbox = forwardRef<
       )}
     >
       <Check
-        className="text-text-white invisible size-3.5 group-has-checked:visible"
+        className="text-white invisible size-3.5 group-has-checked:visible"
         strokeWidth={3}
         aria-hidden
       />
