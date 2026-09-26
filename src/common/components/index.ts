@@ -1,4 +1,5 @@
 export * from './drop-down/index';
+export * from './header/index';
 export * from './language-toggle/index';
 export * from './layout/index';
 export * from './nav-bar/constants';

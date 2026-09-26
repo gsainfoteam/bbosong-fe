@@ -1,4 +1,7 @@
 {
+  "disabled": "Service Unavailable",
   "dryer": "Dryer",
+  "idle": "Idle",
+  "using": "Using",
   "washer": "Washer"
 }

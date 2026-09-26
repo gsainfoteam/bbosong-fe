@@ -5,7 +5,7 @@ import { cn } from '@/common/utils';
 import { AddUsingMachineBox, UsingMachineBox } from '../';
 
 export function UsingMachineList({
-  userName,
+  // userName,
   machineList,
   className,
   ...props
@@ -47,7 +47,6 @@ export function UsingMachineList({
 
 export namespace UsingMachineList {
   export type Props = {
-    userName: string;
     machineList: UsingMachineBox.Props[];
     className?: string;
   };
