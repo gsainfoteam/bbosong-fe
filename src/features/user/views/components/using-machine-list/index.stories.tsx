@@ -13,7 +13,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    userName: '홍길동',
     machineList: [
       {
         machine: { type: 'washer', id: 2 },
@@ -31,7 +30,6 @@ export const Default: Story = {
 
 export const Empty: Story = {
   args: {
-    userName: '홍길동',
     machineList: [],
   },
 };
