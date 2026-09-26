@@ -62,7 +62,7 @@ export function DropDown({
         className={cn(
           // 'border-border bg-bg rounded-lg border',
           'bg-white',
-          'text-body-lg text-text-primary flex w-full item-center justify-between gap-2 px-4 py-2 transition-colors',
+          'text-body-lg text-text-primary flex w-full items-center justify-between gap-2 px-4 py-2 transition-colors',
           disabled && 'text-text-secondary cursor-not-allowed opacity-50',
         )}
       >
