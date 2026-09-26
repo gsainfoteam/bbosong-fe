@@ -13,7 +13,7 @@ export function MypageScreen({
   return (
     <div className={cn('flex flex-col gap-10', className)} {...props}>
       <WelcomeMessage text={userName} />
-      <UsingMachineList userName={userName} machineList={usingMachineList} />
+      <UsingMachineList machineList={usingMachineList} />
       <RoomStatusGrid
         aWasher={roomStatusList.aWasher}
         aDryer={roomStatusList.aDryer}

@@ -27,7 +27,7 @@ export function ConsentScreen({
       </div>
       <div className="mx-auto flex h-full w-full max-w-md flex-col">
         <div className="flex flex-1 flex-col items-center justify-center gap-4">
-          <img src="/3d/logo.png" alt="logo" className="size-40" />
+          <img src="/favicon.svg" alt="logo" className="size-40" />
           <h1 className="text-display text-center leading-tight font-bold whitespace-pre-line">
             {t('consent.title')}
           </h1>
@@ -38,7 +38,7 @@ export function ConsentScreen({
             <label
               className={cn(
                 'flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition-colors',
-                allChecked ? 'border-primary bg-primary-light text-primary' : 'border-border',
+                allChecked ? 'border-primary' : 'border-border',
               )}
             >
               <Checkbox checked={allChecked} onChange={(e) => onAllChange(e.target.checked)} />

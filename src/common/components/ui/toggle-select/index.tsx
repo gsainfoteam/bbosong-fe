@@ -44,7 +44,7 @@ export function ToggleSelect({
             onClick={() => available && onChange(item)}
             className={cn(
               'relative z-10 flex-1 rounded-full px-4 py-1.5 text-center text-sm font-medium transition-colors duration-300',
-              isActive ? 'text-bg' : 'text-gray-500',
+              isActive ? 'text-black' : 'text-gray-500',
             )}
           >
             {item}

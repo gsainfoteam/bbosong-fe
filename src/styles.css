@@ -38,7 +38,7 @@ html {
     scrollbar-width: none; /* Firefox */
   }
 }
-
+ /* 24, 16, 12 */
 @theme {
   /* Typography — 6-step scale */
   --text-display: 24px;
@@ -66,23 +66,23 @@ html {
   --text-caption--line-height: 15px;
 
   /* Primary */
-  --color-primary: #f69da1;
-  --color-primary-light: #e0f7fa;
-  /*--color-primary-muted: #90e0ef;*/
+  --color-primary: #8fe3fa;
+  --color-primary-light: #e9efff;
+  --color-available: #78c6e8;
+  --color-unavailable: #e45b5b;
+  --color-disabled: #d9d9d9;
 
   /* Text */
-  --color-text-primary: #090909;
-  /*--color-text-secondary: #666666;*/
-  /*--color-text-muted: #9ca3af;*/
-  --color-text-white: #ffffff;
+  --color-text-primary: #202938;
+  --color-text-secondary: #667085;
 
   /* Background */
-  --color-bg: #ffffff;
-  --color-bg-surface: #b6b6b6;
+  --color-bg: #f7f8fa;
+  --color-bg-surface: #d3d3d3;
   --color-bg-subtle: #090909;
 
   /* Border */
-  /*--color-border: #e5e5e5;*/
+  --color-border: #e5e5e5;
   /*--color-border-strong: #d1d1d1;*/
 
   /* Icon */

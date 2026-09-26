@@ -3,6 +3,5 @@
   "count_one": "unit",
   "count_other": "units",
   "roomStatusTitle": "Status of available machines",
-  "usingMachineTitle": "Machines currently being used by {{name}}",
   "welcome": "Welcome, {{name}}"
 }
