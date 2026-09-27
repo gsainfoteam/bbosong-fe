@@ -33,14 +33,14 @@ export function UsingMachineBox({
     <div
       className={cn(
         className,
-        'text-text-primary border-border px-2 flex min-h-20 flex-col items-center justify-center rounded-lg border gap-0.5',
+        'text-text-primary border-border flex min-h-20 flex-col items-center justify-center gap-0.5 rounded-lg border px-2',
       )}
       {...props}
     >
       <p>
         {t(`location:${location}`)} {t('machine:count', { id: String(machine.id) })}
       </p>
-      <p className='mb-0.5'>{t(MACHINE_KEYS[machine.type])}</p>
+      <p className="mb-0.5">{t(MACHINE_KEYS[machine.type])}</p>
       {notification ? <Bell className="text-primary" /> : <BellOff />}
     </div>
   );
@@ -48,7 +48,7 @@ export function UsingMachineBox({
 
 export function AddUsingMachineBox() {
   return (
-    <div className="border-border flex min-h-20 items-center justify-center rounded-lg border">
+    <div className="flex min-h-20 items-center justify-center">
       <Plus />
     </div>
   );
