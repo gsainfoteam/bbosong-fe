@@ -25,12 +25,13 @@ export function UsingMachineList({
       {/*  />*/}
       {/*))}*/}
       {machineList.length !== 0 ? (
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid w-fit auto-cols-fr grid-flow-col gap-2">
           {machineList.map((item) => (
             <UsingMachineBox
               key={`${item.location}-${item.machine.type}-${item.machine.id}`}
               machine={item.machine}
               location={item.location}
+              notification={item.notification}
               onClear={item.onClear}
             />
           ))}

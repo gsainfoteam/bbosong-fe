@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/common/utils';
-import { Plus } from 'lucide-react';
+import { Bell, BellOff, Plus } from 'lucide-react';
 
 const MACHINE_KEYS = {
   washer: 'machine:washer',
@@ -16,6 +16,7 @@ const MACHINE_KEYS = {
 export function UsingMachineBox({
   machine,
   location,
+  notification,
   onClear,
   className,
   ...props
@@ -29,46 +30,35 @@ export function UsingMachineBox({
   // t('location:laundryRoom')
 
   return (
-    // <div
-    //   className={cn(
-    //     'bg-bg-surface flex flex-row items-center justify-between rounded-lg p-3',
-    //     className,
-    //   )}
-    //   {...props}
-    // >
-    //   <div className="text-text-primary">
-    //     <h2>
-    //       {t(MACHINE_KEYS[machine.type])} {machine.id}
-    //     </h2>
-    //     <span className="text-sm">{`${t(LOCATION_KEYS[location])} ${t('location:laundryRoom')}`}</span>
-    //   </div>
-    //   <button
-    //     type="button"
-    //     className="bg-bg-subtle rounded-xl px-2 py-1 text-xs text-white"
-    //     onClick={onClear}
-    //   >
-    //     {t('clear')}
-    //   </button>
-    // </div>
-    <div className={cn(className, "flex bg-bg-surface justify-center items-center min-h-20")} {...props}>
-      <p>{t(MACHINE_KEYS[machine.type])}</p>
-      <p></p>
+    <div
+      className={cn(
+        className,
+        'text-text-primary border-border px-2 flex min-h-20 flex-col items-center justify-center rounded-lg border gap-0.5',
+      )}
+      {...props}
+    >
+      <p>
+        {t(`location:${location}`)} {t('machine:count', { id: String(machine.id) })}
+      </p>
+      <p className='mb-0.5'>{t(MACHINE_KEYS[machine.type])}</p>
+      {notification ? <Bell className="text-primary" /> : <BellOff />}
     </div>
   );
 }
 
 export function AddUsingMachineBox() {
   return (
-    <div className="flex bg-bg-surface justify-center items-center min-h-20">
+    <div className="border-border flex min-h-20 items-center justify-center rounded-lg border">
       <Plus />
     </div>
-  )
+  );
 }
 
 export namespace UsingMachineBox {
   export type Props = {
     machine: { type: 'washer' | 'dryer'; id: number };
     location: 'a' | 'b';
+    notification: boolean;
     onClear: () => void;
     className?: string;
   };

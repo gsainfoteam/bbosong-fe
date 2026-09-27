@@ -1,6 +1,9 @@
 {
-  "disabled": "Service Unavailable",
+  "count": "No. {{id}}",
+  "disabled": "Disabled",
   "dryer": "Dryer",
+  "elapsedHourMinute": "{{hours}}h {{minutes}}m elapsed",
+  "elapsedMinute": "{{minutes}}m elapsed",
   "idle": "Idle",
   "using": "Using",
   "washer": "Washer"

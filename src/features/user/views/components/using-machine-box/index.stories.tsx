@@ -18,6 +18,7 @@ export const Default: Story = {
       id: 1,
     },
     location: 'a',
+    notification: true,
     onClear: () => console.log(1),
     className: 'w-100',
   },

@@ -24,7 +24,7 @@ export const Idle: Story = {
 
 export const Using: Story = {
   args: {
-    machine: { type: 'washer', id: 1, status: 'using' },
+    machine: { type: 'washer', id: 1, status: 'using', elapsedMinutes: 90 },
     className: 'w-30',
   },
 };
@@ -39,6 +39,13 @@ export const Disabled: Story = {
 export const Dryer: Story = {
   args: {
     machine: { type: 'dryer', id: 2, status: 'idle' },
+    className: 'w-30',
+  },
+};
+
+export const DryerUsing: Story = {
+  args: {
+    machine: { type: 'dryer', id: 2, status: 'using', elapsedMinutes: 90 },
     className: 'w-30',
   },
 };

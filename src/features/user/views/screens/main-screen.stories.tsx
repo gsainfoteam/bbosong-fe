@@ -21,11 +21,13 @@ export const Default: Story = {
         {
           machine: { type: 'washer', id: 3 },
           location: 'a',
+          notification: true,
           onClear: () => console.log('Clear washer 3'),
         },
         {
           machine: { type: 'dryer', id: 1 },
           location: 'b',
+          notification: false,
           onClear: () => console.log('Clear dryer 1'),
         },
       ],
@@ -41,10 +43,10 @@ export const Default: Story = {
     machines: {
       machines: [
         { type: 'washer', id: 1, status: 'idle' },
-        { type: 'washer', id: 2, status: 'using' },
+        { type: 'washer', id: 2, status: 'using', elapsedMinutes: 90 },
         { type: 'washer', id: 3, status: 'disabled' },
         { type: 'dryer', id: 1, status: 'idle' },
-        { type: 'dryer', id: 2, status: 'using' },
+        { type: 'dryer', id: 2, status: 'using', elapsedMinutes: 90 },
         { type: 'dryer', id: 3, status: 'disabled' },
       ],
     },

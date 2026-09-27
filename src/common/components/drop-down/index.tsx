@@ -11,6 +11,7 @@ export function DropDown({
   onSelect,
   value,
   placeholder,
+  labelContext,
   disabled = false,
   className,
   ...props
@@ -22,6 +23,8 @@ export function DropDown({
 
   // t('location:a')
   // t('location:b')
+  // t('location:a', { context: 'long' })
+  // t('location:b', { context: 'long' })
   // t('location:laundryRoom')
 
   // 메뉴 바깥 클릭 및 Escape 입력 시 닫기
@@ -62,12 +65,14 @@ export function DropDown({
         className={cn(
           // 'border-border bg-bg rounded-lg border',
           'bg-white',
-          'text-body-lg text-text-primary flex w-full items-center justify-between gap-2 px-4 py-2 transition-colors',
+          'text-body-lg text-text-primary flex w-full items-center justify-between gap-2 rounded-lg px-4 py-2 transition-colors',
           disabled && 'text-text-secondary cursor-not-allowed opacity-50',
         )}
       >
         <span className={cn('truncate', value === undefined && 'text-text-secondary')}>
-          {value ? t(`location:${value}`) : (placeholder ?? t('common:dropDown.placeholder'))}
+          {value
+            ? t(`location:${value}`, { context: labelContext })
+            : (placeholder ?? t('common:dropDown.placeholder'))}
         </span>
         <ChevronDown
           aria-hidden
@@ -101,7 +106,9 @@ export function DropDown({
                     strokeWidth={3}
                     className={cn('size-4 shrink-0', !isSelected && 'invisible')}
                   />
-                  <span className="truncate">{t(`location:${item}`)}</span>
+                  <span className="truncate">
+                    {t(`location:${item}`, { context: labelContext })}
+                  </span>
                 </button>
               </li>
             );
@@ -118,6 +125,8 @@ export namespace DropDown {
     onSelect: (item: ParseKeys<'location'>) => void;
     value?: ParseKeys<'location'>;
     placeholder?: string;
+    /** 항목 라벨의 i18next context (예: 'long' → `a_long`). 없으면 기본 키를 쓴다. */
+    labelContext?: 'long';
     disabled?: boolean;
     className?: string;
   };

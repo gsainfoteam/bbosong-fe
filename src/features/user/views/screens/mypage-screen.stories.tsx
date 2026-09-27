@@ -18,11 +18,13 @@ export const Default: Story = {
       {
         machine: { type: 'washer', id: 3 },
         location: 'a',
+        notification: true,
         onClear: () => console.log('Clear washer 3'),
       },
       {
         machine: { type: 'dryer', id: 1 },
         location: 'b',
+        notification: false,
         onClear: () => console.log('Clear dryer 1'),
       },
     ],
