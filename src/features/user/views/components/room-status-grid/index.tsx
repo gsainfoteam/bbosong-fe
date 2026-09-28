@@ -1,3 +1,4 @@
+// LEGACY
 import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/common/utils';

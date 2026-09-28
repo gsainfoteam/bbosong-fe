@@ -5,7 +5,6 @@ import { cn } from '@/common/utils';
 
 export function GenderButton({
   children,
-  selected,
   disabled = false,
   onClick,
   className,
@@ -13,7 +12,7 @@ export function GenderButton({
 }: GenderButton.Props) {
   return (
     <Button
-      className={cn(selected ? 'bg-bg text-white' : 'bg-bg-surface text-text-primary', className)}
+      className={cn(className, 'aspect-square')}
       onClick={onClick}
       disabled={disabled}
       {...props}
@@ -26,7 +25,6 @@ export function GenderButton({
 export namespace GenderButton {
   export type Props = {
     children: ReactNode;
-    selected: boolean;
     disabled?: boolean;
     onClick: () => void;
     className?: string;

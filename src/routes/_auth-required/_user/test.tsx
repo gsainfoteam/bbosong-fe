@@ -1,3 +1,4 @@
+// LEGACY
 import { createFileRoute } from '@tanstack/react-router';
 
 import { WasherPowerChart } from '@/common/components';

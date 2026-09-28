@@ -1,3 +1,4 @@
+// LEGACY
 import { cn } from '@/common/utils';
 import { RoomStatusGrid, WelcomeMessage } from '@/features/user';
 
