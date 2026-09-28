@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -6,10 +6,14 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/common/utils';
 import { type Gender, GenderButton } from '@/features/auth';
 
-export function GenderSelect({ onLogin, className, ...props }: GenderSelect.Props) {
+export function GenderSelect({ onLogin, isLoginError, className, ...props }: GenderSelect.Props) {
   const { t } = useTranslation('auth');
 
   const [pending, setPending] = useState(false);
+
+  useEffect(() => {
+    if (isLoginError) setPending(false);
+  }, [isLoginError]);
 
   return (
     <div className={cn('flex w-full items-center justify-center gap-3 px-3', className)} {...props}>
@@ -44,6 +48,7 @@ export function GenderSelect({ onLogin, className, ...props }: GenderSelect.Prop
 export namespace GenderSelect {
   export type Props = {
     onLogin: (gender: Gender) => void;
+    isLoginError?: boolean;
     className?: string;
   };
 }

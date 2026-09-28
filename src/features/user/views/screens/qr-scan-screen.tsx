@@ -13,7 +13,7 @@ export function QrScanScreen({ videoRef, className, ...props }: QrScanScreen.Pro
       )}
       {...props}
     >
-      <div className="w-0.8 bg-bg-surface mb-10 aspect-square">
+      <div className="w-4/5 bg-bg-surface mb-10 aspect-square">
         <video ref={videoRef} className='w-full' />
       </div>
       <span className='text-body-lg font-medium'>{t('qrScan')}</span>

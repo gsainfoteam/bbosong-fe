@@ -21,7 +21,9 @@ export const MyPageHeader = () => {
   const router = useRouter();
   return (
     <header className="text-text-primary flex w-full flex-row-reverse px-4 py-2">
-      <X onClick={() => router.history.back()} />
+      <button type="button" onClick={() => router.history.back()}>
+        <X />
+      </button>
     </header>
   );
 };

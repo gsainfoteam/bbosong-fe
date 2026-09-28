@@ -5,6 +5,10 @@ import { useTranslation } from 'react-i18next';
 
 export function MypageScreen({ user, className, ...props }: MyPageScreen.Props) {
   const { t } = useTranslation('mypage');
+
+  // t('male')
+  // t('female')
+
   return (
     <div className={cn('bg-bg h-dvh w-full', className)} {...props}>
       <MyPageHeader />
@@ -21,7 +25,7 @@ export function MypageScreen({ user, className, ...props }: MyPageScreen.Props) 
             {t('email')}: {user.email}
           </p>
           <p>
-            {t('gender')}: {user.gender}
+            {t('gender')}: {user.gender ? t(user.gender) : ''}
           </p>
         </div>
       </div>
