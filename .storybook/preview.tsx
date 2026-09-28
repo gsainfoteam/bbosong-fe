@@ -45,7 +45,7 @@ const preview: Preview = {
     withLocale,
     (Story) => (
       <RouterContextProvider router={router}>
-        <div className="mx-auto w-full max-w-100">
+        <div className="mx-auto w-full max-w-100 text-text-primary">
           <Story />
         </div>
       </RouterContextProvider>

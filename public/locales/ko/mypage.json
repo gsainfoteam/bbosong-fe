@@ -1,5 +1,10 @@
 {
+  "account": "계정",
   "count": "대",
+  "email": "이메일",
+  "gender": "성별",
+  "name": "이름",
   "roomStatusTitle": "비어있는 기기 현황",
+  "studentNumber": "학번",
   "welcome": "{{name}}님, 환영합니다."
 }

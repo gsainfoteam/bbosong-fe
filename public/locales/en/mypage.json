@@ -1,6 +1,11 @@
 {
+  "account": "Account",
   "count_one": "unit",
   "count_other": "units",
+  "email": "Email",
+  "gender": "Gender",
+  "name": "Name",
   "roomStatusTitle": "Status of available machines",
+  "studentNumber": "Student Number",
   "welcome": "Welcome, {{name}}"
 }

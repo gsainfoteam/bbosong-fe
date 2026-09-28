@@ -13,29 +13,11 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    userName: '홍길동',
-    usingMachineList: [
-      {
-        machine: { type: 'washer', id: 3 },
-        location: 'a',
-        notification: true,
-        onClear: () => console.log('Clear washer 3'),
-      },
-      {
-        machine: { type: 'dryer', id: 1 },
-        location: 'b',
-        notification: false,
-        onClear: () => console.log('Clear dryer 1'),
-      },
-    ],
-    roomStatusList: {
-      aWasher: { count: 2, toggleState: false },
-      aDryer: { count: 0, toggleState: true },
-      bWasher: { count: 4, toggleState: false },
-      bDryer: { count: 1, toggleState: true },
-      onBoxClick: (building, machine) => {
-        console.log(`Clicked ${building.toUpperCase()} - ${machine}`);
-      },
-    },
+    user: {
+      name: '홍길동',
+      studentNumber: '20261234',
+      email: 'bbosong@gm.gist.ac.kr',
+      gender: 'male'
+    }
   },
 };
