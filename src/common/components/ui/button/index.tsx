@@ -57,10 +57,13 @@ export namespace Button {
   };
 
   export const styles = cv({
-    base: ['flex items-center justify-center rounded-lg'],
+    base: ['flex items-center justify-center rounded-md'],
     variants: {
       variant: {
-        default: ['bg-bg-surface w-full text-lg text-text-primary', 'transition-all duration-150'],
+        default: [
+          'w-full text-heading text-text-primary border border-border',
+          'transition-all duration-150',
+        ],
         disabled: [],
       },
       size: {
