@@ -9,13 +9,14 @@ export function LoginLayoutScreen({ className, children, ...props }: LoginLayout
 
   return (
     <div
-      className={cn('mx-auto flex h-dvh w-full max-w-100 flex-col items-center', className)}
+      className={cn('mx-auto flex h-dvh w-full max-w-100 flex-col items-center bg-bg', className)}
       {...props}
     >
-      <div className="h-1/2 content-center">
-        <span className="text-text-primary mb-10 text-4xl font-bold">{t('title')}</span>
+      <div className="text-text-primary flex h-1/2 flex-col items-center justify-center gap-4">
+        <span className="text-3xl font-medium">{t('description')}</span>
+        <span className="text-4xl font-semibold">{t('bbosong')}</span>
       </div>
-      <div className="h-1/2 w-full px-15 text-center">{children}</div>
+      <div className="h-1/2 w-full flex items-center justify-center">{children}</div>
     </div>
   );
 }

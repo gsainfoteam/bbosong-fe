@@ -1,20 +1,35 @@
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/common/utils';
-import { Menu } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import { useRouter } from '@tanstack/react-router';
 
-export const Header = ({className, ...props}: Header.Props) => {
+export const Header = ({ className, ...props }: Header.Props) => {
   const { t } = useTranslation('common');
 
   return (
-    <header className={cn(className, "flex justify-between p-2 w-full text-text-primary bg-primary-light")} {...props}>
-      <h2>{t('bbosong')}</h2>
+    <header
+      className={cn(className, 'text-text-primary flex w-full justify-between px-4 py-2')}
+      {...props}
+    >
+      <h1>{t('bbosong')}</h1>
       <Menu />
     </header>
-  )
-}
+  );
+};
+
+export const MyPageHeader = () => {
+  const router = useRouter();
+  return (
+    <header className="text-text-primary flex w-full flex-row-reverse px-4 py-2">
+      <button type="button" onClick={() => router.history.back()}>
+        <X />
+      </button>
+    </header>
+  );
+};
 
 export namespace Header {
   export type Props = {
     className?: string;
-  }
+  };
 }

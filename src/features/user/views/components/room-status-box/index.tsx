@@ -1,3 +1,4 @@
+// LEGACY
 import { useTranslation } from 'react-i18next';
 
 import { ToggleBoolean } from '@/common/components/ui/toggle-boolean';

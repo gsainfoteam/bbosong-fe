@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -6,65 +6,49 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/common/utils';
 import { type Gender, GenderButton } from '@/features/auth';
 
-export function GenderSelect({ onLogin, className, ...props }: GenderSelect.Props) {
+export function GenderSelect({ onLogin, isLoginError, className, ...props }: GenderSelect.Props) {
   const { t } = useTranslation('auth');
 
-  const [selected, setSelected] = useState<Gender>(null);
-  const [clicked, setClicked] = useState(false);
+  const [pending, setPending] = useState(false);
 
-  const changeGender = (gender: Gender) => {
-    setSelected(gender);
-  };
-
-  const clickLogin = () => {
-    if (!selected) {
-      console.log('not selected');
-      return;
-    }
-    setClicked(true);
-    onLogin(selected);
-  };
+  useEffect(() => {
+    if (isLoginError) setPending(false);
+  }, [isLoginError]);
 
   return (
-    <>
-      {/*<p className="text-status-fail mb-3">{t('genderAlert')}</p>*/}
-      <div
-        className={cn('mb-10 flex w-full flex-row items-center gap-1 px-10', className)}
-        {...props}
-      >
-        <GenderButton
-          key="auth-gender-male"
-          selected={selected === 'male'}
-          disabled={clicked}
-          onClick={() => changeGender('male')}
-        >
-          {t('male')}
-        </GenderButton>
-        <GenderButton
-          key="auth-gender-female"
-          selected={selected === 'female'}
-          disabled={clicked}
-          onClick={() => changeGender('female')}
-        >
-          {t('female')}
-        </GenderButton>
-      </div>
-      <button
-        type="button"
-        className="bg-bg rounded-sm px-8 py-2 text-base font-semibold text-white"
-        onClick={clickLogin}
-        disabled={clicked}
-      >
-        {!clicked ? t('start') : <Loader2 className="animate-spin text-white" />}
-        {}
-      </button>
-    </>
+    <div className={cn('flex w-full items-center justify-center gap-3 px-3', className)} {...props}>
+      {!pending ? (
+        <>
+          <GenderButton
+            key="auth-gender-male"
+            onClick={() => {
+              onLogin('male');
+              setPending(true);
+            }}
+          >
+            {t('male')}
+          </GenderButton>
+          <GenderButton
+            key="auth-gender-female"
+            onClick={() => {
+              onLogin('female');
+              setPending(true);
+            }}
+          >
+            {t('female')}
+          </GenderButton>
+        </>
+      ) : (
+        <Loader2 className="text-text-primary animate-spin" />
+      )}
+    </div>
   );
 }
 
 export namespace GenderSelect {
   export type Props = {
     onLogin: (gender: Gender) => void;
+    isLoginError?: boolean;
     className?: string;
   };
 }

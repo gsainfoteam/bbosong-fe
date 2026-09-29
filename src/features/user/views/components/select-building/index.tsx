@@ -1,5 +1,3 @@
-import { Map } from 'lucide-react';
-
 import { DropDown } from '@/common/components';
 import { cn } from '@/common/utils';
 
@@ -16,10 +14,11 @@ export function SelectBuilding({
         onSelect={dropDownProps.onSelect}
         value={dropDownProps.value}
         placeholder={dropDownProps.placeholder}
+        labelContext="long"
         disabled={dropDownProps.disabled}
         className={dropDownProps.className}
       />
-      <Map className="text-text-primary" onClick={() => onOpenMap(dropDownProps.value!)} />
+      {/*<Map className="text-text-primary" onClick={() => onOpenMap(dropDownProps.value!)} />*/}
     </div>
   );
 }
