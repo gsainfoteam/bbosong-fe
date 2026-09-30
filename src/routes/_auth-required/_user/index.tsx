@@ -7,5 +7,5 @@ export const Route = createFileRoute('/_auth-required/_user/')({
   //     replace: true,
   //   });
   // },
-  component: () => <>Main</>
+  component: () => <>Main</>,
 });

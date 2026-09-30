@@ -1,13 +1,12 @@
-import { useMypageScreen } from '../../viewmodels';
+import { useFindUserProfile } from '../../viewmodels';
 import { MypageScreen } from '../screens';
 
-
 export function MypageFrame() {
-  const { user, isLoading } = useMypageScreen();
+  const { user, isLoading } = useFindUserProfile();
 
   if (isLoading || !user) {
     return (
-      <div className="bg-bg h-dvh w-full flex items-center justify-center">
+      <div className="bg-bg flex h-dvh w-full items-center justify-center">
         <p>Loading...</p>
       </div>
     );

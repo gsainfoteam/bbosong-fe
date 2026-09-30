@@ -17,7 +17,7 @@ export const Default: Story = {
       name: '홍길동',
       studentNumber: '20261234',
       email: 'bbosong@gm.gist.ac.kr',
-      gender: 'male'
-    }
+      gender: 'male',
+    },
   },
 };

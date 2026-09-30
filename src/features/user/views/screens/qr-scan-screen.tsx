@@ -1,6 +1,8 @@
-import { cn } from '@/common/utils';
-import { useTranslation } from 'react-i18next';
 import type { Ref } from 'react';
+
+import { useTranslation } from 'react-i18next';
+
+import { cn } from '@/common/utils';
 
 export function QrScanScreen({ videoRef, className, ...props }: QrScanScreen.Props) {
   const { t } = useTranslation('main');
@@ -13,10 +15,10 @@ export function QrScanScreen({ videoRef, className, ...props }: QrScanScreen.Pro
       )}
       {...props}
     >
-      <div className="w-4/5 bg-bg-surface mb-10 aspect-square">
-        <video ref={videoRef} className='w-full' />
+      <div className="bg-bg-surface mb-10 aspect-square w-4/5">
+        <video ref={videoRef} className="w-full" />
       </div>
-      <span className='text-body-lg font-medium'>{t('qrScan')}</span>
+      <span className="text-body-lg font-medium">{t('qrScan')}</span>
     </div>
   );
 }

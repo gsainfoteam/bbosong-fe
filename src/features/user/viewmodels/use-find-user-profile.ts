@@ -1,13 +1,16 @@
 import { useEffect, useMemo } from 'react';
+
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { $api } from '@/common/lib';
+import type { Gender } from '@/features/auth';
+
 import { ApiPaths } from '../models';
 
-export function useMypageScreen() {
+export function useFindUserProfile() {
   const { t } = useTranslation('error');
-  
+
   const { data, error, isError, isLoading, refetch } = $api.useQuery(
     'get',
     ApiPaths.AuthController_getMe,
@@ -41,7 +44,7 @@ export function useMypageScreen() {
       name: data.name,
       studentNumber: data.studentNumber,
       email: data.email,
-      gender: data.gender,
+      gender: data.gender.toLowerCase() as Gender,
     };
   }, [data]);
 

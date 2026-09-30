@@ -1,7 +1,7 @@
+import { Bell, BellOff, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/common/utils';
-import { Bell, BellOff, Plus } from 'lucide-react';
 
 const MACHINE_KEYS = {
   washer: 'machine:washer',

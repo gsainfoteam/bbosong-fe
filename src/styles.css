@@ -38,7 +38,7 @@ html {
     scrollbar-width: none; /* Firefox */
   }
 }
- /* 24, 16, 12 */
+/* 24, 16, 12 */
 @theme {
   /* Typography — 6-step scale */
   --text-display: 24px;

@@ -1,7 +1,9 @@
-import { useTranslation } from 'react-i18next';
-import { cn } from '@/common/utils';
-import { Menu, X } from 'lucide-react';
 import { useRouter } from '@tanstack/react-router';
+
+import { Menu, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+
+import { cn } from '@/common/utils';
 
 export const Header = ({ className, ...props }: Header.Props) => {
   const { t } = useTranslation('common');
