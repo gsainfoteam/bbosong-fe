@@ -50,6 +50,7 @@ export function useFindUserProfile() {
 
   return {
     user,
+    isError,
     isLoading,
     refetch,
   };
