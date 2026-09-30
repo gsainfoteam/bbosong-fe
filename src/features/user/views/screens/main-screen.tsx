@@ -1,7 +1,8 @@
-import { Header } from '@/common/components';
-import { MachineList, SelectBuilding, UsingMachineList } from '@/features/user';
-import { cn } from '@/common/utils';
 import { useTranslation } from 'react-i18next';
+
+import { Header } from '@/common/components';
+import { cn } from '@/common/utils';
+import { MachineList, SelectBuilding, UsingMachineList } from '@/features/user';
 
 export function MainScreen({
   usingMachineList,
@@ -25,7 +26,7 @@ export function MainScreen({
           onOpenMap={selectBuilding.onOpenMap}
           className={selectBuilding.className}
         />
-        <span className='text-caption'>{t('main:mvpNotification')}</span>
+        <span className="text-caption">{t('main:mvpNotification')}</span>
         <div>
           <p className="mb-2">{t('washer')}</p>
           <MachineList

@@ -4,18 +4,14 @@ import { cn } from '@/common/utils';
 
 import { AddUsingMachineBox, UsingMachineBox } from '../';
 
-export function UsingMachineList({
-  machineList,
-  className,
-  ...props
-}: UsingMachineList.Props) {
+export function UsingMachineList({ machineList, className, ...props }: UsingMachineList.Props) {
   const { t } = useTranslation('main');
 
   return (
     <div className={cn('', className)} {...props}>
       <p className="mb-3">{t('usingMachineTitle')}</p>
       {machineList.length !== 0 ? (
-        <div className="grid w-fit auto-cols-fr grid-flow-col gap-2 border border-border rounded-lg p-1.5">
+        <div className="border-border grid w-fit auto-cols-fr grid-flow-col gap-2 rounded-lg border p-1.5">
           {machineList.map((item) => (
             <UsingMachineBox
               key={`${item.location}-${item.machine.type}-${item.machine.id}`}

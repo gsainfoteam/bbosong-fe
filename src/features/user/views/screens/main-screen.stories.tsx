@@ -1,8 +1,9 @@
 import { useState } from 'react';
 
+import type { DropDown } from '@/common/components';
+
 import { MainScreen } from './main-screen';
 
-import type { DropDown } from '@/common/components';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

@@ -17,7 +17,7 @@ export function IdpLoginButton({ onLogin }: IdpLoginButton.Props) {
         onLogin();
       }}
       disabled={clicked}
-      className="flex h-12 w-full items-center justify-center mx-15"
+      className="mx-15 flex h-12 w-full items-center justify-center"
     >
       {!clicked ? t('login') : <Loader2 className="text-text-primary animate-spin" size={20} />}
     </Button>

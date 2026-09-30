@@ -7,5 +7,6 @@
   "logoutFailed": "Logout failed.",
   "noIdpToken": "Login error",
   "notFound": "Not found.",
+  "refetch": "Retry",
   "unauthorized": "Login required."
 }
