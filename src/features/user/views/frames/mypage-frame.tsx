@@ -1,13 +1,22 @@
-// import { PushPermissionCard } from '@/features/push-notification';
+import { useMypageScreen } from '../../viewmodels';
+import { MypageScreen } from '../screens';
 
-// import { MypageScreen } from '../screens';
 
 export function MypageFrame() {
-  // return <MypageScreen />;
+  const { user, isLoading } = useMypageScreen();
+
+  if (isLoading || !user) {
+    return (
+      <div className="bg-bg h-dvh w-full flex items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <>
       {/* <PushPermissionCard /> */}
-      <p>MypageScreen</p>
+      <MypageScreen user={user} />
     </>
   );
 }
