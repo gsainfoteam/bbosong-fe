@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { $api } from '@/common/lib';
 import { ApiPaths } from '../models';
 
-export function useMyMachine() {
+export function useFindMyMachine() {
   const { t } = useTranslation('error');
 
   const {
