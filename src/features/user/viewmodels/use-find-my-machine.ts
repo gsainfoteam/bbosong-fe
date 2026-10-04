@@ -64,23 +64,28 @@ export function useFindMyMachine() {
   const mappedMachineList = useMemo(() => {
     if (!usingMachines || !allMachines) return [];
 
-    return usingMachines.map((usage) => {
-      const machineDetail = allMachines.find((m) => m.uuid === usage.machineUuid);
+    const machineByUuid = new Map(allMachines.map((m) => [m.uuid, m]));
 
-      const mappedType = (machineDetail?.type === 'DRYER' ? 'dryer' : 'washer') as
+    return usingMachines.flatMap((usage) => {
+      const machineDetail = machineByUuid.get(usage.machineUuid);
+      if (!machineDetail) return [];
+
+      const mappedType = (machineDetail.type === 'DRYER' ? 'dryer' : 'washer') as
         'dryer' | 'washer';
-      const mappedId = machineDetail?.index ?? 0;
-      const mappedLocation = (machineDetail?.location === 'B' ? 'b' : 'a') as 'a' | 'b';
+      const mappedId = machineDetail.index;
+      const mappedLocation = (machineDetail.location === 'B' ? 'b' : 'a') as 'a' | 'b';
 
-      return {
-        location: mappedLocation,
-        machine: {
-          type: mappedType,
-          id: mappedId,
+      return [
+        {
+          location: mappedLocation,
+          machine: {
+            type: mappedType,
+            id: mappedId,
+          },
+          notification: usage.notifyOnCompletion,
+          onClear: () => handleToggleNotification(usage.machineUuid, usage.notifyOnCompletion),
         },
-        notification: usage.notifyOnCompletion,
-        onClear: () => handleToggleNotification(usage.machineUuid, usage.notifyOnCompletion),
-      };
+      ];
     });
   }, [usingMachines, allMachines, handleToggleNotification]);
 
