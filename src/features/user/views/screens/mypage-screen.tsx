@@ -12,6 +12,8 @@ export function MypageScreen({
   ...props
 }: MyPageScreen.Props) {
   const { t } = useTranslation('mypage');
+  //t('male');
+  //t('female');
 
   return (
     <div className={cn('bg-bg flex h-dvh w-full flex-col', className)} {...props}>
@@ -41,7 +43,7 @@ export function MypageScreen({
             disabled={isLoggingOut}
             className="w-full rounded-md bg-bg-surface py-3.5 text-center text-text-primary font-medium disabled:opacity-50"
           >
-            {isLoggingOut ? '로그아웃 중...' : '로그아웃'}
+            {isLoggingOut ? t('loggingOut') : t('logout')}
           </button>
         </div>
       </div>
