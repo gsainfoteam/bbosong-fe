@@ -13,7 +13,7 @@ export function LoginLayoutScreen({ className, children, ...props }: LoginLayout
       {...props}
     >
       <div className="text-text-primary flex h-1/2 flex-col items-center justify-center gap-4">
-        <span className="text-3xl font-medium">{t('description')}</span>
+        <span className="text-3xl font-medium text-center">{t('description')}</span>
         <span className="text-4xl font-semibold">{t('bbosong')}</span>
       </div>
       <div className="flex h-1/2 w-full items-center justify-center">{children}</div>
