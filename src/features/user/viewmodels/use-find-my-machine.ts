@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useCallback } from 'react';
+
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { $api } from '@/common/lib';
+
 import { ApiPaths } from '../models';
 
 export function useFindMyMachine() {
@@ -13,33 +15,24 @@ export function useFindMyMachine() {
     error: usingError,
     isError: isUsingError,
     isLoading: isUsingLoading,
-    refetch,
-  } = $api.useQuery(
-    'get',
-    ApiPaths.MachineController_getUsingMachinesByUser,
-    undefined,
-    {
-      retry(count, err) {
-        return err?.statusCode === 404 || err?.statusCode === 400 ? false : count < 3;
-      },
-    }
-  );
+    refetch: refetchUsingMachines,
+  } = $api.useQuery('get', ApiPaths.MachineController_getUsingMachinesByUser, undefined, {
+    retry(count, err) {
+      return err?.statusCode === 404 || err?.statusCode === 400 ? false : count < 3;
+    },
+  });
 
   const {
     data: allMachines,
     error: allError,
     isError: isAllError,
     isLoading: isAllLoading,
-  } = $api.useQuery(
-    'get',
-    ApiPaths.MachineController_getMachines,
-    undefined,
-    {
-      retry(count, err) {
-        return err?.statusCode === 404 || err?.statusCode === 400 ? false : count < 3;
-      },
-    }
-  );
+    refetch: refetchAllMachines,
+  } = $api.useQuery('get', ApiPaths.MachineController_getMachines, undefined, {
+    retry(count, err) {
+      return err?.statusCode === 404 || err?.statusCode === 400 ? false : count < 3;
+    },
+  });
 
   const error = usingError || allError;
   const isError = isUsingError || isAllError;
@@ -55,7 +48,7 @@ export function useFindMyMachine() {
   const { mutate: toggleNotification } = $api.useMutation(
     'patch',
     ApiPaths.MachineController_toggleMachineNotification,
-    { onSuccess: () => refetch() }
+    { onSuccess: () => refetchUsingMachines() },
   );
 
   const handleToggleNotification = useCallback(
@@ -65,33 +58,46 @@ export function useFindMyMachine() {
         body: { notifyOnCompletion: !currentNotifyState },
       });
     },
-    [toggleNotification]
+    [toggleNotification],
   );
 
   const mappedMachineList = useMemo(() => {
     if (!usingMachines || !allMachines) return [];
 
-    return usingMachines.map((usage) => {
-      const machineDetail = allMachines.find((m) => m.uuid === usage.machineUuid);
-      
-      const mappedType = (machineDetail?.type === 'DRYER' ? 'dryer' : 'washer') as 'dryer' | 'washer';
-      const mappedId = machineDetail?.index ?? 0;
-      const mappedLocation = (machineDetail?.location === 'B' ? 'b' : 'a') as 'a' | 'b';
+    const machineByUuid = new Map(allMachines.map((m) => [m.uuid, m]));
 
-      return {
-        location: mappedLocation,
-        machine: {
-          type: mappedType,
-          id: mappedId,
+    return usingMachines.flatMap((usage) => {
+      const machineDetail = machineByUuid.get(usage.machineUuid);
+      if (!machineDetail) return [];
+
+      const mappedType = (machineDetail.type === 'DRYER' ? 'dryer' : 'washer') as
+        'dryer' | 'washer';
+      const mappedId = machineDetail.index;
+      const mappedLocation = (machineDetail.location === 'B' ? 'b' : 'a') as 'a' | 'b';
+
+      return [
+        {
+          location: mappedLocation,
+          machine: {
+            type: mappedType,
+            id: mappedId,
+          },
+          notification: usage.notifyOnCompletion,
+          onClear: () => handleToggleNotification(usage.machineUuid, usage.notifyOnCompletion),
         },
-        notification: usage.notifyOnCompletion,
-        onClear: () => handleToggleNotification(usage.machineUuid, usage.notifyOnCompletion),
-      };
+      ];
     });
   }, [usingMachines, allMachines, handleToggleNotification]);
+
+  const refetchMachines = useCallback(
+    () => Promise.all([refetchUsingMachines(), refetchAllMachines()]),
+    [refetchUsingMachines, refetchAllMachines],
+  );
 
   return {
     mappedMachineList,
     isLoading: isUsingLoading || isAllLoading,
+    isError,
+    refetch: refetchMachines,
   };
 }
