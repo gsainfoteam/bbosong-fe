@@ -166,7 +166,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
       scope: SERVICE_WORKER_SCOPE,
     });
   } catch (error) {
-    console.error('Service Worker 등록에 실패했습니다.', error);
+    console.error('Failed to register service worker.', error);
     return null;
   }
 }
@@ -210,7 +210,7 @@ export async function subscribeToPush(): Promise<PushSubscription | null> {
 
   const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
   if (!vapidPublicKey) {
-    console.error('VITE_VAPID_PUBLIC_KEY가 설정되어 있지 않아 푸시를 구독할 수 없습니다.');
+    console.error('Cannot subscribe to push: VITE_VAPID_PUBLIC_KEY is not set.');
     return null;
   }
 

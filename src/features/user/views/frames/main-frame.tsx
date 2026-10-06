@@ -32,7 +32,12 @@ const toMachineStatus = (isAvailable: boolean, status: string): MachineBox.Statu
 export function MainFrame() {
   const { t } = useTranslation('error');
 
-  const { user } = useFindUserProfile();
+  const {
+    user,
+    isLoading: isUserLoading,
+    isError: isUserError,
+    refetch: refetchUser,
+  } = useFindUserProfile();
 
   const {
     data: usingMachines,
@@ -77,8 +82,8 @@ export function MainFrame() {
     localStorage.setItem('location', currentLocation);
   }, [currentLocation]);
 
-  const isLoading = isUsingMachinesLoading || isAllMachinesLoading;
-  const isError = isUsingMachinesError || isAllMachinesError;
+  const isLoading = isUserLoading || isUsingMachinesLoading || isAllMachinesLoading;
+  const isError = isUserError || isUsingMachinesError || isAllMachinesError;
 
   const onSelectLocation = (item: string) => {
     if (isLocation(item)) setCurrentLocation(item);
@@ -135,6 +140,7 @@ export function MainFrame() {
   }
 
   const onRetry = () => {
+    void refetchUser();
     void refetchUsingMachines();
     void refetchAllMachines();
   };

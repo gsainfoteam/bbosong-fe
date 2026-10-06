@@ -43,7 +43,11 @@ export function QrScanFrame() {
     );
 
     scanner.start().catch((error: unknown) => {
-      console.error('카메라를 시작할 수 없습니다.', error);
+      console.error('Failed to start camera.', error);
+      if (video.srcObject instanceof MediaStream) {
+        video.srcObject.getTracks().forEach((track) => track.stop());
+      }
+      video.srcObject = null;
     });
 
     return () => {
