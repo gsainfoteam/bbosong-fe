@@ -3,25 +3,12 @@ import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
-import { $api } from '@/common/lib';
-import type { Gender } from '@/features/auth';
-
-import { ApiPaths } from '../models';
+import { type Gender, useUser } from '@/features/auth';
 
 export function useFindUserProfile() {
   const { t } = useTranslation('error');
 
-  const { data, error, isError, isLoading, refetch } = $api.useQuery(
-    'get',
-    ApiPaths.AuthController_getMe,
-    undefined,
-    {
-      retry(count, queryError) {
-        if (queryError?.statusCode === 404 || queryError?.statusCode === 400) return false;
-        return count < 3;
-      },
-    },
-  );
+  const { data, error, isError, isLoading, refetch } = useUser();
 
   useEffect(() => {
     if (!isError) return;

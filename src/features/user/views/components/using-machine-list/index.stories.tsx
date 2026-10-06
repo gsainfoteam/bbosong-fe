@@ -27,11 +27,13 @@ export const Default: Story = {
         onClear: () => console.log('Clear dryer 5 in building B'),
       },
     ],
+    onAdd: () => console.log('add'),
   },
 };
 
 export const Empty: Story = {
   args: {
     machineList: [],
+    onAdd: () => console.log('add'),
   },
 };

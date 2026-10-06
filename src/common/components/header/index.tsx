@@ -1,4 +1,4 @@
-import { useRouter } from '@tanstack/react-router';
+import { Link, useRouter } from '@tanstack/react-router';
 
 import { Menu, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -14,7 +14,9 @@ export const Header = ({ className, ...props }: Header.Props) => {
       {...props}
     >
       <h1>{t('bbosong')}</h1>
-      <Menu />
+      <Link to="/mypage">
+        <Menu />
+      </Link>
     </header>
   );
 };

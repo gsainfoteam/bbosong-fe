@@ -1,5 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
+import { MainFrame } from '@/features/user';
+
 export const Route = createFileRoute('/_auth-required/_user/')({
   // beforeLoad: () => {
   //   throw redirect({
@@ -7,5 +9,5 @@ export const Route = createFileRoute('/_auth-required/_user/')({
   //     replace: true,
   //   });
   // },
-  component: () => <>Main</>,
+  component: MainFrame,
 });

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -11,13 +11,12 @@ export function GenderSelect({ onLogin, isLoginError, className, ...props }: Gen
 
   const [pending, setPending] = useState(false);
 
-  useEffect(() => {
-    if (isLoginError) setPending(false);
-  }, [isLoginError]);
+  // 로그인 에러가 나면 다시 고를 수 있도록 대기 표시를 끈다
+  const isPending = pending && !isLoginError;
 
   return (
     <div className={cn('flex w-full items-center justify-center gap-3 px-3', className)} {...props}>
-      {!pending ? (
+      {!isPending ? (
         <>
           <GenderButton
             key="auth-gender-male"

@@ -6,10 +6,7 @@ import { cn } from '@/common/utils';
 export function Layout({ className, children }: Layout.Props) {
   return (
     <div
-      className={cn(
-        className,
-        'bg-bg text-text-primary mx-auto flex h-dvh min-h-0 w-full max-w-100 flex-col gap-5 px-10',
-      )}
+      className={cn(className, 'bg-bg text-text-primary mx-auto h-dvh min-h-0 w-full max-w-120')}
     >
       {/*<NavBar className={'border-b border-b-white'} />*/}
       {children}

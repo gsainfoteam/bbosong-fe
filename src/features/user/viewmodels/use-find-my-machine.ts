@@ -95,7 +95,7 @@ export function useFindMyMachine() {
   );
 
   return {
-    mappedMachineList,
+    data: mappedMachineList,
     isLoading: isUsingLoading || isAllLoading,
     isError,
     refetch: refetchMachines,
