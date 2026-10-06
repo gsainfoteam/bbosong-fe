@@ -46,7 +46,7 @@ import { AnimatePresence, motion } from 'motion/react';
       </motion.div>
     </>
   )}
-</AnimatePresence>
+</AnimatePresence>;
 ```
 
 - **`fixed inset-x-0 bottom-0`**: 시트를 화면 하단에 고정합니다. 높이는 `QrScanScreen`의 `h-[80dvh]`가 정합니다.

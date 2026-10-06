@@ -32,6 +32,7 @@ export const Default: Story = {
           onClear: () => console.log('Clear dryer 1'),
         },
       ],
+      onAdd: () => console.log('Add using machine'),
     },
     selectBuilding: {
       dropDownProps: {
@@ -39,7 +40,6 @@ export const Default: Story = {
         value: 'a',
         onSelect: (item) => console.log(`Select ${item}`),
       },
-      onOpenMap: (building) => console.log(`Open map ${building}`),
     },
     machines: {
       machines: [
@@ -79,6 +79,7 @@ export const NoUsingMachine: Story = {
     ...Default.args,
     usingMachineList: {
       machineList: [],
+      onAdd: () => console.log('Add using machine'),
     },
   },
 };

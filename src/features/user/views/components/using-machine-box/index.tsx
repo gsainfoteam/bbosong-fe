@@ -46,10 +46,10 @@ export function UsingMachineBox({
   );
 }
 
-export function AddUsingMachineBox() {
+export function AddUsingMachineBox({ onAdd }: AddUsingMachineBox.Props) {
   return (
     <div className="flex min-h-20 items-center justify-center">
-      <Plus />
+      <Plus size={32} strokeWidth={1.5} onClick={onAdd} />
     </div>
   );
 }
@@ -61,5 +61,11 @@ export namespace UsingMachineBox {
     notification: boolean;
     onClear: () => void;
     className?: string;
+  };
+}
+
+export namespace AddUsingMachineBox {
+  export type Props = {
+    onAdd: () => void;
   };
 }

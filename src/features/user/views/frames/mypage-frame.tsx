@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { useLogout } from '@/features/auth/viewmodels/queries/use-logout';
+
+import { useLogout } from '@/features/auth';
+
 import { useFindUserProfile } from '../../viewmodels';
 import { MypageScreen } from '../screens';
 
@@ -16,7 +18,7 @@ export function MypageFrame() {
       </div>
     );
   }
-  
+
   if (isError || !user) {
     return (
       <div className="bg-bg flex h-dvh w-full flex-col items-center justify-center">
@@ -31,11 +33,7 @@ export function MypageFrame() {
   return (
     <>
       {/* <PushPermissionCard /> */}
-      <MypageScreen 
-        user={user} 
-        onLogout={() => logout(undefined)} 
-        isLoggingOut={isLoggingOut}
-      />
+      <MypageScreen user={user} onLogout={() => logout(undefined)} isLoggingOut={isLoggingOut} />
     </>
   );
 }
