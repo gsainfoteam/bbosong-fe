@@ -4,6 +4,8 @@
     "placeholder": "선택해 주세요"
   },
   "goBack": "돌아가기",
+  "index": "홈",
+  "myPage": "마이 페이지",
   "switchToEnglish": "영어로 전환",
   "switchToKorean": "한국어로 전환",
   "yes": "예"

@@ -47,10 +47,17 @@ export function UsingMachineBox({
 }
 
 export function AddUsingMachineBox({ onAdd }: AddUsingMachineBox.Props) {
+  const { t } = useTranslation('mypage');
+
   return (
-    <div className="flex min-h-20 items-center justify-center">
-      <Plus size={32} strokeWidth={1.5} onClick={onAdd} />
-    </div>
+    <button
+      type="button"
+      aria-label={t('addMachine')}
+      className="flex min-h-20 w-full items-center justify-center"
+      onClick={onAdd}
+    >
+      <Plus size={32} strokeWidth={1.5} aria-hidden />
+    </button>
   );
 }
 

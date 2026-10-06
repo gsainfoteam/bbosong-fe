@@ -60,6 +60,7 @@ export function MainFrame() {
     data: allMachines,
     isLoading: isAllMachinesLoading,
     isError: isAllMachinesError,
+    refetch: refetchAllMachines,
   } = useFindMachines();
 
   const usingMachineUuids = useMemo(
@@ -133,11 +134,16 @@ export function MainFrame() {
     );
   }
 
+  const onRetry = () => {
+    void refetchUsingMachines();
+    void refetchAllMachines();
+  };
+
   if (isError) {
     return (
       <div className="bg-bg flex h-dvh w-full flex-col items-center justify-center">
         <p role="alert">{t('generic')}</p>
-        <button type="button" onClick={() => void refetchUsingMachines()}>
+        <button type="button" onClick={onRetry}>
           {t('refetch')}
         </button>
       </div>
