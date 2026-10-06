@@ -1,5 +1,6 @@
 {
   "account": "Account",
+  "addMachine": "Add machine in use",
   "count_one": "unit",
   "count_other": "units",
   "email": "Email",
