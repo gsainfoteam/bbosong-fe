@@ -14,3 +14,7 @@ type Story = StoryObj<typeof QrScanScreen>;
 export const Default: Story = {
   args: {},
 };
+
+export const CameraError: Story = {
+  args: { isCameraError: true },
+};

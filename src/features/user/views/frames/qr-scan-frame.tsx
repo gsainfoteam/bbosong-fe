@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useNavigate } from '@tanstack/react-router';
 
@@ -18,6 +18,7 @@ const parseMachineUuid = (data: string) => {
 export function QrScanFrame() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const navigate = useNavigate();
+  const [isCameraError, setIsCameraError] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -48,6 +49,7 @@ export function QrScanFrame() {
         video.srcObject.getTracks().forEach((track) => track.stop());
       }
       video.srcObject = null;
+      setIsCameraError(true);
     });
 
     return () => {
@@ -55,5 +57,5 @@ export function QrScanFrame() {
     };
   }, [navigate]);
 
-  return <QrScanScreen videoRef={videoRef} />;
+  return <QrScanScreen videoRef={videoRef} isCameraError={isCameraError} />;
 }
