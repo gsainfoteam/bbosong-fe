@@ -5,6 +5,8 @@
   "email": "Email",
   "female": "Female",
   "gender": "Gender",
+  "loggingOut": "Logging out...",
+  "logout": "Logout",
   "male": "Male",
   "name": "Name",
   "roomStatusTitle": "Status of available machines",

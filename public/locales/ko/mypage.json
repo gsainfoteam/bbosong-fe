@@ -4,6 +4,8 @@
   "email": "이메일",
   "female": "여성",
   "gender": "성별",
+  "loggingOut": "로그아웃 중...",
+  "logout": "로그아웃",
   "male": "남성",
   "name": "이름",
   "roomStatusTitle": "비어있는 기기 현황",
