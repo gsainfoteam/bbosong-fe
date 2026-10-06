@@ -19,6 +19,6 @@ export const Default: Story = {
       email: 'bbosong@gm.gist.ac.kr',
       gender: 'male',
     },
-    
+    onLogout: () => console.log('로그아웃 실행'),
   },
 };
