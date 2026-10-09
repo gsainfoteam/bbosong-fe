@@ -2,5 +2,6 @@
   "mvpNotification": "* The service is currently available only on select machines. We ask for your understanding.",
   "noUsingMachine": "There is no using machine.",
   "qrScan": "Scan QR code and register your machine",
+  "qrScanCameraError": "Unable to access the camera. Allow camera permission in your browser settings, then reopen this sheet.",
   "usingMachineTitle": "Using machines"
 }

@@ -1,5 +1,7 @@
 import { useEffect, useMemo } from 'react';
 
+import { type UseQueryResult, useQueries } from '@tanstack/react-query';
+
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -42,5 +44,27 @@ export function useFindMachineByUuid(uuid: string) {
     machine: data,
     isLoading,
     isNotFound,
+  };
+}
+
+export function useFindMachinesByUuids(uuids: string[]) {
+  return useQueries({
+    queries: uuids.map((uuid) =>
+      $api.queryOptions('get', ApiPaths.MachineController_getMachine, {
+        params: { path: { uuid } },
+      }),
+    ),
+    combine: combineMachineResults,
+  });
+}
+
+// combine은 참조가 고정돼야 결과가 메모이즈되므로 컴포넌트 밖에 둔다
+function combineMachineResults<T extends { uuid: string }>(results: UseQueryResult<T, unknown>[]) {
+  return {
+    machineByUuid: new Map(
+      results.flatMap((result) => (result.data ? [[result.data.uuid, result.data] as const] : [])),
+    ),
+    isLoading: results.some((result) => result.isLoading),
+    isError: results.some((result) => result.isError),
   };
 }

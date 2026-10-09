@@ -1,6 +1,6 @@
 {
   "name": "bbosong-fe",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "private": true,
   "type": "module",
   "scripts": {
@@ -39,6 +39,7 @@
     "motion": "^12.43.0",
     "openapi-fetch": "^0.17.0",
     "openapi-react-query": "^0.5.4",
+    "qr-scanner": "^1.4.2",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-i18next": "^16.6.6",
@@ -87,7 +88,7 @@
     "typescript-eslint": "^8.67.0",
     "vite": "^7.3.6",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.2.7"
+    "vitest": "^4.1.11"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

@@ -1,4 +1,4 @@
-import { useRouter } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 
 import { Menu, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -14,18 +14,20 @@ export const Header = ({ className, ...props }: Header.Props) => {
       {...props}
     >
       <h1>{t('bbosong')}</h1>
-      <Menu />
+      <Link to="/mypage" aria-label={t('myPage')}>
+        <Menu />
+      </Link>
     </header>
   );
 };
 
 export const MyPageHeader = () => {
-  const router = useRouter();
+  const { t } = useTranslation('common');
   return (
     <header className="text-text-primary flex w-full flex-row-reverse px-4 py-2">
-      <button type="button" onClick={() => router.history.back()}>
+      <Link to="/" aria-label={t('index')}>
         <X />
-      </button>
+      </Link>
     </header>
   );
 };

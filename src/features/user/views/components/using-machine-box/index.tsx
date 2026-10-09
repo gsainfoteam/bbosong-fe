@@ -46,11 +46,18 @@ export function UsingMachineBox({
   );
 }
 
-export function AddUsingMachineBox() {
+export function AddUsingMachineBox({ onAdd }: AddUsingMachineBox.Props) {
+  const { t } = useTranslation('mypage');
+
   return (
-    <div className="flex min-h-20 items-center justify-center">
-      <Plus />
-    </div>
+    <button
+      type="button"
+      aria-label={t('addMachine')}
+      className="flex min-h-20 w-full items-center justify-center"
+      onClick={onAdd}
+    >
+      <Plus size={32} strokeWidth={1.5} aria-hidden />
+    </button>
   );
 }
 
@@ -61,5 +68,11 @@ export namespace UsingMachineBox {
     notification: boolean;
     onClear: () => void;
     className?: string;
+  };
+}
+
+export namespace AddUsingMachineBox {
+  export type Props = {
+    onAdd: () => void;
   };
 }

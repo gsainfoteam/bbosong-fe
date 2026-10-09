@@ -60,7 +60,7 @@ async function notifyClients(payload) {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
-  const targetUrl = (event.notification.data && event.notification.data.url) || DEFAULT_URL;
+  const targetUrl = event.notification.data?.url || DEFAULT_URL;
 
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {

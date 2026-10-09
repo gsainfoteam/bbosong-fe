@@ -1,9 +1,11 @@
 {
   "account": "계정",
+  "addMachine": "사용 중인 기기 추가",
   "count": "대",
   "email": "이메일",
   "female": "여성",
   "gender": "성별",
+  "language": "언어",
   "loggingOut": "로그아웃 중...",
   "logout": "로그아웃",
   "male": "남성",

@@ -30,14 +30,14 @@ export function PushPermissionCard({ className, ...props }: PushPermissionCard.P
         <>
           <p className="text-sm">{t('permission.needsInstall')}</p>
           {/* iOS Safari는 beforeinstallprompt가 없어 수동 안내만 가능하다 */}
-          {isIOS ? (
-            <p className="text-sm opacity-80">{t('permission.installGuideIOS')}</p>
-          ) : canPrompt ? (
+          {isIOS && <p className="text-sm opacity-80">{t('permission.installGuideIOS')}</p>}
+          {!isIOS && canPrompt && (
             <Button type="button" onClick={() => void promptInstall()} disabled={isPrompting}>
               {isPrompting ? t('permission.installing') : t('permission.install')}
             </Button>
-          ) : (
-            // 이미 설치했거나 브라우저가 프롬프트를 내주지 않는 경우의 폴백 안내
+          )}
+          {/* 이미 설치했거나 브라우저가 프롬프트를 내주지 않는 경우의 폴백 안내 */}
+          {!isIOS && !canPrompt && (
             <p className="text-sm opacity-80">{t('permission.installGuideFallback')}</p>
           )}
         </>

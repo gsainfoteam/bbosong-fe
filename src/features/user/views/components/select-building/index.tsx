@@ -1,12 +1,7 @@
 import { DropDown } from '@/common/components';
 import { cn } from '@/common/utils';
 
-export function SelectBuilding({
-  dropDownProps,
-  onOpenMap,
-  className,
-  ...props
-}: SelectBuilding.Props) {
+export function SelectBuilding({ dropDownProps, className, ...props }: SelectBuilding.Props) {
   return (
     <div className={cn(className, 'flex w-full flex-1 items-center gap-2')} {...props}>
       <DropDown
@@ -26,7 +21,6 @@ export function SelectBuilding({
 export namespace SelectBuilding {
   export type Props = {
     dropDownProps: DropDown.Props;
-    onOpenMap: (building: string) => void;
     className?: string;
   };
 }

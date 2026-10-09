@@ -19,11 +19,11 @@ export function MainScreen({
       <div className="flex flex-col gap-6 px-3">
         <UsingMachineList
           machineList={usingMachineList.machineList}
+          onAdd={usingMachineList.onAdd}
           className={usingMachineList.className}
         />
         <SelectBuilding
           dropDownProps={selectBuilding.dropDownProps}
-          onOpenMap={selectBuilding.onOpenMap}
           className={selectBuilding.className}
         />
         <span className="text-caption">{t('main:mvpNotification')}</span>

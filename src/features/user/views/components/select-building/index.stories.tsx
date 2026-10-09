@@ -13,9 +13,7 @@ const meta: Meta<typeof SelectBuilding> = {
   parameters: {
     layout: 'padded',
   },
-  args: {
-    onOpenMap: (building: string) => console.log(building),
-  },
+  args: {},
   // 드롭다운 선택값을 스토리 내부 상태로 관리해 실제 사용 흐름을 재현
   render: function Render({ dropDownProps, ...args }) {
     const [selected, setSelected] = useState(dropDownProps.value);

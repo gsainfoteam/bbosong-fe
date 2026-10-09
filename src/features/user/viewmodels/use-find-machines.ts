@@ -2,7 +2,10 @@ import { ApiPaths } from '@/@types/api-schema.ts';
 import { $api } from '@/common/lib';
 
 export function useFindMachines() {
-  const { data } = $api.useQuery('get', ApiPaths.MachineController_getMachines);
+  const { data, isError, isLoading, error, refetch } = $api.useQuery(
+    'get',
+    ApiPaths.MachineController_getMachines,
+  );
 
-  return data;
+  return { data, isError, isLoading, error, refetch };
 }

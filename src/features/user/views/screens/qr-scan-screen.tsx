@@ -4,7 +4,12 @@ import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/common/utils';
 
-export function QrScanScreen({ videoRef, className, ...props }: QrScanScreen.Props) {
+export function QrScanScreen({
+  videoRef,
+  isCameraError = false,
+  className,
+  ...props
+}: QrScanScreen.Props) {
   const { t } = useTranslation('main');
   return (
     <div
@@ -15,10 +20,16 @@ export function QrScanScreen({ videoRef, className, ...props }: QrScanScreen.Pro
       )}
       {...props}
     >
-      <div className="bg-bg-surface mb-10 aspect-square w-4/5">
-        <video ref={videoRef} className="w-full" />
+      <div className="bg-bg-surface mb-10 aspect-square w-4/5 overflow-hidden">
+        <video ref={videoRef} className="size-full object-cover" />
       </div>
-      <span className="text-body-lg font-medium">{t('qrScan')}</span>
+      {isCameraError ? (
+        <p role="alert" className="text-body-lg px-6 text-center font-medium">
+          {t('qrScanCameraError')}
+        </p>
+      ) : (
+        <span className="text-body-lg font-medium">{t('qrScan')}</span>
+      )}
     </div>
   );
 }
@@ -26,6 +37,7 @@ export function QrScanScreen({ videoRef, className, ...props }: QrScanScreen.Pro
 export namespace QrScanScreen {
   export type Props = {
     videoRef: Ref<HTMLVideoElement> | null;
+    isCameraError?: boolean;
     className?: string;
   };
 }

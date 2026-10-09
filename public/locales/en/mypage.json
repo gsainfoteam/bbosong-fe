@@ -1,10 +1,12 @@
 {
   "account": "Account",
+  "addMachine": "Add machine in use",
   "count_one": "unit",
   "count_other": "units",
   "email": "Email",
   "female": "Female",
   "gender": "Gender",
+  "language": "Language",
   "loggingOut": "Logging out...",
   "logout": "Logout",
   "male": "Male",
