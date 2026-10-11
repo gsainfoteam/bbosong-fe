@@ -7,7 +7,7 @@
 const SERVICE_WORKER_URL = '/sw.js';
 const SERVICE_WORKER_SCOPE = '/';
 
-/** SW가 푸시 수신 시 앱 클라이언트로 보내는 메시지 타입 (public/sw.js와 동일 문자열 유지) */
+/** SW가 푸시 수신 시 앱 클라이언트로 보내는 메시지 타입 (public/push-sw.js와 동일 문자열 유지) */
 export const PUSH_RECEIVED_MESSAGE = 'push-received';
 
 export type PushMessagePayload = {
@@ -159,12 +159,15 @@ export function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuf
 
 /** SW 등록. 미지원 환경에서는 null을 반환한다 */
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
-  if (!isPushSupported()) return null;
+  if (!('serviceWorker' in navigator)) return null;
 
   try {
-    return await navigator.serviceWorker.register(SERVICE_WORKER_URL, {
-      scope: SERVICE_WORKER_SCOPE,
-    });
+    return await navigator.serviceWorker.register(
+      import.meta.env.DEV ? '/push-sw.js' : SERVICE_WORKER_URL,
+      {
+        scope: SERVICE_WORKER_SCOPE,
+      },
+    );
   } catch (error) {
     console.error('Failed to register service worker.', error);
     return null;

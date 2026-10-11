@@ -8,17 +8,15 @@ const BADGE_URL = '/icons/badge-72.png';
 // 앱 클라이언트로 푸시 수신을 알릴 때 사용하는 메시지 타입
 const PUSH_RECEIVED_MESSAGE = 'push-received';
 
-self.addEventListener('install', () => {
-  self.skipWaiting();
+// 개발 환경에서는 이 파일을 직접 등록하므로 활성화도 처리한다.
+// 프로덕션 캐싱은 vite-plugin-pwa가 생성하는 /sw.js에서 처리한다.
+self.addEventListener('install', (event) => {
+  event.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim());
 });
-
-// 일부 브라우저는 fetch 핸들러를 가진 SW만 '설치 가능'으로 판정한다.
-// 아직 캐싱 전략이 없으므로 요청을 가로채지 않고 브라우저 기본 동작에 맡긴다.
-self.addEventListener('fetch', () => {});
 
 self.addEventListener('push', (event) => {
   if (!event.data) return;
