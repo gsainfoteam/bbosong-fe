@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { type UseQueryResult, useQueries } from '@tanstack/react-query';
 
@@ -48,7 +48,17 @@ export function useFindMachineByUuid(uuid: string) {
 }
 
 export function useFindMachinesByUuids(uuids: string[]) {
-  return useQueries({
+  const [now, setNow] = useState(() => Date.now());
+  const hasMachines = uuids.length > 0;
+
+  useEffect(() => {
+    if (!hasMachines) return;
+
+    const interval = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(interval);
+  }, [hasMachines]);
+
+  const result = useQueries({
     queries: uuids.map((uuid) =>
       $api.queryOptions('get', ApiPaths.MachineController_getMachine, {
         params: { path: { uuid } },
@@ -56,6 +66,24 @@ export function useFindMachinesByUuids(uuids: string[]) {
     ),
     combine: combineMachineResults,
   });
+
+  const elapsedMinutesByUuid = useMemo(
+    () =>
+      new Map(
+        [...result.machineByUuid].map(([uuid, machine]) => {
+          const startedAt = machine.currentUsage?.startedAt;
+          const startedAtMs = startedAt ? Date.parse(startedAt) : NaN;
+          const elapsedMinutes = Number.isFinite(startedAtMs)
+            ? Math.max(0, Math.floor((now - startedAtMs) / 60_000))
+            : undefined;
+
+          return [uuid, elapsedMinutes] as const;
+        }),
+      ),
+    [result.machineByUuid, now],
+  );
+
+  return { ...result, elapsedMinutesByUuid };
 }
 
 // combine은 참조가 고정돼야 결과가 메모이즈되므로 컴포넌트 밖에 둔다
