@@ -14,6 +14,8 @@
     "washer": "washer"
   },
   "permission": {
+    "completionDescription": "Your machine is registered. Turn on notifications to know when it finishes.",
+    "completionTitle": "Want to know when your laundry is done?",
     "denied": "Notifications are blocked. Please allow notifications for this site in your browser settings.",
     "description": "We'll let you know when your machine finishes or a machine frees up.",
     "enable": "Turn on notifications",
@@ -21,6 +23,7 @@
     "installGuideFallback": "Install the app from the install icon in the address bar, then try again.",
     "installGuideIOS": "Tap the Share button, choose \"Add to Home Screen\", then reopen the app from the Home Screen icon.",
     "installing": "Installing...",
+    "later": "Maybe later",
     "needsInstall": "Install the app first to receive notifications. Installing means you won't miss alerts after closing the app.",
     "requesting": "Requesting permission...",
     "title": "Notifications",

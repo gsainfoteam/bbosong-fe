@@ -14,6 +14,8 @@
     "washer": "세탁기"
   },
   "permission": {
+    "completionDescription": "기기가 등록되었어요. 알림을 켜두면 사용이 끝났을 때 바로 알려드릴게요.",
+    "completionTitle": "세탁이 끝나면 알려드릴까요?",
     "denied": "알림이 차단되어 있습니다. 브라우저 설정에서 이 사이트의 알림을 직접 허용해 주세요.",
     "description": "기기 사용이 끝나거나 빈 기기가 생기면 알려드릴게요.",
     "enable": "알림 받기",
@@ -21,6 +23,7 @@
     "installGuideFallback": "주소창의 설치 아이콘을 눌러 앱을 설치한 뒤 다시 시도해 주세요.",
     "installGuideIOS": "공유 버튼을 누른 뒤 '홈 화면에 추가'를 선택하고, 홈 화면 아이콘으로 다시 열어 주세요.",
     "installing": "설치 중...",
+    "later": "나중에",
     "needsInstall": "알림을 받으려면 먼저 앱을 설치해 주세요. 설치해야 앱을 닫아도 알림을 놓치지 않습니다.",
     "requesting": "권한 요청 중...",
     "title": "알림 설정",

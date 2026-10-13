@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { useLogout } from '@/features/auth';
+import { PushPermissionCard } from '@/features/push-notification';
 
 import { useFindUserProfile } from '../../viewmodels';
 import { MypageScreen } from '../screens';
@@ -32,7 +33,7 @@ export function MypageFrame() {
 
   return (
     <>
-      {/* <PushPermissionCard /> */}
+      <PushPermissionCard />
       <MypageScreen user={user} onLogout={() => logout(undefined)} isLoggingOut={isLoggingOut} />
     </>
   );
