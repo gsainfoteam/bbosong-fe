@@ -16,6 +16,7 @@ jobs:
         env:
           VITE_AMPLITUDE_API_KEY: ${{ secrets.VITE_AMPLITUDE_API_KEY }}
           VITE_IDP_CLIENT_ID: ${{ secrets.VITE_IDP_CLIENT_ID }}
+          SWAGGER_URL: ${{ secrets.SWAGGER_URL }}
           SWAGGER_USER: ${{ secrets.SWAGGER_USER }}
           SWAGGER_PASSWORD: ${{ secrets.SWAGGER_PASSWORD }}
         run: |
