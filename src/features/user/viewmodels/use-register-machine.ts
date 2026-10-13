@@ -7,7 +7,7 @@ import { $api } from '@/common/lib';
 
 import { ApiPaths } from '../models';
 
-export function useRegisterMachine() {
+export function useRegisterMachine(onRegistered?: () => void) {
   const { t } = useTranslation(['machineRegister', 'error']);
   const navigate = useNavigate();
 
@@ -17,7 +17,11 @@ export function useRegisterMachine() {
         toast.error(t('error.alreadyUsing'));
       } else {
         toast.success(t('success'));
-        navigate({ to: '/' });
+        if (onRegistered) {
+          onRegistered();
+        } else {
+          void navigate({ to: '/' });
+        }
       }
     },
     onError: (error) => {

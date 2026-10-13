@@ -5,7 +5,11 @@ import { cn } from '@/common/utils';
 
 import { useInstallPrompt, usePushPermission } from '../viewmodels';
 
-export function PushPermissionCard({ className, ...props }: PushPermissionCard.Props) {
+export function PushPermissionCard({
+  className,
+  presentation = 'card',
+  ...props
+}: PushPermissionCard.Props) {
   const { t } = useTranslation('notification');
   const { status, isRequesting, requestPermission } = usePushPermission();
   const { canPrompt, isPrompting, promptInstall, isIOS } = useInstallPrompt();
@@ -15,10 +19,16 @@ export function PushPermissionCard({ className, ...props }: PushPermissionCard.P
 
   return (
     <section
-      className={cn('text-text-primary flex flex-col gap-3 rounded-lg p-4', className)}
+      className={cn(
+        'text-text-primary flex flex-col gap-3',
+        presentation === 'card' ? 'rounded-lg p-4' : 'gap-5',
+        className,
+      )}
       {...props}
     >
-      <h2 className="text-lg font-semibold">{t('permission.title')}</h2>
+      <h2 className={presentation === 'sheet' ? 'text-2xl font-semibold' : 'text-lg font-semibold'}>
+        {presentation === 'sheet' ? t('permission.completionTitle') : t('permission.title')}
+      </h2>
 
       {status === 'unsupported' && <p className="text-sm">{t('permission.unsupported')}</p>}
 
@@ -32,7 +42,14 @@ export function PushPermissionCard({ className, ...props }: PushPermissionCard.P
           {/* iOS Safari는 beforeinstallprompt가 없어 수동 안내만 가능하다 */}
           {isIOS && <p className="text-sm opacity-80">{t('permission.installGuideIOS')}</p>}
           {!isIOS && canPrompt && (
-            <Button type="button" onClick={() => void promptInstall()} disabled={isPrompting}>
+            <Button
+              type="button"
+              onClick={() => void promptInstall()}
+              disabled={isPrompting}
+              className={
+                presentation === 'sheet' ? 'bg-primary border-0 py-4 text-white' : undefined
+              }
+            >
               {isPrompting ? t('permission.installing') : t('permission.install')}
             </Button>
           )}
@@ -45,9 +62,18 @@ export function PushPermissionCard({ className, ...props }: PushPermissionCard.P
 
       {status === 'default' && (
         <>
-          <p className="text-sm">{t('permission.description')}</p>
+          <p className="text-sm">
+            {presentation === 'sheet'
+              ? t('permission.completionDescription')
+              : t('permission.description')}
+          </p>
           {/* 권한 요청은 사용자가 명시적으로 누른 시점에만 발생해야 한다 */}
-          <Button type="button" onClick={() => void requestPermission()} disabled={isRequesting}>
+          <Button
+            type="button"
+            onClick={() => void requestPermission()}
+            disabled={isRequesting}
+            className={presentation === 'sheet' ? 'bg-primary border-0 py-4 text-white' : undefined}
+          >
             {isRequesting ? t('permission.requesting') : t('permission.enable')}
           </Button>
         </>
@@ -59,5 +85,6 @@ export function PushPermissionCard({ className, ...props }: PushPermissionCard.P
 export namespace PushPermissionCard {
   export type Props = {
     className?: string;
+    presentation?: 'card' | 'sheet';
   } & React.HTMLAttributes<HTMLElement>;
 }
