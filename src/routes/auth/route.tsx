@@ -7,24 +7,26 @@ import { z } from 'zod';
 import { Loading } from '@/common/components';
 import { useAuth, useAuthPrompt, useAuthRedirect, useToken } from '@/features/auth';
 
+const redirectSearchSchema = z
+  .string()
+  .min(1, 'Redirect cannot be empty')
+  .refine(
+    (val) => val.startsWith('/') && !val.startsWith('//'),
+    'Redirect must be a relative path',
+  );
+
 export const Route = createFileRoute('/auth')({
   component: AuthLayout,
   validateSearch: z.object({
-    redirect: z
-      .string()
-      .min(1, 'Redirect cannot be empty')
-      .refine(
-        (val) => val.startsWith('/') && !val.startsWith('//'),
-        'Redirect must be a relative path',
-      )
-      .optional(),
+    redirect: redirectSearchSchema.optional(),
+    redirectUr: redirectSearchSchema.optional(),
   }),
 });
 
 function Redirect() {
-  const { redirect: redirectSearch } = Route.useSearch();
+  const { redirect: redirectSearch, redirectUr } = Route.useSearch();
   const redirectCache = useAuthRedirect((state) => state.redirect);
-  const [redirect] = useState(redirectSearch ?? redirectCache ?? '/');
+  const [redirect] = useState(redirectSearch ?? redirectUr ?? redirectCache ?? '/');
 
   useEffect(() => {
     return () => useAuthRedirect.getState().clearRedirect();

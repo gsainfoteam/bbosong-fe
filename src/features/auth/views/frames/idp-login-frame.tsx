@@ -4,12 +4,12 @@ import { IdpLoginButton, LoginLayoutScreen, useAuth, useAuthRedirect } from '@/f
 
 export function IdpLoginFrame() {
   const { idpLogIn } = useAuth();
-  const { redirect } = useSearch({ from: '/auth' });
+  const { redirect, redirectUr } = useSearch({ from: '/auth' });
 
   // const navigate = useNavigate();
 
   const handleLogin = () => {
-    useAuthRedirect.getState().setRedirect(redirect);
+    useAuthRedirect.getState().setRedirect(redirect ?? redirectUr);
     idpLogIn();
   };
 
