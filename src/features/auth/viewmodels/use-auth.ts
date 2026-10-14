@@ -63,8 +63,9 @@ export const useAuth = ({ showToast = false }: { showToast?: boolean } = {}) => 
       // IDP 세션 복원 중이거나, idpToken은 있는데 자체 재로그인이 아직 실패로 확정되지 않았다면
       // 로그아웃 상태가 아니라 판단 보류(undefined)로 취급해 /auth 화면이 잠깐 보였다가
       // 리다이렉트되는 깜빡임을 방지한다
+      const hasLoginSettled = logInMutation.isError || logInMutation.isSuccess;
       const isResolvingSession =
-        loginInProgress || (!!idpToken && !logInMutation.isError && !logInMutation.isSuccess);
+        !hasLoginSettled && (loginInProgress || !!idpToken);
 
       return isResolvingSession ? undefined : null;
     }
@@ -91,26 +92,6 @@ export const useAuth = ({ showToast = false }: { showToast?: boolean } = {}) => 
     token,
     idpToken,
     loginInProgress,
-    logInMutation.isError,
-    logInMutation.isSuccess,
-  ]);
-
-  // IDP 인증이 완수된 시점에 토큰이 부재하면 1차 로그인 자동 시도
-  useEffect(() => {
-    if (
-      idpToken &&
-      !token &&
-      !logInMutation.isPending &&
-      !logInMutation.isError &&
-      !logInMutation.isSuccess
-    ) {
-      logIn({ body: {} });
-    }
-  }, [
-    idpToken,
-    token,
-    logIn,
-    logInMutation.isPending,
     logInMutation.isError,
     logInMutation.isSuccess,
   ]);
