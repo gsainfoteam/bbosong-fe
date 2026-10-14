@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { createFileRoute, Navigate, Outlet, useRouter } from '@tanstack/react-router';
 
 import { Loading } from '@/common/components';
-import { useAuth } from '@/features/auth';
+import { useAuth, useToken } from '@/features/auth';
 import { usePushDeviceSync } from '@/features/push-notification';
 
 export const Route = createFileRoute('/_auth-required')({
@@ -12,6 +12,7 @@ export const Route = createFileRoute('/_auth-required')({
 
 function AuthRequiredLayout() {
   const { user } = useAuth();
+  const token = useToken((state) => state.token);
   // 앱 실행 시점과 로그인 직후(계정 전환 포함)마다 푸시 디바이스를 재등록한다
   usePushDeviceSync();
   const router = useRouter();
@@ -32,7 +33,13 @@ function AuthRequiredLayout() {
     return () => clearTimeout(timer);
   }, [user]);
 
-  if (user === undefined) return <Loading />;
+  if (user === undefined) {
+    if (!token) {
+      return <Navigate to="/auth" search={{ redirect }} replace />;
+    }
+
+    return <Loading />;
+  }
 
   // 정상적으로 인증이 통과된 사용자만 Outlet 렌더링을 허용
   if (user !== null && !shouldRedirect) {

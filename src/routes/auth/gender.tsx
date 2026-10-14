@@ -2,7 +2,7 @@ import { createFileRoute, Navigate } from '@tanstack/react-router';
 
 import { useAuthContext } from 'react-oauth2-code-pkce';
 
-import { GenderSelectFrame } from '@/features/auth';
+import { GenderSelectFrame, useAuthPrompt } from '@/features/auth';
 
 export const Route = createFileRoute('/auth/gender')({
   component: GenderComponent,
@@ -10,8 +10,9 @@ export const Route = createFileRoute('/auth/gender')({
 
 function GenderComponent() {
   const { token } = useAuthContext();
+  const requiredConsents = useAuthPrompt((state) => state.requiredConsents);
 
-  if (!token) {
+  if (!token || !requiredConsents) {
     return <Navigate to="/auth" replace />;
   }
 
