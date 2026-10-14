@@ -38,15 +38,23 @@ function Redirect() {
 function AuthLayout() {
   const { user, idpToken, logIn, logInMutation } = useAuth();
   const token = useToken((state) => state.token);
+  const { redirect: redirectSearch, redirectUr } = Route.useSearch();
   const requiredConsents = useAuthPrompt((state) => state.requiredConsents);
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const attemptedIdpToken = useRef<string | null>(null);
+  const redirectTarget = redirectSearch ?? redirectUr;
   const isConsentFlowRoute =
     pathname === '/auth/consent' ||
     pathname === '/auth/gender' ||
     pathname.startsWith('/auth/terms/');
   const canResumeConsentFlow =
     isConsentFlowRoute && !token && !!idpToken && !!requiredConsents;
+
+  useEffect(() => {
+    if (redirectTarget) {
+      useAuthRedirect.getState().setRedirect(redirectTarget);
+    }
+  }, [redirectTarget]);
 
   // 최초 로그인은 auth 레이아웃에서 한 번만 시도한다. useAuth를 쓰는 하위 화면의
   // 각 mutation이 별도로 빈 body 로그인을 발생시키지 않도록 한다.
@@ -60,9 +68,7 @@ function AuthLayout() {
       !token &&
       !canResumeConsentFlow &&
       attemptedIdpToken.current !== idpToken &&
-      !logInMutation.isPending &&
-      !logInMutation.isError &&
-      !logInMutation.isSuccess
+      !logInMutation.isPending
     ) {
       attemptedIdpToken.current = idpToken;
       logIn({ body: {} });
@@ -73,8 +79,6 @@ function AuthLayout() {
     canResumeConsentFlow,
     logIn,
     logInMutation.isPending,
-    logInMutation.isError,
-    logInMutation.isSuccess,
   ]);
 
   if (user === undefined) {

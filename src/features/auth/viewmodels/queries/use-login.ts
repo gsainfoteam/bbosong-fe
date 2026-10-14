@@ -5,7 +5,7 @@ import { useAuthContext } from 'react-oauth2-code-pkce';
 import { toast } from 'sonner';
 
 import { $api } from '@/common/lib';
-import { useAuthPrompt, useToken } from '@/features/auth';
+import { useAuthPrompt, useAuthRedirect, useToken } from '@/features/auth';
 
 import { ApiPaths, type ConsentRequiredErrorDto, type GenderRequiredErrorDto } from '../../models';
 
@@ -19,6 +19,10 @@ export const useLogin = ({ showToast = false }: { showToast?: boolean } = {}) =>
       useToken.getState().saveToken(response.access_token);
       // 로그인이 최종 성공하면 더 이상 필요 없는 약관 요구 정보를 비운다
       useAuthPrompt.getState().setRequiredConsents(undefined);
+
+      const { redirect, clearRedirect } = useAuthRedirect.getState();
+      clearRedirect();
+      navigate({ to: redirect ?? '/', replace: true });
     },
     onError: async (error) => {
       const err = error as
