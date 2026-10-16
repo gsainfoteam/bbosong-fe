@@ -197,31 +197,45 @@ export async function getPushSubscription(): Promise<PushSubscription | null> {
   return registration.pushManager.getSubscription();
 }
 
-/**
- * 푸시 구독을 확보한다. 기존 구독이 있으면 재사용한다.
- *
- * TODO: VAPID 키를 교체하게 되면 기존 구독이 옛 키에 묶여 있어 발송이 조용히 실패한다.
- *       키 교체 계획이 생기면 `subscription.options.applicationServerKey`를 현재 키와 비교해
- *       다르면 `unsubscribe()` 후 재구독하는 분기를 추가할 것. (신규 구축이므로 현재는 불필요)
- */
+/** 푸시 구독을 확보한다. 기존 구독의 VAPID 키가 다르면 해제 후 현재 키로 재구독한다. */
 export async function subscribeToPush(): Promise<PushSubscription | null> {
   const registration = await getReadyRegistration();
   if (!registration) return null;
 
   const existing = await registration.pushManager.getSubscription();
-  if (existing) return existing;
-
   const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+
+  // 기존 구독은 키가 설정되지 않은 배포에서도 서버에 동기화할 수 있도록 유지한다.
+  // 키가 설정되어 있으면 구독 당시 키와 비교해 교체된 구독만 다시 만든다.
+  if (existing && !vapidPublicKey) return existing;
+
   if (!vapidPublicKey) {
     console.error('Cannot subscribe to push: VITE_VAPID_PUBLIC_KEY is not set.');
     return null;
   }
 
+  const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey);
+
+  if (existing) {
+    const existingKey = existing.options.applicationServerKey;
+    const hasSameKey =
+      existingKey !== null &&
+      areApplicationServerKeysEqual(new Uint8Array(existingKey), applicationServerKey);
+
+    if (hasSameKey) return existing;
+
+    await existing.unsubscribe();
+  }
+
   return registration.pushManager.subscribe({
     // Chrome은 이 값 없이는 구독을 거부한다
     userVisibleOnly: true,
-    applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+    applicationServerKey,
   });
+}
+
+function areApplicationServerKeysEqual(first: Uint8Array, second: Uint8Array): boolean {
+  return first.length === second.length && first.every((byte, index) => byte === second[index]);
 }
 
 /** 브라우저의 푸시 구독을 해제한다 */
