@@ -33,7 +33,7 @@ export function UsingMachineBox({
     <div
       className={cn(
         className,
-        'text-text-primary border-border flex min-h-20 flex-col items-center justify-center gap-0.5 rounded-lg border px-2',
+        'text-text-primary border-border flex min-h-20 min-w-20 shrink-0 flex-col items-center justify-center gap-0.5 rounded-lg border px-2',
       )}
       {...props}
     >
@@ -53,7 +53,7 @@ export function AddUsingMachineBox({ onAdd }: AddUsingMachineBox.Props) {
     <button
       type="button"
       aria-label={t('addMachine')}
-      className="flex min-h-20 w-full items-center justify-center"
+      className="flex min-h-20 w-20 shrink-0 items-center justify-center"
       onClick={onAdd}
     >
       <Plus size={32} strokeWidth={1.5} aria-hidden />
