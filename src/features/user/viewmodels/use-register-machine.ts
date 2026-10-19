@@ -25,9 +25,13 @@ export function useRegisterMachine(onRegistered?: () => void) {
       }
     },
     onError: (error) => {
-      const err = error as { statusCode?: number; message?: string };
-      if (err?.statusCode === 404) {
+      const err = error as { statusCode?: number; message?: string; errorCode?: string };
+      if (err?.errorCode === 'MACHINE_ALREADY_REGISTERED' || err?.statusCode === 409) {
         toast.error(t('error.alreadyUsing'));
+      } else if (err?.errorCode === 'MACHINE_NOT_RUNNING') {
+        toast.error(t('error.notRunning'));
+      } else if (err?.statusCode === 404) {
+        toast.error(t('error:notFound'));
       } else if (err?.statusCode === 401) {
         toast.error(t('error:unauthorized'));
       } else if (err?.statusCode === 403) {

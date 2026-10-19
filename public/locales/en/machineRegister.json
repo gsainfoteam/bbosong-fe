@@ -1,6 +1,7 @@
 {
   "error": {
-    "alreadyUsing": "This machine is already registered by another user."
+    "alreadyUsing": "This machine is already registered by another user.",
+    "notRunning": "This machine is not running. Start the machine and try registering again."
   },
   "message": "Registering as a machine in use.",
   "success": "Machine registered successfully."
