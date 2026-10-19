@@ -12,7 +12,8 @@ export function PushPermissionCard({
 }: PushPermissionCard.Props) {
   const { t } = useTranslation('notification');
   const { status, isRequesting, requestPermission } = usePushPermission();
-  const { canPrompt, isPrompting, promptInstall, isIOS } = useInstallPrompt();
+  const { canPrompt, isPrompting, promptInstall, showManualGuide, isIOS, isAndroid } =
+    useInstallPrompt();
 
   // 권한이 이미 허용된 상태에서는 아무것도 노출하지 않는다
   if (status === 'granted') return null;
@@ -41,7 +42,7 @@ export function PushPermissionCard({
           <p className="text-sm">{t('permission.needsInstall')}</p>
           {/* iOS Safari는 beforeinstallprompt가 없어 수동 안내만 가능하다 */}
           {isIOS && <p className="text-sm opacity-80">{t('permission.installGuideIOS')}</p>}
-          {!isIOS && canPrompt && (
+          {!isIOS && (canPrompt || isPrompting) && (
             <Button
               type="button"
               onClick={() => void promptInstall()}
@@ -53,9 +54,13 @@ export function PushPermissionCard({
               {isPrompting ? t('permission.installing') : t('permission.install')}
             </Button>
           )}
-          {/* 이미 설치했거나 브라우저가 프롬프트를 내주지 않는 경우의 폴백 안내 */}
-          {!isIOS && !canPrompt && (
-            <p className="text-sm opacity-80">{t('permission.installGuideFallback')}</p>
+          {/* 자동 설치를 사용할 수 없거나 실패하면 현재 기기에 맞는 수동 설치를 안내한다 */}
+          {!isIOS && showManualGuide && (
+            <p className="text-sm opacity-80" role="status">
+              {isAndroid
+                ? t('permission.installGuideAndroid')
+                : t('permission.installGuideFallback')}
+            </p>
           )}
         </>
       )}

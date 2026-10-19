@@ -5,6 +5,7 @@ import {
   canSubscribeOnThisPlatform,
   getNotificationPermission,
   getPushSubscription,
+  isAndroid,
   isIOS,
   isPushSupported,
   needsInstall,
@@ -23,7 +24,10 @@ export type PushPermissionStatus =
   'unsupported' | 'needs-install' | 'default' | 'granted' | 'denied';
 
 function resolveStatus(permission: NotificationPermission): PushPermissionStatus {
-  if (!isPushSupported()) return 'unsupported';
+  if (!isPushSupported()) {
+    // iOS 일반 탭에서는 푸시 API가 없어도 홈 화면에 추가하면 사용할 수 있다.
+    return isIOS() && needsInstall() ? 'needs-install' : 'unsupported';
+  }
 
   // 이미 허용된 사용자는 설치 여부와 무관하게 알림이 동작하므로 설치를 다시 요구하지 않는다.
   // (설치 후 허용해 둔 사용자가 일반 탭으로 들어왔을 때 기능이 잠기는 것을 막는다)
@@ -168,23 +172,29 @@ export function usePushPermission() {
 
 /** 앱 설치 유도. Chrome/Edge 계열은 앱 내 버튼으로, iOS Safari는 안내 문구로 처리한다 */
 export function useInstallPrompt() {
-  const [canPrompt, setCanPrompt] = useState(canPromptInstall);
+  const canPrompt = useSyncExternalStore(subscribeToInstallPromptChange, canPromptInstall);
   const [isPrompting, setIsPrompting] = useState(false);
-
-  // beforeinstallprompt는 React 마운트 전에 발화할 수 있어 main.tsx에서 미리 잡아 둔다.
-  // 여기서는 그 보관 상태의 변화만 구독한다
-  useEffect(() => subscribeToInstallPromptChange(() => setCanPrompt(canPromptInstall())), []);
+  const [needsManualInstall, setNeedsManualInstall] = useState(false);
 
   const promptInstall = useCallback(async () => {
     setIsPrompting(true);
     try {
-      await showInstallPrompt();
+      const outcome = await showInstallPrompt();
+      setNeedsManualInstall(outcome !== 'accepted');
     } catch (error) {
+      setNeedsManualInstall(true);
       console.error('앱 설치 프롬프트를 띄우지 못했습니다.', error);
     } finally {
       setIsPrompting(false);
     }
   }, []);
 
-  return { canPrompt, isPrompting, promptInstall, isIOS: isIOS() };
+  return {
+    canPrompt,
+    isPrompting,
+    promptInstall,
+    showManualGuide: !isPrompting && (needsManualInstall || !canPrompt),
+    isIOS: isIOS(),
+    isAndroid: isAndroid(),
+  };
 }

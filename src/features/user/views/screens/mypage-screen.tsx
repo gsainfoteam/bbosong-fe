@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 
 import { LanguageToggle, MyPageHeader } from '@/common/components';
 import { cn } from '@/common/utils';
-import type { Gender } from '@/features/auth';
+import { type Gender } from '@/features/auth';
 
 export function MypageScreen({
   user,
@@ -41,7 +41,15 @@ export function MypageScreen({
           <LanguageToggle />
         </div>
 
-        <div className="mt-auto">
+        <div className="mt-auto flex flex-col gap-3">
+          <a
+            href={`https://cs.gistory.me/?service=bbosong&email=${encodeURIComponent(user.email)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-bg-surface text-text-primary w-full rounded-md py-3.5 text-center font-medium"
+          >
+            {t('feedback')}
+          </a>
           <button
             type="button"
             onClick={onLogout}

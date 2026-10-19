@@ -45,6 +45,11 @@ export function isIOS(): boolean {
   );
 }
 
+/** Android 여부 */
+export function isAndroid(): boolean {
+  return typeof navigator !== 'undefined' && /Android/i.test(navigator.userAgent);
+}
+
 /** 홈 화면에 설치된 PWA로 실행 중인지 여부 */
 export function isStandalone(): boolean {
   if (typeof window === 'undefined') return false;
@@ -116,14 +121,15 @@ export function canPromptInstall(): boolean {
 
 /** 보관해 둔 설치 프롬프트를 띄운다 */
 export async function showInstallPrompt(): Promise<'accepted' | 'dismissed' | 'unavailable'> {
-  if (!deferredInstallPrompt) return 'unavailable';
+  const installPrompt = deferredInstallPrompt;
+  if (!installPrompt) return 'unavailable';
 
-  await deferredInstallPrompt.prompt();
-  const { outcome } = await deferredInstallPrompt.userChoice;
-
-  // 프롬프트는 1회용이라 사용 후 반드시 버려야 한다
+  // 프롬프트는 1회용이다. 오류나 중복 호출에서도 재사용하지 않도록 먼저 비운다.
   deferredInstallPrompt = null;
   emitInstallPromptChange();
+
+  await installPrompt.prompt();
+  const { outcome } = await installPrompt.userChoice;
 
   return outcome;
 }
