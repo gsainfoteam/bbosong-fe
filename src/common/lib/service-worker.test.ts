@@ -5,8 +5,11 @@ import {
   canPromptInstall,
   initInstallPromptCapture,
   isAndroid,
+  isAppInstalled,
   isIOS,
+  needsInstall,
   showInstallPrompt,
+  subscribeToInstallPromptChange,
 } from './service-worker';
 
 function capturePrompt(
@@ -23,6 +26,23 @@ afterEach(() => {
   window.dispatchEvent(new Event('appinstalled'));
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
+});
+
+describe('completed installation', () => {
+  it('recognizes installation in a regular tab and notifies subscribers', () => {
+    vi.stubGlobal('matchMedia', () => ({ matches: false }));
+    const listener = vi.fn();
+    const unsubscribe = subscribeToInstallPromptChange(listener);
+
+    window.dispatchEvent(new Event('appinstalled'));
+
+    expect(isAppInstalled()).toBe(true);
+    expect(needsInstall()).toBe(false);
+    expect(listener).toHaveBeenCalledTimes(1);
+    unsubscribe();
+    window.dispatchEvent(new Event('appinstalled'));
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('PWA installation', () => {

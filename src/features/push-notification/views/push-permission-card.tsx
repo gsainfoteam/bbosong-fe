@@ -8,6 +8,7 @@ import { useInstallPrompt, usePushPermission } from '../viewmodels';
 export function PushPermissionCard({
   className,
   presentation = 'card',
+  afterInstall = false,
   ...props
 }: PushPermissionCard.Props) {
   const { t } = useTranslation('notification');
@@ -68,7 +69,7 @@ export function PushPermissionCard({
       {status === 'default' && (
         <>
           <p className="text-sm">
-            {presentation === 'sheet'
+            {presentation === 'sheet' && !afterInstall
               ? t('permission.completionDescription')
               : t('permission.description')}
           </p>
@@ -91,5 +92,6 @@ export namespace PushPermissionCard {
   export type Props = {
     className?: string;
     presentation?: 'card' | 'sheet';
+    afterInstall?: boolean;
   } & React.HTMLAttributes<HTMLElement>;
 }

@@ -6,6 +6,7 @@ import {
   getNotificationPermission,
   getPushSubscription,
   isAndroid,
+  isAppInstalled,
   isIOS,
   isPushSupported,
   needsInstall,
@@ -114,6 +115,7 @@ function emitPermissionChange() {
 
 function subscribePermission(listener: () => void): () => void {
   permissionListeners.add(listener);
+  const unsubscribeInstall = subscribeToInstallPromptChange(listener);
 
   // 브라우저 설정에서 권한을 되돌린 경우를 따라잡기 위해 포커스 복귀 시 재조회
   const handleFocus = () => listener();
@@ -131,6 +133,7 @@ function subscribePermission(listener: () => void): () => void {
 
   return () => {
     permissionListeners.delete(listener);
+    unsubscribeInstall();
     window.removeEventListener('focus', handleFocus);
     permissionStatus?.removeEventListener('change', listener);
   };
@@ -138,13 +141,14 @@ function subscribePermission(listener: () => void): () => void {
 
 // 문자열 원시값이라 매번 읽어도 참조가 안정적이다
 const getPermissionSnapshot = () => getNotificationPermission();
+const getStatusSnapshot = () => resolveStatus(getNotificationPermission());
 
 /** 알림 권한 상태와 권한 요청 액션 */
 export function usePushPermission() {
   const permission = useSyncExternalStore(subscribePermission, getPermissionSnapshot);
   const [isRequesting, setIsRequesting] = useState(false);
 
-  const status = resolveStatus(permission);
+  const status = useSyncExternalStore(subscribePermission, getStatusSnapshot);
 
   /** 사용자가 명시적으로 버튼을 누른 시점에만 호출할 것 */
   const requestPermission = useCallback(async () => {
@@ -168,6 +172,18 @@ export function usePushPermission() {
   }, []);
 
   return { status, permission, isRequesting, requestPermission };
+}
+
+/** 설치 직후 또는 설치된 앱 실행 시 알림 설정을 안내한다. 닫으면 이번 마운트에서는 재노출하지 않는다. */
+export function usePostInstallPermission() {
+  const installed = useSyncExternalStore(subscribeToInstallPromptChange, isAppInstalled);
+  const { status } = usePushPermission();
+  const [dismissed, setDismissed] = useState(false);
+
+  return {
+    isOpen: installed && !dismissed && status !== 'granted' && status !== 'unsupported',
+    dismiss: useCallback(() => setDismissed(true), []),
+  };
 }
 
 /** 앱 설치 유도. Chrome/Edge 계열은 앱 내 버튼으로, iOS Safari는 안내 문구로 처리한다 */
