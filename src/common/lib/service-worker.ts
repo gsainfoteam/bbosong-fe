@@ -68,7 +68,7 @@ export function isStandalone(): boolean {
  * 수신 안정성을 위해 모든 플랫폼에서 설치를 선행 조건으로 강제한다. (제품 정책)
  */
 export function needsInstall(): boolean {
-  return !isStandalone();
+  return !isAppInstalled();
 }
 
 /** 이 플랫폼에서 지금 푸시 구독이 기술적으로 가능한지 여부 (정책이 아닌 브라우저 제약) */
@@ -86,7 +86,13 @@ type BeforeInstallPromptEvent = Event & {
 };
 
 let deferredInstallPrompt: BeforeInstallPromptEvent | null = null;
+let installedInThisSession = false;
 const installPromptListeners = new Set<() => void>();
+
+/** 설치 완료 이벤트는 일반 탭에서도 발생하며 display-mode는 그대로일 수 있다. */
+export function isAppInstalled(): boolean {
+  return installedInThisSession || isStandalone();
+}
 
 function emitInstallPromptChange() {
   installPromptListeners.forEach((listener) => listener());
@@ -109,6 +115,7 @@ export function initInstallPromptCapture(): void {
   });
 
   window.addEventListener('appinstalled', () => {
+    installedInThisSession = true;
     deferredInstallPrompt = null;
     emitInstallPromptChange();
   });

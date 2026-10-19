@@ -8,6 +8,7 @@ export {
   unregisterPushDeviceFromServer,
   useInstallPrompt,
   useLaundryRoomAlert,
+  usePostInstallPermission,
   usePushDeviceSync,
   usePushPermission,
   type PushPermissionStatus,
