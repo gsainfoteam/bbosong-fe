@@ -78,6 +78,14 @@ bun run build-storybook
 
 ## 백엔드 API
 
+관리자 콘솔은 `/admin`으로 직접 접근합니다. 별도 진입 버튼은 없으며, 로그인 세션을
+복원한 뒤 `/auth/me`의 역할이 `ADMIN`인지 확인합니다. 미로그인 상태이거나 관리자
+권한이 없으면 기존 404 페이지를 표시합니다. 하위 관리 페이지에도 동일하게 적용됩니다.
+
+관리자 메뉴는 운영 현황, 기기 관리(등록·일괄 등록·수정·삭제·Matter 장치 연결),
+등록 링크 관리, 전력 기록, 사용자 권한으로 구성됩니다. 사용자 목록 조회 API가
+없으므로 권한 변경에는 대상 사용자 UUID가 필요합니다.
+
 이 프로젝트는 [openapi-typescript](https://openapi-ts.dev/), [openapi-fetch](https://openapi-ts.dev/openapi-fetch/), [openapi-react-query](https://openapi-ts.dev/openapi-react-query/)를 사용하여 백엔드 API를 type-safe하게 사용합니다.
 
 ### API 스키마 생성
