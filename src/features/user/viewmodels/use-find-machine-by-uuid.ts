@@ -17,7 +17,12 @@ export function useFindMachineByUuid(uuid: string) {
     { params: { path: { uuid } } },
     {
       retry(count, queryError) {
-        if (queryError?.statusCode === 404 || queryError?.statusCode === 400) return false;
+        if (
+          queryError?.statusCode === 404 ||
+          queryError?.statusCode === 400 ||
+          queryError?.statusCode === 403
+        )
+          return false;
         return count < 3;
       },
     },
@@ -28,7 +33,11 @@ export function useFindMachineByUuid(uuid: string) {
     if (error?.statusCode === 401) {
       toast.error(t('unauthorized'));
     } else if (error?.statusCode === 403) {
-      toast.error(t('forbidden'));
+      toast.error(
+        error?.message === 'Machine gender does not match user gender.'
+          ? t('genderMismatch')
+          : t('forbidden'),
+      );
     } else if (error?.statusCode === 404) {
       toast.error(t('notFound'));
     } else if (error?.statusCode === 400) {

@@ -25,13 +25,17 @@ export function useRegisterMachine(onRegistered?: () => void) {
       }
     },
     onError: (error) => {
-      const err = error as { statusCode?: number };
+      const err = error as { statusCode?: number; message?: string };
       if (err?.statusCode === 404) {
         toast.error(t('error.alreadyUsing'));
       } else if (err?.statusCode === 401) {
         toast.error(t('error:unauthorized'));
       } else if (err?.statusCode === 403) {
-        toast.error(t('error:forbidden'));
+        toast.error(
+          err?.message === 'Machine gender does not match user gender.'
+            ? t('error:genderMismatch')
+            : t('error:forbidden'),
+        );
       } else if (err?.statusCode === 500) {
         toast.error(t('error:internalServerError'));
       } else {
