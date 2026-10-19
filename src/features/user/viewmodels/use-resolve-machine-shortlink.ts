@@ -40,7 +40,11 @@ export function useResolveMachineShortlink() {
             toast.error(t('unauthorized'));
             break;
           case 403:
-            toast.error(t('forbidden'));
+            toast.error(
+              error?.message === 'Machine gender does not match user gender.'
+                ? t('genderMismatch')
+                : t('forbidden'),
+            );
             break;
           case 404:
             toast.error(t('notFound'));

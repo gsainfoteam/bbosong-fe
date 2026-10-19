@@ -1,6 +1,7 @@
 {
   "badRequest": "Bad request.",
   "forbidden": "You do not have permission.",
+  "genderMismatch": "You cannot register a machine in a laundry room for a different gender.",
   "generic": "An error occurred.",
   "internalServerError": "Internal server error.",
   "loginFailed": "Login failed.",

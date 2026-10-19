@@ -1,6 +1,7 @@
 {
   "badRequest": "잘못된 요청입니다.",
   "forbidden": "권한이 없습니다.",
+  "genderMismatch": "본인 성별과 다른 세탁실의 기기는 등록할 수 없습니다.",
   "generic": "오류가 발생했습니다.",
   "internalServerError": "서버 오류가 발생했습니다.",
   "loginFailed": "로그인에 실패했습니다.",
