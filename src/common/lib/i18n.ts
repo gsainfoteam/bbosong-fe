@@ -28,6 +28,7 @@ await i18n
       'nav',
       'mypage',
       'notification',
+      'admin',
     ],
     nsSeparator: ':',
     keySeparator: '.',
