@@ -2,26 +2,38 @@ import { type FormEvent, useState } from 'react';
 
 import { useTranslation } from 'react-i18next';
 
-import { formatMachineCode, useAdminMachines, useAdminPower } from '../../viewmodels';
-import { AdminPage, PowerRecordResults } from '../components';
+import {
+  formatMachineCode,
+  shiftPowerQueryStart,
+  toDatetimeLocalValue,
+  useAdminMachines,
+  useAdminPower,
+} from '../../viewmodels';
+import { AdminPage, PowerLookbackButtons, PowerRecordResults } from '../components';
 import { buttonClass, inputClass, panelClass } from '../styles';
 
 export function AdminPowerScreen() {
   const { t } = useTranslation('admin');
   const machines = useAdminMachines();
+  const [startedAtInput, setStartedAtInput] = useState('');
   const [selection, setSelection] = useState<{ uuid: string; startedAt?: string }>({ uuid: '' });
   const power = useAdminPower(selection.uuid, selection.startedAt);
   function search(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    const startedAt = String(form.get('startedAt') ?? '');
+    const parsed = startedAtInput ? Date.parse(startedAtInput) : Number.NaN;
     const next = {
-      uuid: String(form.get('uuid')),
-      startedAt: startedAt ? new Date(startedAt).toISOString() : undefined,
+      uuid: String(new FormData(event.currentTarget).get('uuid')),
+      startedAt: Number.isFinite(parsed) ? new Date(parsed).toISOString() : undefined,
     };
     if (next.uuid === selection.uuid && next.startedAt === selection.startedAt)
       void power.refetch();
     else setSelection(next);
+  }
+  function lookback(minutes: 60 | 30 | 10) {
+    if (!selection.uuid) return;
+    const startedAt = shiftPowerQueryStart(selection.startedAt, minutes);
+    setStartedAtInput(toDatetimeLocalValue(startedAt));
+    setSelection((current) => ({ ...current, startedAt }));
   }
   return (
     <AdminPage
@@ -54,7 +66,13 @@ export function AdminPowerScreen() {
         </label>
         <label className="block space-y-2 text-sm">
           <span>{t('startedAt')}</span>
-          <input name="startedAt" type="datetime-local" className={inputClass} />
+          <input
+            name="startedAt"
+            type="datetime-local"
+            className={inputClass}
+            value={startedAtInput}
+            onChange={(event) => setStartedAtInput(event.target.value)}
+          />
         </label>
         <button
           type="submit"
@@ -66,6 +84,12 @@ export function AdminPowerScreen() {
         <p className="text-text-secondary text-sm leading-6 md:col-span-3 dark:text-slate-400">
           {t('powerRangeHint')}
         </p>
+        <div className="md:col-span-3">
+          <PowerLookbackButtons
+            disabled={!selection.uuid || power.isFetching}
+            onLookback={lookback}
+          />
+        </div>
       </form>
       <PowerRecordResults
         uuid={selection.uuid}
