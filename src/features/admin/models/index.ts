@@ -4,14 +4,14 @@ import {
   PathsMachinePostParametersQueryLocation,
   PathsMachinePostParametersQueryType,
   PathsMachineSummaryGetParametersQueryGender,
-  UserResDtoRole,
+  GetUsersResDtoRole,
 } from '@/@types/api-schema';
 
 export { ApiPaths } from '@/@types/api-schema';
 export const Gender = PathsMachineSummaryGetParametersQueryGender;
 export const Location = PathsMachinePostParametersQueryLocation;
 export const MachineType = PathsMachinePostParametersQueryType;
-export const UserRole = UserResDtoRole;
+export const UserRole = GetUsersResDtoRole;
 // Swagger represents these nullable scalar fields as objects. Normalize them at the model boundary.
 export type AdminMachine = Omit<
   components['schemas']['GetMachineResDto'],
@@ -40,3 +40,4 @@ export type CreateMultipleMachinesInput =
   operations['MachineController_createMultipleMachines']['parameters']['query'];
 export type UpdateMachineInput = components['schemas']['UpdateMachineReqDto'];
 export type UpdateRoleInput = components['schemas']['UpdateRoleReqDto'];
+export * from './users';

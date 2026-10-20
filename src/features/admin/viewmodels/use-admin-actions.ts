@@ -61,7 +61,10 @@ export function useAdminActions() {
   );
   const updateRole = $api.useMutation('post', ApiPaths.AuthController_updateRole, {
     ...options,
-    onSuccess: () => toast.success(t('saved')),
+    onSuccess: async () => {
+      toast.success(t('saved'));
+      await client.invalidateQueries({ queryKey: ['admin-users'] });
+    },
   });
   const isPending = [
     create,
