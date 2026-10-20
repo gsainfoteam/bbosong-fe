@@ -5,12 +5,14 @@ import {
   PathsMachinePostParametersQueryType,
   PathsMachineSummaryGetParametersQueryGender,
   GetUsersResDtoRole,
+  GetMachineResDtoStatus,
 } from '@/@types/api-schema';
 
 export { ApiPaths } from '@/@types/api-schema';
 export const Gender = PathsMachineSummaryGetParametersQueryGender;
 export const Location = PathsMachinePostParametersQueryLocation;
 export const MachineType = PathsMachinePostParametersQueryType;
+export const MachineStatus = GetMachineResDtoStatus;
 export const UserRole = GetUsersResDtoRole;
 // Swagger represents these nullable scalar fields as objects. Normalize them at the model boundary.
 export type AdminMachine = Omit<

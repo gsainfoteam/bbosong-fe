@@ -2,6 +2,7 @@ export {
   Gender,
   Location,
   MachineType,
+  MachineStatus,
   UserRole,
   type AdminMachine,
   type AdminUser,
