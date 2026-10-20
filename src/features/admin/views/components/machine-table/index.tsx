@@ -2,7 +2,7 @@ import { type ReactNode } from 'react';
 
 import { useTranslation } from 'react-i18next';
 
-import { type AdminMachine } from '../../../viewmodels';
+import { type AdminMachine, formatMachineCode } from '../../../viewmodels';
 
 export function MachineTable({ machines, renderActions, showLinks = false }: MachineTable.Props) {
   const { t } = useTranslation('admin');
@@ -31,8 +31,11 @@ export function MachineTable({ machines, renderActions, showLinks = false }: Mac
           {machines.map((machine) => (
             <tr key={machine.uuid}>
               <td className="px-5 py-4">
-                <div className="font-medium whitespace-nowrap">
-                  {t(machine.type)} #{machine.index}
+                <div
+                  className="font-mono text-sm font-medium tracking-wide whitespace-nowrap"
+                  title={`${t('building', { location: machine.location })} · ${t(machine.gender)} · ${t(machine.type)} #${machine.index}`}
+                >
+                  {formatMachineCode(machine)}
                 </div>
                 <div className="text-text-secondary mt-1 font-mono text-xs dark:text-slate-400">
                   {machine.uuid}

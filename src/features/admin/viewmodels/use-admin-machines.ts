@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { $api } from '@/common/lib';
 
 import { ApiPaths, type AdminMachine, normalizeAdminMachine } from '../models';
+import { formatMachineCode } from './machine-code';
 
 export function useAdminMachines() {
   const query = $api.useQuery('get', ApiPaths.MachineController_getMachines, undefined, {
@@ -34,7 +35,7 @@ export function useAdminMachines() {
           (!gender || machine.gender === gender) &&
           (!type || machine.type === type) &&
           (!search ||
-            `${machine.uuid} ${machine.index} ${machine.shortCode ?? ''}`
+            `${formatMachineCode(machine)} ${machine.uuid} ${machine.index} ${machine.shortCode ?? ''}`
               .toLowerCase()
               .includes(search.trim().toLowerCase())),
       ),
