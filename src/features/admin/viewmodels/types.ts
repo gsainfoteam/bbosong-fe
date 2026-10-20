@@ -5,4 +5,5 @@ export {
   UserRole,
   type AdminMachine,
   type AdminUser,
+  type AdminUserWithSubscriptions,
 } from '../models';
