@@ -18,7 +18,7 @@ export const Default: Story = {
         type: MachineType.WASHER,
         location: Location.A,
         gender: Gender.MALE,
-        index: 1,
+        index: 2,
         isAvailable: true,
         status: 'IDLE' as MachineTable.Props['machines'][number]['status'],
         posX: null,

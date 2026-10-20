@@ -3,7 +3,7 @@ import { type ReactNode, useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-export function AdminDialog({ title, onClose, children, isPending }: AdminDialog.Props) {
+export function AdminDialog({ title, onClose, children, isPending, wide }: AdminDialog.Props) {
   const ref = useRef<HTMLDialogElement>(null);
   const { t } = useTranslation('admin');
   useEffect(() => {
@@ -19,7 +19,7 @@ export function AdminDialog({ title, onClose, children, isPending }: AdminDialog
         event.preventDefault();
         if (!isPending) onClose();
       }}
-      className="border-border text-text-primary fixed inset-0 m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto rounded-2xl border bg-white p-6 shadow-xl backdrop:bg-slate-950/40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+      className={`border-border text-text-primary fixed inset-0 m-auto max-h-[90dvh] w-[calc(100%-2rem)] ${wide ? 'max-w-4xl' : 'max-w-lg'} overflow-y-auto rounded-2xl border bg-white p-6 shadow-xl backdrop:bg-slate-950/40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100`}
     >
       <div className="mb-5 flex items-center justify-between gap-4">
         <h2 id="admin-dialog-title" className="font-semibold">
@@ -45,5 +45,6 @@ export namespace AdminDialog {
     onClose: () => void;
     children: ReactNode;
     isPending?: boolean;
+    wide?: boolean;
   };
 }

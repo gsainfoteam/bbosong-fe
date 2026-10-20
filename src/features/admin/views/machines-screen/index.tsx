@@ -11,11 +11,19 @@ import {
   MachineType,
   createMachineSchema,
   createMultipleMachinesSchema,
+  formatMachineCode,
   updateMachineSchema,
   useAdminActions,
   useAdminMachines,
+  useAdminPower,
 } from '../../viewmodels';
-import { AdminDialog, AdminPage, MachineFilters, MachineTable } from '../components';
+import {
+  AdminDialog,
+  AdminPage,
+  MachineFilters,
+  MachineTable,
+  PowerRecordResults,
+} from '../components';
 import { buttonClass, inputClass, secondaryButtonClass } from '../styles';
 
 export function AdminMachinesScreen() {
@@ -28,6 +36,9 @@ export function AdminMachinesScreen() {
     machine: AdminMachine;
     action: 'delete' | 'commission';
   } | null>(null);
+  const [powerTarget, setPowerTarget] = useState<AdminMachine | null>(null);
+  const [startedAt, setStartedAt] = useState<string | undefined>();
+  const power = useAdminPower(powerTarget?.uuid ?? '', startedAt);
 
   async function create(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -80,6 +91,17 @@ export function AdminMachinesScreen() {
       /* The mutation reports the API error. */
     }
   }
+  function searchPower(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const value = String(new FormData(event.currentTarget).get('startedAt') ?? '');
+    const next = value ? new Date(value).toISOString() : undefined;
+    if (next === startedAt) void power.refetch();
+    else setStartedAt(next);
+  }
+  function closePower() {
+    setPowerTarget(null);
+    setStartedAt(undefined);
+  }
   async function confirmAction() {
     if (!confirm) return;
     try {
@@ -129,6 +151,16 @@ export function AdminMachinesScreen() {
         machines={query.filtered}
         renderActions={(machine) => (
           <>
+            <button
+              type="button"
+              className={secondaryButtonClass}
+              onClick={() => {
+                setStartedAt(undefined);
+                setPowerTarget(machine);
+              }}
+            >
+              {t('power')}
+            </button>
             <button
               type="button"
               className={secondaryButtonClass}
@@ -266,7 +298,7 @@ export function AdminMachinesScreen() {
       )}
       {editing && (
         <AdminDialog
-          title={`${t('editMachine')} · ${t(editing.type)} #${editing.index}`}
+          title={`${t('editMachine')} · ${formatMachineCode(editing)}`}
           onClose={() => setEditing(null)}
           isPending={actions.isPending}
         >
@@ -333,6 +365,7 @@ export function AdminMachinesScreen() {
           isPending={actions.isPending}
         >
           <p className="text-sm leading-6">
+            {formatMachineCode(confirm.machine)} ·{' '}
             {t('building', { location: confirm.machine.location })} · {t(confirm.machine.gender)} ·{' '}
             {t(confirm.machine.type)} #{confirm.machine.index}
           </p>
@@ -356,6 +389,37 @@ export function AdminMachinesScreen() {
             >
               {actions.isPending ? t('saving') : t('confirm')}
             </button>
+          </div>
+        </AdminDialog>
+      )}
+      {powerTarget && (
+        <AdminDialog
+          wide
+          title={`${t('power')} · ${formatMachineCode(powerTarget)}`}
+          onClose={closePower}
+        >
+          <form
+            className="mb-4 grid items-end gap-4 sm:grid-cols-[1fr_auto]"
+            onSubmit={searchPower}
+          >
+            <label className="block space-y-2 text-sm">
+              <span>{t('startedAt')}</span>
+              <input name="startedAt" type="datetime-local" className={inputClass} />
+            </label>
+            <button type="submit" className={buttonClass} disabled={power.isFetching}>
+              {power.isFetching ? t('loading') : t('searchRecords')}
+            </button>
+            <p className="text-text-secondary text-sm leading-6 sm:col-span-2 dark:text-slate-400">
+              {t('powerRangeHint')}
+            </p>
+          </form>
+          <div className="space-y-4">
+            <PowerRecordResults
+              uuid={powerTarget.uuid}
+              records={power.data ?? []}
+              isLoading={power.isLoading}
+              isError={power.isError}
+            />
           </div>
         </AdminDialog>
       )}
