@@ -12,6 +12,8 @@ import {
   createMachineSchema,
   createMultipleMachinesSchema,
   formatMachineCode,
+  shiftPowerQueryStart,
+  toDatetimeLocalValue,
   updateMachineSchema,
   useAdminActions,
   useAdminMachines,
@@ -21,7 +23,9 @@ import {
   AdminDialog,
   AdminPage,
   MachineFilters,
+  MachineStatusBadge,
   MachineTable,
+  PowerLookbackButtons,
   PowerRecordResults,
 } from '../components';
 import { buttonClass, inputClass, secondaryButtonClass } from '../styles';
@@ -38,7 +42,10 @@ export function AdminMachinesScreen() {
   } | null>(null);
   const [powerTarget, setPowerTarget] = useState<AdminMachine | null>(null);
   const [startedAt, setStartedAt] = useState<string | undefined>();
+  const [startedAtInput, setStartedAtInput] = useState('');
   const power = useAdminPower(powerTarget?.uuid ?? '', startedAt);
+  const powerMachine =
+    query.machines.find((machine) => machine.uuid === powerTarget?.uuid) ?? powerTarget;
 
   async function create(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -93,14 +100,20 @@ export function AdminMachinesScreen() {
   }
   function searchPower(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const value = String(new FormData(event.currentTarget).get('startedAt') ?? '');
-    const next = value ? new Date(value).toISOString() : undefined;
+    const parsed = startedAtInput ? Date.parse(startedAtInput) : Number.NaN;
+    const next = Number.isFinite(parsed) ? new Date(parsed).toISOString() : undefined;
     if (next === startedAt) void power.refetch();
     else setStartedAt(next);
+  }
+  function lookback(minutes: 60 | 30 | 10) {
+    const next = shiftPowerQueryStart(startedAt, minutes);
+    setStartedAtInput(toDatetimeLocalValue(next));
+    setStartedAt(next);
   }
   function closePower() {
     setPowerTarget(null);
     setStartedAt(undefined);
+    setStartedAtInput('');
   }
   async function confirmAction() {
     if (!confirm) return;
@@ -392,19 +405,32 @@ export function AdminMachinesScreen() {
           </div>
         </AdminDialog>
       )}
-      {powerTarget && (
+      {powerMachine && (
         <AdminDialog
           wide
-          title={`${t('power')} · ${formatMachineCode(powerTarget)}`}
+          title={`${t('power')} · ${formatMachineCode(powerMachine)}`}
           onClose={closePower}
         >
+          <div className="mb-4 flex items-center gap-3">
+            <span className="text-text-secondary text-sm dark:text-slate-400">{t('status')}</span>
+            <MachineStatusBadge
+              isAvailable={powerMachine.isAvailable}
+              status={powerMachine.status}
+            />
+          </div>
           <form
             className="mb-4 grid items-end gap-4 sm:grid-cols-[1fr_auto]"
             onSubmit={searchPower}
           >
             <label className="block space-y-2 text-sm">
               <span>{t('startedAt')}</span>
-              <input name="startedAt" type="datetime-local" className={inputClass} />
+              <input
+                name="startedAt"
+                type="datetime-local"
+                className={inputClass}
+                value={startedAtInput}
+                onChange={(event) => setStartedAtInput(event.target.value)}
+              />
             </label>
             <button type="submit" className={buttonClass} disabled={power.isFetching}>
               {power.isFetching ? t('loading') : t('searchRecords')}
@@ -412,10 +438,13 @@ export function AdminMachinesScreen() {
             <p className="text-text-secondary text-sm leading-6 sm:col-span-2 dark:text-slate-400">
               {t('powerRangeHint')}
             </p>
+            <div className="sm:col-span-2">
+              <PowerLookbackButtons disabled={power.isFetching} onLookback={lookback} />
+            </div>
           </form>
           <div className="space-y-4">
             <PowerRecordResults
-              uuid={powerTarget.uuid}
+              uuid={powerMachine.uuid}
               records={power.data ?? []}
               isLoading={power.isLoading}
               isError={power.isError}
