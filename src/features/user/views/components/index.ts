@@ -9,3 +9,4 @@ export * from './select-building/index';
 export * from './using-machine-box/index';
 export * from './using-machine-list/index';
 export * from './welcome-message/index';
+export * from './machine-completion-dialog/index';

@@ -10,8 +10,9 @@ export function MachineRegisterScreen({
   machine,
   location,
   onRegister,
+  isPending = false,
 }: MachineRegisterScreen.Props) {
-  const { i18n, t } = useTranslation('common');
+  const { i18n, t } = useTranslation(['common', 'machineRegister']);
   const navigate = useNavigate();
 
   return (
@@ -24,8 +25,12 @@ export function MachineRegisterScreen({
       <div className="flex h-1/2 w-full flex-col items-center justify-between px-10 py-15">
         <MachineRegisterMessage lang={i18n.language} machine={machine} location={location} />
         <div className="flex w-full flex-row items-center justify-between gap-2 p-5">
-          <Button onClick={() => navigate({ to: '/' })}>{t('goBack')}</Button>
-          <Button onClick={onRegister}>{t('yes')}</Button>
+          <Button disabled={isPending} onClick={() => navigate({ to: '/' })}>
+            {t('goBack')}
+          </Button>
+          <Button onClick={onRegister} disabled={isPending} aria-busy={isPending}>
+            {isPending ? t('machineRegister:registering') : t('yes')}
+          </Button>
         </div>
       </div>
     </div>
@@ -37,5 +42,6 @@ export namespace MachineRegisterScreen {
     machine: { type: 'washer' | 'dryer'; id: number };
     location: 'a' | 'b';
     onRegister: () => void;
+    isPending?: boolean;
   };
 }
