@@ -31,7 +31,9 @@ export function AdminPowerScreen() {
   }
   function lookback(minutes: 60 | 30 | 10) {
     if (!selection.uuid) return;
-    const startedAt = shiftPowerQueryStart(selection.startedAt, minutes);
+    const parsed = startedAtInput ? Date.parse(startedAtInput) : Number.NaN;
+    const base = Number.isFinite(parsed) ? new Date(parsed).toISOString() : selection.startedAt;
+    const startedAt = shiftPowerQueryStart(base, minutes);
     setStartedAtInput(toDatetimeLocalValue(startedAt));
     setSelection((current) => ({ ...current, startedAt }));
   }
