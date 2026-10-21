@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/common/components';
 import { PushPermissionCard, usePushPermission } from '@/features/push-notification';
-import { MachineRegisterScreen } from '@/features/user';
+import { MachineCompletionDialog, MachineRegisterScreen } from '@/features/user';
 import { useFindMachineByUuid, useRegisterMachine } from '@/features/user/viewmodels';
 
 export function MachineRegisterFrame() {
@@ -20,7 +20,13 @@ export function MachineRegisterFrame() {
   });
 
   const { machine, isNotFound } = useFindMachineByUuid(machineUuid);
-  const { mutate: registerMachine } = useRegisterMachine(() => {
+  const {
+    mutate: registerMachine,
+    isPending,
+    confirmation,
+    confirmCompletion,
+    cancelConfirmation,
+  } = useRegisterMachine(() => {
     if (status === 'granted') {
       void navigate({ to: '/' });
     } else {
@@ -59,7 +65,19 @@ export function MachineRegisterFrame() {
 
   return (
     <>
-      <MachineRegisterScreen machine={machineData} location={location} onRegister={register} />
+      <MachineRegisterScreen
+        machine={machineData}
+        location={location}
+        onRegister={register}
+        isPending={isPending}
+      />
+      {confirmation && (
+        <MachineCompletionDialog
+          isPending={isPending}
+          onConfirm={confirmCompletion}
+          onClose={cancelConfirmation}
+        />
+      )}
       <dialog
         ref={dialogRef}
         aria-label={t('permission.completionTitle')}
