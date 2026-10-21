@@ -77,7 +77,12 @@ export function useRegisterMachine(onRegistered?: () => void) {
   const registration = $api.useMutation('post', ApiPaths.MachineController_registerMachineUsage, {
     onSuccess,
     onError: (error, variables) => {
-      if ('errorCode' in error && error.errorCode === 'MACHINE_COMPLETION_CONFIRMATION_REQUIRED') {
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'errorCode' in error &&
+        error.errorCode === 'MACHINE_COMPLETION_CONFIRMATION_REQUIRED'
+      ) {
         if ('usageUuid' in error && error.usageUuid) {
           setConfirmation({ uuid: variables.params.path.uuid, usageUuid: error.usageUuid });
         } else {

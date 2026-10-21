@@ -26,6 +26,12 @@ vi.mock('@/common/lib', async () => {
     },
   };
 });
+vi.mock('../models', () => ({
+  ApiPaths: {
+    MachineController_registerMachineUsage: '/machine/{uuid}/register',
+    MachineController_confirmMachineCompletion: '/machine/{uuid}/register/confirm-completion',
+  },
+}));
 vi.mock('@tanstack/react-router', () => ({ useNavigate: () => mocks.navigate }));
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
 vi.mock('sonner', () => ({ toast: { error: mocks.error, success: mocks.success } }));
@@ -71,6 +77,10 @@ describe('machine registration', () => {
       'error:genderMismatch',
     ],
     [{ statusCode: 500 }, 'error:internalServerError'],
+    ['Bad Gateway', 'error:generic'],
+    ['', 'error:generic'],
+    [null, 'error:generic'],
+    [42, 'error:generic'],
     [new Error('Network error'), 'error:generic'],
     [{ ...confirmationError, usageUuid: undefined }, 'error:generic'],
   ])('shows the appropriate message for %j', async (error, message) => {
