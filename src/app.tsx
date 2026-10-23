@@ -4,6 +4,9 @@ import { RouterProvider } from '@tanstack/react-router';
 import { AuthProvider, type TAuthConfig } from 'react-oauth2-code-pkce';
 import { Toaster } from 'sonner';
 
+import { Loading } from '@/common/components';
+import { useRestoreSession, useToken } from '@/features/auth';
+
 import { queryClient, router } from './router';
 
 const getRequiredEnv = (key: string): string => {
@@ -22,15 +25,28 @@ const authConfig: TAuthConfig = {
   scope: ['email', 'student_id', 'profile'].join(' '),
   autoLogin: false,
   decodeToken: false,
+  onRefreshTokenExpire: ({ logIn }) => {
+    // 백엔드 세션이 유효하면 만료된 IDP 세션 때문에 다시 로그인하지 않는다.
+    if (!useToken.getState().token) logIn();
+  },
 };
 
 export function App() {
   return (
+    <QueryClientProvider client={queryClient}>
+      <Toaster />
+      <SessionRouter />
+    </QueryClientProvider>
+  );
+}
+
+function SessionRouter() {
+  const { isRestoring } = useRestoreSession();
+  if (isRestoring) return <Loading />;
+
+  return (
     <AuthProvider authConfig={authConfig}>
-      <QueryClientProvider client={queryClient}>
-        <Toaster />
-        <RouterProvider router={router} />
-      </QueryClientProvider>
+      <RouterProvider router={router} />
     </AuthProvider>
   );
 }
