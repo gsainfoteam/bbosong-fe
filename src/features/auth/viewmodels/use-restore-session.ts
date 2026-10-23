@@ -11,14 +11,20 @@ export function useRestoreSession() {
     queryFn: async () => {
       if (useToken.getState().token) return true;
 
-      const { data } = await api.POST(ApiPaths.AuthController_refresh);
-      if (data) useToken.getState().saveToken(data.access_token);
-      return !!data;
+      const { data, error, response } = await api.POST(ApiPaths.AuthController_refresh, {
+        signal: AbortSignal.timeout(10_000),
+      });
+      if (response.status === 401) return false;
+      if (error) throw error;
+      if (!data) throw new Error('Session refresh returned no access token');
+
+      useToken.getState().saveToken(data.access_token);
+      return true;
     },
-    // 부팅 시 한 번만 복원한다. 로그아웃이나 레이아웃 재마운트로 다시 로그인하지 않는다.
+    // 부팅 복원만 제한적으로 재시도한다. 로그아웃이나 레이아웃 재마운트로 다시 로그인하지 않는다.
     staleTime: Infinity,
     gcTime: Infinity,
-    retry: false,
+    retry: 2,
     retryOnMount: false,
     refetchOnMount: false,
     refetchOnWindowFocus: false,

@@ -67,6 +67,8 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   queryClient.clear();
+  vi.useRealTimers();
+  vi.restoreAllMocks();
   vi.unstubAllGlobals();
 });
 
@@ -108,23 +110,91 @@ describe('boot session restoration', () => {
     expect(logIn).not.toHaveBeenCalled();
   });
 
-  it.each(['unauthorized', 'network error'])(
-    'shows login when restoration fails: %s',
+  it('shows login without retrying an expired refresh cookie', async () => {
+    mocks.fetch.mockResolvedValue(jsonResponse({ statusCode: 401 }, 401));
+    render(<App />);
+    await screen.findByText('login page');
+    expect(useToken.getState().token).toBeNull();
+    expect(mocks.fetch).toHaveBeenCalledOnce();
+    expect(queryClient.getQueryData(['auth-session'])).toBe(false);
+    const logIn = vi.fn();
+    mocks.authConfig.onRefreshTokenExpire({ logIn });
+    expect(logIn).toHaveBeenCalledOnce();
+  });
+
+  it.each(['unavailable', 'network error'])(
+    'retries a transient failure before treating the user as logged out: %s',
     async (failure) => {
-      if (failure === 'unauthorized') {
-        mocks.fetch.mockResolvedValue(jsonResponse({ statusCode: 401 }, 401));
+      vi.useFakeTimers();
+      if (failure === 'unavailable') {
+        mocks.fetch.mockResolvedValueOnce(jsonResponse({ statusCode: 503 }, 503));
       } else {
-        mocks.fetch.mockRejectedValue(new TypeError('Network error'));
+        mocks.fetch.mockRejectedValueOnce(new TypeError('Network error'));
       }
+      mocks.fetch.mockResolvedValueOnce(jsonResponse({ access_token: 'restored-session' }));
       render(<App />);
-      await screen.findByText('login page');
-      expect(useToken.getState().token).toBeNull();
-      expect(mocks.fetch).toHaveBeenCalledOnce();
-      const logIn = vi.fn();
-      mocks.authConfig.onRefreshTokenExpire({ logIn });
-      expect(logIn).toHaveBeenCalledOnce();
+      await act(async () => {});
+      expect(screen.getByText('restoring')).toBeTruthy();
+      expect(screen.queryByText('login page')).toBeNull();
+      expect(queryClient.getQueryData(['auth-session'])).toBeUndefined();
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(1_001);
+      });
+      expect(screen.getByText('protected page')).toBeTruthy();
+      expect(useToken.getState().token).toBe('restored-session');
+      expect(mocks.fetch).toHaveBeenCalledTimes(2);
     },
   );
+
+  it('stops retrying persistent server errors and releases the loading gate', async () => {
+    vi.useFakeTimers();
+    mocks.fetch.mockImplementation(() => Promise.resolve(jsonResponse({ statusCode: 503 }, 503)));
+    render(<App />);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(4_000);
+    });
+    expect(mocks.fetch).toHaveBeenCalledTimes(3);
+    expect(queryClient.getQueryState(['auth-session'])?.status).toBe('error');
+    expect(queryClient.getQueryState(['auth-session'])?.error).toEqual({ statusCode: 503 });
+    expect(queryClient.getQueryData(['auth-session'])).toBeUndefined();
+    expect(screen.getByText('login page')).toBeTruthy();
+    expect(useToken.getState().token).toBeNull();
+  });
+
+  it('aborts stalled requests and releases the loading gate after bounded retries', async () => {
+    vi.useFakeTimers();
+    const timeout = vi.spyOn(AbortSignal, 'timeout').mockImplementation((delay) => {
+      const controller = new AbortController();
+      setTimeout(() => controller.abort(new DOMException('Timed out', 'TimeoutError')), delay);
+      return controller.signal;
+    });
+    mocks.fetch.mockImplementation(
+      (input) =>
+        new Promise((_resolve, reject) => {
+          const request = input as Request;
+          request.signal.addEventListener('abort', () => reject(request.signal.reason), {
+            once: true,
+          });
+        }),
+    );
+    render(<App />);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(9_999);
+    });
+    expect(screen.getByText('restoring')).toBeTruthy();
+    expect(mocks.fetch).toHaveBeenCalledOnce();
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(24_001);
+    });
+    expect(timeout).toHaveBeenCalledWith(10_000);
+    expect(mocks.fetch).toHaveBeenCalledTimes(3);
+    expect(mocks.fetch.mock.calls.every(([input]) => (input as Request).signal.aborted)).toBe(true);
+    expect(queryClient.getQueryState(['auth-session'])?.status).toBe('error');
+    expect(queryClient.getQueryState(['auth-session'])?.error).toMatchObject({
+      name: 'TimeoutError',
+    });
+    expect(screen.getByText('login page')).toBeTruthy();
+  });
 
   it('waits for the existing IDP callback after backend restoration fails', async () => {
     mocks.loginInProgress = true;
