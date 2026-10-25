@@ -29,4 +29,18 @@ export const Default: Story = {
     ],
   },
 };
-export const Empty: Story = { args: { machines: [] } };
+export const Empty: Story = { args: { machines: [], showTiming: true } };
+export const Timing: Story = {
+  args: {
+    showTiming: true,
+    machines: [
+      {
+        ...Default.args.machines[0],
+        status: 'WASH' as MachineTable.Props['machines'][number]['status'],
+        lastSeenAt: new Date(Date.now() - 3 * 60_000).toISOString(),
+        currentUsage: { startedAt: new Date(Date.now() - 90 * 60_000).toISOString() },
+      },
+      { ...Default.args.machines[0], uuid: 'missing-timing', index: 3 },
+    ],
+  },
+};

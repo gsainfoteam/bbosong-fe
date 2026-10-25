@@ -162,6 +162,7 @@ export function AdminMachinesScreen() {
       <MachineFilters filters={query.filters} />
       <MachineTable
         machines={query.filtered}
+        showTiming
         renderActions={(machine) => (
           <>
             <button
