@@ -7,8 +7,14 @@ export function useMachineTiming(enabled: boolean) {
 
   useEffect(() => {
     if (!enabled) return;
-    const interval = window.setInterval(() => setNow(Date.now()), 30_000);
-    return () => window.clearInterval(interval);
+    const refresh = () => setNow(Date.now());
+    // Refresh on activation without waiting for the first polling interval.
+    const activation = window.setTimeout(refresh, 0);
+    const interval = window.setInterval(refresh, 30_000);
+    return () => {
+      window.clearTimeout(activation);
+      window.clearInterval(interval);
+    };
   }, [enabled]);
 
   return now;
