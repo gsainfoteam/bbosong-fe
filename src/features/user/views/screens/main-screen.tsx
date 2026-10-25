@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import { Header } from '@/common/components';
+import { Button, Header } from '@/common/components';
 import { cn } from '@/common/utils';
 import { MachineList, SelectBuilding, UsingMachineList } from '@/features/user';
 
@@ -41,6 +41,17 @@ export function MainScreen({
             className={machines.className}
           />
         </div>
+      </div>
+      <div className="fixed inset-x-0 bottom-0 mx-auto max-w-120 px-6 pb-6">
+        <Button asChild className="bg-bg-surface border-0 py-3.5 text-base font-medium">
+          <a
+            href="https://infoteam-rulrudino.notion.site/3a4365ea27df802bb3f8c2b8c224a0e1?pvs=105"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t('main:surveyNotification')}
+          </a>
+        </Button>
       </div>
     </div>
   );
