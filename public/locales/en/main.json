@@ -3,5 +3,6 @@
   "noUsingMachine": "There is no using machine.",
   "qrScan": "Scan QR code and register your machine",
   "qrScanCameraError": "Unable to access the camera. Allow camera permission in your browser settings, then reopen this sheet.",
+  "surveyNotification": "Participate in the survey and win a prize!",
   "usingMachineTitle": "Using machines"
 }
