@@ -5,4 +5,4 @@ export * from './machine-status-badge/index';
 export * from './machine-table/index';
 export * from './power-lookback/index';
 export * from './power-record-results/index';
-export * from './user-table';
+export * from './user-table/index';
