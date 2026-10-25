@@ -20,6 +20,7 @@ export const Default: Story = {
         gender: Gender.MALE,
         index: 2,
         isAvailable: true,
+        isOnline: true,
         status: 'IDLE' as MachineTable.Props['machines'][number]['status'],
         posX: null,
         posY: null,

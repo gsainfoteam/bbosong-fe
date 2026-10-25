@@ -1,7 +1,7 @@
 // public/ 하위 파일은 Vite 번들링/트랜스파일 대상이 아니므로 순수 JS로만 작성한다.
 // (@/ alias, npm import, TS 문법 사용 불가)
 
-const DEFAULT_URL = '/machine';
+const DEFAULT_URL = '/';
 const ICON_URL = '/icon-192.png';
 const BADGE_URL = '/icons/badge-72.png';
 
