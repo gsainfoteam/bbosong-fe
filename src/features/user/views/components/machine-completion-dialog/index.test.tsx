@@ -5,8 +5,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MachineCompletionDialog } from '.';
 
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
-vi.mock('@/common/components', () => ({
-  Button: (props: React.ButtonHTMLAttributes<HTMLButtonElement>) => <button {...props} />,
+// 무거운 배럴 대신 실제 Modal만 노출
+vi.mock('@/common/components', async () => ({
+  Modal: (await import('@/common/components/modal')).Modal,
 }));
 beforeEach(() => {
   HTMLDialogElement.prototype.showModal = vi.fn(function (this: HTMLDialogElement) {

@@ -12,5 +12,11 @@
   },
   "message": "Registering as a machine in use.",
   "registering": "Registering…",
-  "success": "Machine registered successfully."
+  "success": "Machine registered successfully.",
+  "unregister": {
+    "error": {
+      "notRegistered": "This machine is not in use by you or its usage has already ended."
+    },
+    "success": "Machine unregistered successfully."
+  }
 }

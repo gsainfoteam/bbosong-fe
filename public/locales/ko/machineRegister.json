@@ -12,5 +12,11 @@
   },
   "message": "사용중인 기기로 등록합니다.",
   "registering": "등록 중…",
-  "success": "기기를 등록하였습니다."
+  "success": "기기를 등록하였습니다.",
+  "unregister": {
+    "error": {
+      "notRegistered": "내가 사용 중인 기기가 아니거나 이미 사용이 종료되었습니다."
+    },
+    "success": "기기 등록을 해제하였습니다."
+  }
 }
