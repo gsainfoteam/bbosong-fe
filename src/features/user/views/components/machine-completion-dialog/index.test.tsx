@@ -50,7 +50,7 @@ describe('completion confirmation dialog', () => {
     const dialog = screen.getByRole('dialog');
     expect(dialog.getAttribute('aria-busy')).toBe('true');
     fireEvent.click(screen.getByRole('button', { name: 'registering' }));
-    fireEvent.click(screen.getByRole('button', { name: 'confirmation.no' }));
+    expect(screen.queryByRole('button', { name: 'confirmation.no' })).toBeNull();
     fireEvent(dialog, new Event('cancel', { cancelable: true }));
     expect(onConfirm).not.toHaveBeenCalled();
     expect(onClose).not.toHaveBeenCalled();

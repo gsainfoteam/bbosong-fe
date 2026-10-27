@@ -20,6 +20,7 @@ export const Default: Story = {
     location: 'a',
     notification: true,
     onClear: () => console.log(1),
+    onUnregister: () => console.log('Unregister'),
     className: 'w-100',
   },
 };

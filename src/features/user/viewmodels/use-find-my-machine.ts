@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { $api } from '@/common/lib';
 
 import { ApiPaths } from '../models';
+import { useUnregisterMachine } from './use-unregister-machine';
 
 export function useFindMyMachine() {
   const { t } = useTranslation('error');
@@ -51,6 +52,8 @@ export function useFindMyMachine() {
     { onSuccess: () => refetchUsingMachines() },
   );
 
+  const { mutate: unregisterMachine, isPending: isUnregistering } = useUnregisterMachine();
+
   const handleToggleNotification = useCallback(
     (machineUuid: string, currentNotifyState: boolean) => {
       toggleNotification({
@@ -84,10 +87,12 @@ export function useFindMyMachine() {
           },
           notification: usage.notifyOnCompletion,
           onClear: () => handleToggleNotification(usage.machineUuid, usage.notifyOnCompletion),
+          onUnregister: () => unregisterMachine({ params: { path: { uuid: usage.machineUuid } } }),
+          isUnregistering,
         },
       ];
     });
-  }, [usingMachines, allMachines, handleToggleNotification]);
+  }, [usingMachines, allMachines, handleToggleNotification, unregisterMachine, isUnregistering]);
 
   const refetchMachines = useCallback(
     () => Promise.all([refetchUsingMachines(), refetchAllMachines()]),

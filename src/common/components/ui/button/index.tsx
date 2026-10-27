@@ -35,15 +35,7 @@ export function Button({
       : {};
 
   return (
-    <Comp
-      className={Button.styles({
-        variant: props.disabled ? 'disabled' : variant,
-        size,
-        className,
-      })}
-      {...props}
-      {...disabledProps}
-    >
+    <Comp className={Button.styles({ variant, size, className })} {...props} {...disabledProps}>
       {children}
     </Comp>
   );
@@ -57,14 +49,17 @@ export namespace Button {
   };
 
   export const styles = cv({
-    base: ['flex items-center justify-center rounded-md'],
+    base: [
+      'flex items-center justify-center rounded-md',
+      'disabled:cursor-not-allowed disabled:opacity-50',
+      'aria-disabled:cursor-not-allowed aria-disabled:opacity-50',
+    ],
     variants: {
       variant: {
         default: [
           'w-full text-heading text-text-primary border border-border',
           'transition-all duration-150',
         ],
-        disabled: [],
       },
       size: {
         default: 'p-2',

@@ -24,6 +24,8 @@ export function UsingMachineList({
             location={item.location}
             notification={item.notification}
             onClear={item.onClear}
+            onUnregister={item.onUnregister}
+            isUnregistering={item.isUnregistering}
           />
         ))}
         <AddUsingMachineBox onAdd={onAdd} />

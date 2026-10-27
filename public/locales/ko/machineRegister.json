@@ -14,6 +14,12 @@
   "registering": "등록 중…",
   "success": "기기를 등록하였습니다.",
   "unregister": {
+    "confirmation": {
+      "confirm": "해제",
+      "description": "해제하면 사용 중인 기기 목록에서 제거되고 완료 알림을 받을 수 없습니다.",
+      "pending": "해제 중…",
+      "title": "기기 등록을 해제할까요?"
+    },
     "error": {
       "notRegistered": "내가 사용 중인 기기가 아니거나 이미 사용이 종료되었습니다."
     },

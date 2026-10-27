@@ -14,6 +14,12 @@
   "registering": "Registering…",
   "success": "Machine registered successfully.",
   "unregister": {
+    "confirmation": {
+      "confirm": "Unregister",
+      "description": "It will be removed from your machines in use and you will no longer receive a completion notification.",
+      "pending": "Unregistering…",
+      "title": "Unregister this machine?"
+    },
     "error": {
       "notRegistered": "This machine is not in use by you or its usage has already ended."
     },
