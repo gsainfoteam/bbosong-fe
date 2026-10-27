@@ -119,6 +119,10 @@ export function MainFrame() {
   const usingMachineList = {
     machineList: usingMachines,
     isNotificationEnabled: pushPermissionStatus === 'granted',
+    notificationBlocker:
+      pushPermissionStatus === 'needs-install' || pushPermissionStatus === 'unsupported'
+        ? pushPermissionStatus
+        : undefined,
     onAdd: onOpenQrScan,
   };
 

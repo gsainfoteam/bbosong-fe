@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from 'react';
+import { type SubmitEvent, useState } from 'react';
 
 import { useTranslation } from 'react-i18next';
 
@@ -18,7 +18,7 @@ export function AdminPowerScreen() {
   const [startedAtInput, setStartedAtInput] = useState('');
   const [selection, setSelection] = useState<{ uuid: string; startedAt?: string }>({ uuid: '' });
   const power = useAdminPower(selection.uuid, selection.startedAt);
-  function search(event: FormEvent<HTMLFormElement>) {
+  function search(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     const parsed = startedAtInput ? Date.parse(startedAtInput) : Number.NaN;
     const next = {

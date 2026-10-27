@@ -14,4 +14,4 @@ export const Default: Story = {
   },
 };
 export const Loading: Story = { args: { ...Default.args, isLoading: true } };
-export const Error: Story = { args: { ...Default.args, isError: true } };
+export const ErrorState: Story = { name: 'Error', args: { ...Default.args, isError: true } };

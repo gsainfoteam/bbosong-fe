@@ -55,6 +55,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@storybook/addon-themes": "10.3.1",
+    "@tailwindcss/language-server": "^0.16.0",
     "@tailwindcss/typography": "^0.5.20",
     "@tanstack/eslint-config": "latest",
     "@tanstack/eslint-plugin-router": "^1.162.0",

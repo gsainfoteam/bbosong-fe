@@ -18,6 +18,8 @@
       "confirm": "Unregister",
       "description": "It will be removed from your machines in use and you will no longer receive a completion notification.",
       "notificationDisabled": "Browser notifications are turned off, so you won't receive completion notifications. Please allow notifications in your browser settings.",
+      "notificationNeedsInstall": "The app isn't installed, so you won't receive completion notifications. Install the app first to receive notifications.",
+      "notificationUnsupported": "This browser does not support web push notifications, so you won't receive completion notifications.",
       "pending": "Unregistering…",
       "title": "Unregister this machine?"
     },

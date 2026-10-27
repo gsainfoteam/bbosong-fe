@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from 'react';
+import { type SubmitEvent, useState } from 'react';
 
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -27,7 +27,7 @@ export function AdminPermissionsScreen() {
     targetRole: (typeof UserRole)[keyof typeof UserRole];
   } | null>(null);
 
-  function review(event: FormEvent<HTMLFormElement>) {
+  function review(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     const result = updateRoleSchema(user?.uuid).safeParse({
       targetUserUuid: selected?.uuid,

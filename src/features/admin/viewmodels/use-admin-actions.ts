@@ -10,6 +10,22 @@ import { ApiPaths } from '../models';
 export function useAdminActions() {
   const client = useQueryClient();
   const { t } = useTranslation('admin');
+
+  const getErrorMessage = (status: number | undefined) => {
+    switch (status) {
+      case 409:
+        return t('conflict');
+      case 403:
+        return t('forbidden');
+      case 404:
+        return t('notFound');
+      case 400:
+        return t('badRequest');
+      default:
+        return t('requestFailed');
+    }
+  };
+
   const options = {
     onSuccess: async () => {
       toast.success(t('saved'));
@@ -23,17 +39,7 @@ export function useAdminActions() {
     },
     onError: (error: unknown) => {
       const status = (error as { statusCode?: number })?.statusCode;
-      toast.error(
-        status === 409
-          ? t('conflict')
-          : status === 403
-            ? t('forbidden')
-            : status === 404
-              ? t('notFound')
-              : status === 400
-                ? t('badRequest')
-                : t('requestFailed'),
-      );
+      toast.error(getErrorMessage(status));
     },
   };
   const create = $api.useMutation('post', ApiPaths.MachineController_createMachine, options);

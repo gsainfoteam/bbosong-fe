@@ -30,3 +30,19 @@ export const NotificationDisabled: Story = {
     isNotificationEnabled: false,
   },
 };
+
+export const NeedsInstall: Story = {
+  args: {
+    ...Default.args,
+    isNotificationEnabled: false,
+    notificationBlocker: 'needs-install',
+  },
+};
+
+export const Unsupported: Story = {
+  args: {
+    ...Default.args,
+    isNotificationEnabled: false,
+    notificationBlocker: 'unsupported',
+  },
+};

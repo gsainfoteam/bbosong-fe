@@ -11,6 +11,13 @@ const MACHINE_KEYS = {
   dryer: 'machine:dryer',
 } as const;
 
+// 알림이 꺼진 이유별 해제 모달 안내 문구. default는 브라우저 설정에서 허용하라는 안내다.
+const NOTIFICATION_DISABLED_KEYS = {
+  default: 'machineRegister:unregister.confirmation.notificationDisabled',
+  'needs-install': 'machineRegister:unregister.confirmation.notificationNeedsInstall',
+  unsupported: 'machineRegister:unregister.confirmation.notificationUnsupported',
+} as const;
+
 // const LOCATION_KEYS = {
 //   a: 'location:a',
 //   b: 'location:b',
@@ -21,6 +28,7 @@ export function UsingMachineBox({
   location,
   notification,
   isNotificationEnabled = true,
+  notificationBlocker,
   onUnregister,
   isUnregistering = false,
   className,
@@ -34,6 +42,9 @@ export function UsingMachineBox({
   // t('location:a')
   // t('location:b')
   // t('location:laundryRoom')
+  // t('machineRegister:unregister.confirmation.notificationDisabled')
+  // t('machineRegister:unregister.confirmation.notificationNeedsInstall')
+  // t('machineRegister:unregister.confirmation.notificationUnsupported')
 
   return (
     <div
@@ -73,7 +84,7 @@ export function UsingMachineBox({
         >
           {!isNotificationEnabled && (
             <p role="note" className="text-text-error">
-              {t('machineRegister:unregister.confirmation.notificationDisabled')}
+              {t(NOTIFICATION_DISABLED_KEYS[notificationBlocker ?? 'default'])}
             </p>
           )}
         </Modal>
@@ -98,12 +109,21 @@ export function AddUsingMachineBox({ onAdd }: AddUsingMachineBox.Props) {
 }
 
 export namespace UsingMachineBox {
+  /** 브라우저 설정으로는 알림을 켤 수 없는 이유 */
+  export type NotificationBlocker = 'needs-install' | 'unsupported';
+
   export type Props = {
     machine: { type: 'washer' | 'dryer'; id: number };
     location: 'a' | 'b';
     notification: boolean;
     /** 브라우저 알림 권한이 꺼져 있으면 false. BellOff 아이콘과 해제 모달에 안내 문구를 보여준다. */
     isNotificationEnabled?: boolean;
+    /**
+     * 브라우저 설정으로는 알림을 켤 수 없는 이유. 해제 모달의 안내 문구를 고른다.
+     * - needs-install: 앱 설치가 먼저 필요하다.
+     * - unsupported: 이 브라우저는 웹 푸시를 지원하지 않는다.
+     */
+    notificationBlocker?: NotificationBlocker;
     /** 확인 모달에서 확인을 누르면 호출된다. 성공 시 목록에서 빠지며 모달도 함께 사라진다. */
     onUnregister: () => void;
     isUnregistering?: boolean;

@@ -24,7 +24,7 @@ export const useLogin = ({ showToast = false }: { showToast?: boolean } = {}) =>
       clearRedirect();
       navigate({ to: redirect ?? '/', replace: true });
     },
-    onError: async (error) => {
+    onError: (error) => {
       const err = error as
         ConsentRequiredErrorDto | GenderRequiredErrorDto | { statusCode?: number };
 

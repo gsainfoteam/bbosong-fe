@@ -20,6 +20,7 @@ export function MainScreen({
         <UsingMachineList
           machineList={usingMachineList.machineList}
           isNotificationEnabled={usingMachineList.isNotificationEnabled}
+          notificationBlocker={usingMachineList.notificationBlocker}
           onAdd={usingMachineList.onAdd}
           className={usingMachineList.className}
         />
