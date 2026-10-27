@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Bell, Plus } from 'lucide-react';
+import { Bell, BellOff, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { Modal } from '@/common/components';
@@ -20,7 +20,7 @@ export function UsingMachineBox({
   machine,
   location,
   notification,
-  onClear,
+  isNotificationEnabled = true,
   onUnregister,
   isUnregistering = false,
   className,
@@ -52,7 +52,11 @@ export function UsingMachineBox({
         aria-label={t('machineRegister:unregister.confirmation.title')}
         onClick={() => setIsConfirmOpen(true)}
       >
-        <Bell className={cn(notification && 'text-primary')} aria-hidden />
+        {isNotificationEnabled ? (
+          <Bell className={cn(notification && 'text-primary')} aria-hidden />
+        ) : (
+          <BellOff aria-hidden />
+        )}
       </button>
       {isConfirmOpen && (
         <Modal
@@ -66,7 +70,13 @@ export function UsingMachineBox({
           isPending={isUnregistering}
           onConfirm={onUnregister}
           onClose={() => setIsConfirmOpen(false)}
-        />
+        >
+          {!isNotificationEnabled && (
+            <p role="note" className="text-text-error">
+              {t('machineRegister:unregister.confirmation.notificationDisabled')}
+            </p>
+          )}
+        </Modal>
       )}
     </div>
   );
@@ -92,7 +102,8 @@ export namespace UsingMachineBox {
     machine: { type: 'washer' | 'dryer'; id: number };
     location: 'a' | 'b';
     notification: boolean;
-    onClear: () => void;
+    /** 브라우저 알림 권한이 꺼져 있으면 false. BellOff 아이콘과 해제 모달에 안내 문구를 보여준다. */
+    isNotificationEnabled?: boolean;
     /** 확인 모달에서 확인을 누르면 호출된다. 성공 시 목록에서 빠지며 모달도 함께 사라진다. */
     onUnregister: () => void;
     isUnregistering?: boolean;

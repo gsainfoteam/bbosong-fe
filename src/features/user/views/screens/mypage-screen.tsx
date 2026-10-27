@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { LanguageToggle, MyPageHeader } from '@/common/components';
 import { cn } from '@/common/utils';
 import { type Gender } from '@/features/auth';
+import { PushPermissionCard } from '@/features/push-notification';
 
 export function MypageScreen({
   user,
@@ -40,6 +41,8 @@ export function MypageScreen({
           <h2>{t('language')}</h2>
           <LanguageToggle />
         </div>
+
+        <PushPermissionCard className="mt-8" />
 
         <div className="mt-auto flex flex-col gap-3">
           <a

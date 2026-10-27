@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion, type PanInfo } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 
+import { usePushPermission } from '@/features/push-notification';
 import {
   useFindMachines,
   useFindMachinesByUuids,
@@ -45,6 +46,8 @@ export function MainFrame() {
     isLoading: isUsingMachinesLoading,
     refetch: refetchUsingMachines,
   } = useFindMyMachine();
+
+  const { status: pushPermissionStatus } = usePushPermission();
 
   const [isQrOpen, setIsQrOpen] = useState(false);
 
@@ -115,6 +118,7 @@ export function MainFrame() {
 
   const usingMachineList = {
     machineList: usingMachines,
+    isNotificationEnabled: pushPermissionStatus === 'granted',
     onAdd: onOpenQrScan,
   };
 

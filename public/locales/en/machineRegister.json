@@ -17,6 +17,7 @@
     "confirmation": {
       "confirm": "Unregister",
       "description": "It will be removed from your machines in use and you will no longer receive a completion notification.",
+      "notificationDisabled": "Browser notifications are turned off, so you won't receive completion notifications. Please allow notifications in your browser settings.",
       "pending": "Unregistering…",
       "title": "Unregister this machine?"
     },

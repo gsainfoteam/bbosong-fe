@@ -46,23 +46,7 @@ export function useFindMyMachine() {
     else if (error?.statusCode === 500) toast.error(t('internalServerError'));
   }, [error, isError, t]);
 
-  const { mutate: toggleNotification } = $api.useMutation(
-    'patch',
-    ApiPaths.MachineController_toggleMachineNotification,
-    { onSuccess: () => refetchUsingMachines() },
-  );
-
   const { mutate: unregisterMachine, isPending: isUnregistering } = useUnregisterMachine();
-
-  const handleToggleNotification = useCallback(
-    (machineUuid: string, currentNotifyState: boolean) => {
-      toggleNotification({
-        params: { path: { uuid: machineUuid } },
-        body: { notifyOnCompletion: !currentNotifyState },
-      });
-    },
-    [toggleNotification],
-  );
 
   const mappedMachineList = useMemo(() => {
     if (!usingMachines || !allMachines) return [];
@@ -86,13 +70,12 @@ export function useFindMyMachine() {
             id: mappedId,
           },
           notification: usage.notifyOnCompletion,
-          onClear: () => handleToggleNotification(usage.machineUuid, usage.notifyOnCompletion),
           onUnregister: () => unregisterMachine({ params: { path: { uuid: usage.machineUuid } } }),
           isUnregistering,
         },
       ];
     });
-  }, [usingMachines, allMachines, handleToggleNotification, unregisterMachine, isUnregistering]);
+  }, [usingMachines, allMachines, unregisterMachine, isUnregistering]);
 
   const refetchMachines = useCallback(
     () => Promise.all([refetchUsingMachines(), refetchAllMachines()]),

@@ -47,8 +47,7 @@ function AuthLayout() {
     pathname === '/auth/consent' ||
     pathname === '/auth/gender' ||
     pathname.startsWith('/auth/terms/');
-  const canResumeConsentFlow =
-    isConsentFlowRoute && !token && !!idpToken && !!requiredConsents;
+  const canResumeConsentFlow = isConsentFlowRoute && !token && !!idpToken && !!requiredConsents;
 
   useEffect(() => {
     if (redirectTarget) {
@@ -73,13 +72,7 @@ function AuthLayout() {
       attemptedIdpToken.current = idpToken;
       logIn({ body: {} });
     }
-  }, [
-    idpToken,
-    token,
-    canResumeConsentFlow,
-    logIn,
-    logInMutation.isPending,
-  ]);
+  }, [idpToken, token, canResumeConsentFlow, logIn, logInMutation.isPending]);
 
   if (user === undefined) {
     if (canResumeConsentFlow) return <Outlet />;

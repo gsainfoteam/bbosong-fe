@@ -18,17 +18,16 @@ export const Default: Story = {
         machine: { type: 'washer', id: 2 },
         location: 'a',
         notification: true,
-        onClear: () => console.log('Clear machine 2 in building A'),
         onUnregister: () => console.log('Unregister'),
       },
       {
         machine: { type: 'dryer', id: 5 },
         location: 'b',
         notification: false,
-        onClear: () => console.log('Clear dryer 5 in building B'),
         onUnregister: () => console.log('Unregister'),
       },
     ],
+    isNotificationEnabled: true,
     onAdd: () => console.log('add'),
   },
 };
@@ -36,6 +35,7 @@ export const Default: Story = {
 export const Empty: Story = {
   args: {
     machineList: [],
+    isNotificationEnabled: true,
     onAdd: () => console.log('add'),
   },
 };
