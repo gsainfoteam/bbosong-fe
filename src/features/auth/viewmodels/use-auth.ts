@@ -64,8 +64,7 @@ export const useAuth = ({ showToast = false }: { showToast?: boolean } = {}) => 
       // 로그아웃 상태가 아니라 판단 보류(undefined)로 취급해 /auth 화면이 잠깐 보였다가
       // 리다이렉트되는 깜빡임을 방지한다
       const hasLoginSettled = logInMutation.isError || logInMutation.isSuccess;
-      const isResolvingSession =
-        !hasLoginSettled && (loginInProgress || !!idpToken);
+      const isResolvingSession = !hasLoginSettled && (loginInProgress || !!idpToken);
 
       return isResolvingSession ? undefined : null;
     }

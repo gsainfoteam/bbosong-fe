@@ -23,15 +23,16 @@ export const Default: Story = {
           machine: { type: 'washer', id: 3 },
           location: 'a',
           notification: true,
-          onClear: () => console.log('Clear washer 3'),
+          onUnregister: () => console.log('Unregister'),
         },
         {
           machine: { type: 'dryer', id: 1 },
           location: 'b',
           notification: false,
-          onClear: () => console.log('Clear dryer 1'),
+          onUnregister: () => console.log('Unregister'),
         },
       ],
+      isNotificationEnabled: true,
       onAdd: () => console.log('Add using machine'),
     },
     selectBuilding: {
@@ -79,6 +80,7 @@ export const NoUsingMachine: Story = {
     ...Default.args,
     usingMachineList: {
       machineList: [],
+      isNotificationEnabled: true,
       onAdd: () => console.log('Add using machine'),
     },
   },

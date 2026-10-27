@@ -77,6 +77,7 @@ html {
   /* Text */
   --color-text-primary: #202938;
   --color-text-secondary: #667085;
+  --color-text-error: #c93c3c;
 
   /* Background */
   --color-bg: #f7f8fa;

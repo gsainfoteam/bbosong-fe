@@ -19,6 +19,8 @@ export function MainScreen({
       <div className="flex flex-col gap-6 px-3 pb-24">
         <UsingMachineList
           machineList={usingMachineList.machineList}
+          isNotificationEnabled={usingMachineList.isNotificationEnabled}
+          notificationBlocker={usingMachineList.notificationBlocker}
           onAdd={usingMachineList.onAdd}
           className={usingMachineList.className}
         />

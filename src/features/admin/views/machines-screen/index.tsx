@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from 'react';
+import { type SubmitEvent, useState } from 'react';
 
 import { Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -47,7 +47,7 @@ export function AdminMachinesScreen() {
   const powerMachine =
     query.machines.find((machine) => machine.uuid === powerTarget?.uuid) ?? powerTarget;
 
-  async function create(event: FormEvent<HTMLFormElement>) {
+  async function create(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     const values = Object.fromEntries(new FormData(event.currentTarget));
     if (mode === 'multiple') {
@@ -76,7 +76,7 @@ export function AdminMachinesScreen() {
       }
     }
   }
-  async function update(event: FormEvent<HTMLFormElement>) {
+  async function update(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!editing) return;
     const values = new FormData(event.currentTarget);
@@ -98,7 +98,7 @@ export function AdminMachinesScreen() {
       /* The mutation reports the API error. */
     }
   }
-  function searchPower(event: FormEvent<HTMLFormElement>) {
+  function searchPower(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     const parsed = startedAtInput ? Date.parse(startedAtInput) : Number.NaN;
     const next = Number.isFinite(parsed) ? new Date(parsed).toISOString() : undefined;

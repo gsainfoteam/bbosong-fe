@@ -81,7 +81,7 @@ export function useFindMachinesByUuids(uuids: string[]) {
       new Map(
         [...result.machineByUuid].map(([uuid, machine]) => {
           const startedAt = machine.currentUsage?.startedAt;
-          const startedAtMs = startedAt ? Date.parse(startedAt) : NaN;
+          const startedAtMs = startedAt ? Date.parse(startedAt) : Number.NaN;
           const elapsedMinutes = Number.isFinite(startedAtMs)
             ? Math.max(0, Math.floor((now - startedAtMs) / 60_000))
             : undefined;

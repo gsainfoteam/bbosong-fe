@@ -1,19 +1,14 @@
-import {
-  type components,
-  type operations,
-  PathsMachinePostParametersQueryLocation,
-  PathsMachinePostParametersQueryType,
-  PathsMachineSummaryGetParametersQueryGender,
-  GetUsersResDtoRole,
-  GetMachineResDtoStatus,
+import { type components, type operations } from '@/@types/api-schema';
+
+export {
+  ApiPaths,
+  PathsMachineSummaryGetParametersQueryGender as Gender,
+  PathsMachinePostParametersQueryLocation as Location,
+  PathsMachinePostParametersQueryType as MachineType,
+  GetMachineResDtoStatus as MachineStatus,
+  GetUsersResDtoRole as UserRole,
 } from '@/@types/api-schema';
 
-export { ApiPaths } from '@/@types/api-schema';
-export const Gender = PathsMachineSummaryGetParametersQueryGender;
-export const Location = PathsMachinePostParametersQueryLocation;
-export const MachineType = PathsMachinePostParametersQueryType;
-export const MachineStatus = GetMachineResDtoStatus;
-export const UserRole = GetUsersResDtoRole;
 // Optional for backends that omit connectivity or the current usage session.
 type AdminMachineTiming = {
   lastSeenAt?: string | null;

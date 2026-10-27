@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/common/components';
@@ -16,14 +18,13 @@ export function PushPermissionCard({
   const { canPrompt, isPrompting, promptInstall, showManualGuide, isIOS, isAndroid } =
     useInstallPrompt();
 
-  // 권한이 이미 허용된 상태에서는 아무것도 노출하지 않는다
   if (status === 'granted') return null;
 
   return (
     <section
       className={cn(
         'text-text-primary flex flex-col gap-3',
-        presentation === 'card' ? 'rounded-lg p-4' : 'gap-5',
+        presentation === 'card' ? 'rounded-lg' : 'gap-5',
         className,
       )}
       {...props}

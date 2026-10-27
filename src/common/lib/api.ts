@@ -12,7 +12,7 @@ let refreshPromise: ReturnType<
 > | null = null;
 
 const middleware: Middleware = {
-  async onRequest({ request }) {
+  onRequest({ request }) {
     const token = useToken.getState().token;
     if (token) {
       request.headers.set('Authorization', `Bearer ${token}`);

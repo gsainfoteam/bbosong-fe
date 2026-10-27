@@ -57,7 +57,7 @@ export const useConsentForm = (requiredConsents: RequiredConsents, formData?: Co
     form.trigger();
   };
 
-  const onSubmit = form.handleSubmit(async (data) => {
+  const onSubmit = form.handleSubmit((data) => {
     logIn({
       headers: {
         Authorization: `Bearer ${token}`,

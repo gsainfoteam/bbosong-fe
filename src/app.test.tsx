@@ -215,6 +215,9 @@ describe('boot session restoration', () => {
     mocks.fetch.mockResolvedValue(jsonResponse({ access_token: 'restored-session' }));
     render(<App />);
     await screen.findByText('protected page');
+    expect(screen.queryByText('restoring')).toBeNull();
+    expect(useToken.getState().token).toBe('restored-session');
+    expect(mocks.fetch).toHaveBeenCalledOnce();
   });
 
   it('does not restore again after logout, focus, reconnect, or remount', async () => {

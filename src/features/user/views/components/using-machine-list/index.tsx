@@ -6,6 +6,8 @@ import { AddUsingMachineBox, UsingMachineBox } from '../';
 
 export function UsingMachineList({
   machineList,
+  isNotificationEnabled,
+  notificationBlocker,
   onAdd,
   className,
   ...props
@@ -23,7 +25,10 @@ export function UsingMachineList({
             machine={item.machine}
             location={item.location}
             notification={item.notification}
-            onClear={item.onClear}
+            isNotificationEnabled={isNotificationEnabled}
+            notificationBlocker={notificationBlocker}
+            onUnregister={item.onUnregister}
+            isUnregistering={item.isUnregistering}
           />
         ))}
         <AddUsingMachineBox onAdd={onAdd} />
@@ -40,6 +45,9 @@ export function UsingMachineList({
 export namespace UsingMachineList {
   export type Props = {
     machineList: UsingMachineBox.Props[];
+    /** 브라우저 알림 권한 허용 여부. false면 모든 박스에 BellOff를 보여준다. */
+    isNotificationEnabled: boolean;
+    notificationBlocker?: UsingMachineBox.NotificationBlocker;
     onAdd: () => void;
     className?: string;
   };

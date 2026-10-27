@@ -15,6 +15,31 @@ export function AdminPage({
   isError,
 }: AdminPage.Props) {
   const { t } = useTranslation('admin');
+
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div
+          className="border-border rounded-xl border p-12 text-center text-sm dark:border-slate-800"
+          role="status"
+        >
+          {t('loading')}
+        </div>
+      );
+    }
+    if (isError) {
+      return (
+        <div
+          role="alert"
+          className="rounded-xl bg-red-50 p-6 text-sm text-red-700 dark:bg-red-950 dark:text-red-300"
+        >
+          {t('requestFailed')}
+        </div>
+      );
+    }
+    return children;
+  };
+
   return (
     <section className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -36,23 +61,7 @@ export function AdminPage({
           </button>
         )}
       </div>
-      {isLoading ? (
-        <div
-          className="border-border rounded-xl border p-12 text-center text-sm dark:border-slate-800"
-          role="status"
-        >
-          {t('loading')}
-        </div>
-      ) : isError ? (
-        <div
-          role="alert"
-          className="rounded-xl bg-red-50 p-6 text-sm text-red-700 dark:bg-red-950 dark:text-red-300"
-        >
-          {t('requestFailed')}
-        </div>
-      ) : (
-        children
-      )}
+      {renderContent()}
     </section>
   );
 }

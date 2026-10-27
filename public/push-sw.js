@@ -1,5 +1,9 @@
 // public/ 하위 파일은 Vite 번들링/트랜스파일 대상이 아니므로 순수 JS로만 작성한다.
 // (@/ alias, npm import, TS 문법 사용 불가)
+// 대신 JSDoc으로 서비스 워커 타입을 지정해 IDE가 self를 Window가 아닌 ServiceWorkerGlobalScope로 인식하게 한다.
+/// <reference lib="webworker" />
+
+const sw = /** @type {ServiceWorkerGlobalScope} */ (/** @type {unknown} */ (self));
 
 const DEFAULT_URL = '/';
 const ICON_URL = '/icon-192.png';
@@ -10,15 +14,15 @@ const PUSH_RECEIVED_MESSAGE = 'push-received';
 
 // 개발 환경에서는 이 파일을 직접 등록하므로 활성화도 처리한다.
 // 프로덕션 캐싱은 vite-plugin-pwa가 생성하는 /sw.js에서 처리한다.
-self.addEventListener('install', (event) => {
-  event.waitUntil(self.skipWaiting());
+sw.addEventListener('install', (event) => {
+  event.waitUntil(sw.skipWaiting());
 });
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(self.clients.claim());
+sw.addEventListener('activate', (event) => {
+  event.waitUntil(sw.clients.claim());
 });
 
-self.addEventListener('push', (event) => {
+sw.addEventListener('push', (event) => {
   if (!event.data) return;
 
   let payload;
@@ -33,7 +37,7 @@ self.addEventListener('push', (event) => {
 
   event.waitUntil(
     Promise.all([
-      self.registration.showNotification(title, {
+      sw.registration.showNotification(title, {
         body,
         icon: icon || ICON_URL,
         badge: BADGE_URL,
@@ -47,35 +51,41 @@ self.addEventListener('push', (event) => {
 // 열려 있는 앱 탭에 푸시 수신 사실을 전달한다.
 // 빈 기기 알림은 발송 시점에 서버가 해당 구독을 자동 삭제하므로,
 // 앱이 켜져 있다면 로컬 토글 상태를 서버와 맞춰 주어야 한다.
+/** @param {unknown} payload */
 async function notifyClients(payload) {
-  const clientList = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+  const clientList = await sw.clients.matchAll({ type: 'window', includeUncontrolled: true });
 
   for (const client of clientList) {
     client.postMessage({ type: PUSH_RECEIVED_MESSAGE, payload });
   }
 }
 
-self.addEventListener('notificationclick', (event) => {
+sw.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
   const targetUrl = event.notification.data?.url || DEFAULT_URL;
 
-  event.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      for (const client of clientList) {
-        if ('focus' in client) {
-          // navigate 미지원 브라우저(구형 Safari 등)에서도 최소한 포커스는 되도록 방어
-          if ('navigate' in client) {
-            return client.navigate(targetUrl).then((navigated) => (navigated || client).focus());
-          }
-          return client.focus();
-        }
-      }
-
-      return self.clients.openWindow(targetUrl);
-    }),
-  );
+  event.waitUntil(focusOrOpenClient(targetUrl));
 });
+
+// 열려 있는 앱 탭이 있으면 해당 URL로 이동해 포커스하고, 없으면 새 창을 연다.
+/** @param {string} targetUrl */
+async function focusOrOpenClient(targetUrl) {
+  const clientList = await sw.clients.matchAll({ type: 'window', includeUncontrolled: true });
+
+  // type: 'window'로 조회한 클라이언트는 모두 focus()를 가진 WindowClient다.
+  const [client] = clientList;
+  if (client) {
+    // navigate 미지원 브라우저(구형 Safari 등)에서도 최소한 포커스는 되도록 방어
+    if (typeof client.navigate === 'function') {
+      const navigated = await client.navigate(targetUrl);
+      return (navigated || client).focus();
+    }
+    return client.focus();
+  }
+
+  return sw.clients.openWindow(targetUrl);
+}
 
 // [pushsubscriptionchange 미구현 — 의도된 결정]
 // 이 이벤트는 앱이 떠 있지 않을 때도 발생하므로 SW가 스스로 Authorization 헤더를 채워야 한다.

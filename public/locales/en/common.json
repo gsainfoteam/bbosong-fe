@@ -5,6 +5,10 @@
   },
   "goBack": "Back",
   "index": "Index",
+  "modal": {
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
   "myPage": "My Page",
   "switchToEnglish": "Switch to English",
   "switchToKorean": "Switch to Korean",

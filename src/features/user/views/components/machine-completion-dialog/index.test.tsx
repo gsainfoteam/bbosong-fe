@@ -5,8 +5,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MachineCompletionDialog } from '.';
 
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
-vi.mock('@/common/components', () => ({
-  Button: (props: React.ButtonHTMLAttributes<HTMLButtonElement>) => <button {...props} />,
+// 무거운 배럴 대신 실제 Modal만 노출
+vi.mock('@/common/components', async () => ({
+  Modal: (await import('@/common/components/modal')).Modal,
 }));
 beforeEach(() => {
   HTMLDialogElement.prototype.showModal = vi.fn(function (this: HTMLDialogElement) {
@@ -49,7 +50,7 @@ describe('completion confirmation dialog', () => {
     const dialog = screen.getByRole('dialog');
     expect(dialog.getAttribute('aria-busy')).toBe('true');
     fireEvent.click(screen.getByRole('button', { name: 'registering' }));
-    fireEvent.click(screen.getByRole('button', { name: 'confirmation.no' }));
+    expect(screen.queryByRole('button', { name: 'confirmation.no' })).toBeNull();
     fireEvent(dialog, new Event('cancel', { cancelable: true }));
     expect(onConfirm).not.toHaveBeenCalled();
     expect(onClose).not.toHaveBeenCalled();
