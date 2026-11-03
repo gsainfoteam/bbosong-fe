@@ -5,6 +5,8 @@
   "elapsedHourMinute": "{{hours}}시간 {{minutes}}분째",
   "elapsedMinute": "{{minutes}}분째",
   "idle": "사용 가능",
+  "remainingHourMinute": "{{hours}}시간 {{minutes}}분 남음",
+  "remainingMinute": "{{minutes}}분 남음",
   "using": "사용 중",
   "washer": "세탁기"
 }

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { $api } from '@/common/lib';
+import { resolveRemainingMinutes } from '@/common/utils';
 
 import { ApiPaths } from '../models';
 
@@ -92,7 +93,20 @@ export function useFindMachinesByUuids(uuids: string[]) {
     [result.machineByUuid, now],
   );
 
-  return { ...result, elapsedMinutesByUuid };
+  const remainingMinutesByUuid = useMemo(
+    () =>
+      new Map(
+        [...result.machineByUuid].flatMap(([uuid, machine]) => {
+          const isThinqMapped = typeof machine.thinqDeviceId === 'string' && !!machine.thinqDeviceId;
+          if (!isThinqMapped) return [];
+          const remainingMinutes = resolveRemainingMinutes(machine);
+          return remainingMinutes === null ? [] : ([[uuid, remainingMinutes] as const]);
+        }),
+      ),
+    [result.machineByUuid],
+  );
+
+  return { ...result, elapsedMinutesByUuid, remainingMinutesByUuid };
 }
 
 // combine은 참조가 고정돼야 결과가 메모이즈되므로 컴포넌트 밖에 둔다

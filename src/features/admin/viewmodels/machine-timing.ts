@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import { formatRemainingMinutes, resolveRemainingMinutes } from '@/common/utils';
+
 import { type AdminMachine } from '../models';
 
 export function useMachineTiming(enabled: boolean) {
@@ -59,4 +61,19 @@ export function getMachineOperatingMinutes(machine: AdminMachine, now: number) {
   const timestamp = startedAt ? Date.parse(startedAt) : Number.NaN;
   if (machine.status === 'IDLE' || !Number.isFinite(timestamp)) return null;
   return Math.max(0, Math.floor((now - timestamp) / 60_000));
+}
+
+/** ThinQ 매핑 기기의 남은 분. 없으면 null. */
+export function getMachineThinqRemainingMinutes(machine: AdminMachine): number | null {
+  if (!machine.thinqDeviceId) return null;
+  return resolveRemainingMinutes(machine);
+}
+
+/** 남은 분 → 시·분 문자열 파라미터. null이면 표시 불가. */
+export function formatThinqRemainingParts(remainingMinutes: number | null): {
+  hours: number;
+  minutes: number;
+} | null {
+  if (remainingMinutes === null) return null;
+  return formatRemainingMinutes(remainingMinutes);
 }

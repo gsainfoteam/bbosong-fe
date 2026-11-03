@@ -79,7 +79,8 @@ export function MainFrame() {
     [allMachines],
   );
 
-  const { elapsedMinutesByUuid } = useFindMachinesByUuids(usingMachineUuids);
+  const { elapsedMinutesByUuid, remainingMinutesByUuid } =
+    useFindMachinesByUuids(usingMachineUuids);
 
   useEffect(() => {
     localStorage.setItem('location', currentLocation);
@@ -111,10 +112,17 @@ export function MainFrame() {
           id: machine.index,
           status,
           elapsedMinutes: elapsedMinutesByUuid.get(machine.uuid),
+          remainingMinutes: remainingMinutesByUuid.get(machine.uuid),
         };
       })
       .sort((a, b) => a.id - b.id);
-  }, [allMachines, currentLocation, elapsedMinutesByUuid, user?.gender]);
+  }, [
+    allMachines,
+    currentLocation,
+    elapsedMinutesByUuid,
+    remainingMinutesByUuid,
+    user?.gender,
+  ]);
 
   const usingMachineList = {
     machineList: usingMachines,

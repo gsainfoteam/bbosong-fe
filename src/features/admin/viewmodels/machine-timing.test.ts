@@ -2,7 +2,12 @@
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { useMachineTiming } from './machine-timing';
+import { type AdminMachine } from '../models';
+import {
+  formatThinqRemainingParts,
+  getMachineThinqRemainingMinutes,
+  useMachineTiming,
+} from './machine-timing';
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -12,6 +17,34 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   vi.useRealTimers();
+});
+
+describe('formatThinqRemainingParts', () => {
+  it('splits remaining minutes into hours and minutes', () => {
+    expect(formatThinqRemainingParts(90)).toEqual({ hours: 1, minutes: 30 });
+    expect(formatThinqRemainingParts(20)).toEqual({ hours: 0, minutes: 20 });
+  });
+
+  it('returns null when remaining minutes are unavailable', () => {
+    expect(formatThinqRemainingParts(null)).toBeNull();
+  });
+});
+
+describe('getMachineThinqRemainingMinutes', () => {
+  it('returns remaining minutes only for ThinQ-mapped machines', () => {
+    expect(
+      getMachineThinqRemainingMinutes({
+        thinqDeviceId: 'device-1',
+        thinqRemainingMinutes: 45,
+      } as AdminMachine),
+    ).toBe(45);
+    expect(
+      getMachineThinqRemainingMinutes({
+        thinqDeviceId: null,
+        thinqRemainingMinutes: 45,
+      } as AdminMachine),
+    ).toBeNull();
+  });
 });
 
 describe('useMachineTiming', () => {

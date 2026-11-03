@@ -6,7 +6,9 @@ import {
   type AdminMachine,
   formatMachineCode,
   formatMachineLastSeen,
+  formatThinqRemainingParts,
   getMachineOperatingMinutes,
+  getMachineThinqRemainingMinutes,
   useMachineTiming,
 } from '../../../viewmodels';
 import { MachineStatusBadge } from '../machine-status-badge';
@@ -29,6 +31,7 @@ export function MachineTable({
       ? formatMachineLastSeen(machine.thinqUpdatedAt, now, i18n.resolvedLanguage ?? 'ko')
       : null,
     operatingMinutes: getMachineOperatingMinutes(machine, now),
+    thinqRemaining: formatThinqRemainingParts(getMachineThinqRemainingMinutes(machine)),
   }));
   // Keep translations for API enum values during i18next extraction.
   // t('WASHER'); t('DRYER'); t('MALE'); t('FEMALE');
@@ -53,7 +56,7 @@ export function MachineTable({
           </tr>
         </thead>
         <tbody className="divide-border divide-y dark:divide-slate-800">
-          {rows.map(({ machine, lastSeen, thinqUpdated, operatingMinutes }) => (
+          {rows.map(({ machine, lastSeen, thinqUpdated, operatingMinutes, thinqRemaining }) => (
             <tr key={machine.uuid}>
               <td className="px-5 py-4">
                 <div
@@ -102,11 +105,16 @@ export function MachineTable({
                     <div className="space-y-1">
                       <div>{machine.thinqCurrentState ?? t('thinqStateUnknown')}</div>
                       <div className="text-text-secondary text-xs dark:text-slate-400">
-                        {machine.thinqRemainingMinutes === null
+                        {thinqRemaining === null
                           ? t('thinqRemainingUnknown')
-                          : t('thinqRemainingMinutes', {
-                              minutes: String(machine.thinqRemainingMinutes),
-                            })}
+                          : thinqRemaining.hours > 0
+                            ? t('thinqRemainingHourMinute', {
+                                hours: String(thinqRemaining.hours),
+                                minutes: String(thinqRemaining.minutes),
+                              })
+                            : t('thinqRemainingMinutes', {
+                                minutes: String(thinqRemaining.minutes),
+                              })}
                       </div>
                       {thinqUpdated ? (
                         <time
