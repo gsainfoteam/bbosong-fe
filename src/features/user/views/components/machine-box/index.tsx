@@ -2,7 +2,7 @@ import { useId } from 'react';
 
 import { useTranslation } from 'react-i18next';
 
-import { cn } from '@/common/utils';
+import { cn, formatRemainingMinutes } from '@/common/utils';
 
 /*
  * 모든 수치는 viewBox(한 변 100) 기준이다. 디자인 시안의 박스 한 변(≈94px)을 100으로 환산했고,
@@ -103,13 +103,22 @@ const SURFACE: Record<MachineBox.Type, Record<MachineBox.Status, string>> = {
   },
 };
 
-function useElapsedLabel(elapsedMinutes?: number) {
+function useTimeLabel(machine: Pick<MachineBox.Props['machine'], 'status' | 'elapsedMinutes' | 'remainingMinutes'>) {
   const { t } = useTranslation('machine');
 
-  if (elapsedMinutes === undefined || elapsedMinutes < 0) return '';
+  if (machine.status !== 'using') return '';
 
-  const hours = Math.floor(elapsedMinutes / 60);
-  const minutes = elapsedMinutes % 60;
+  if (machine.remainingMinutes !== undefined && machine.remainingMinutes >= 0) {
+    const { hours, minutes } = formatRemainingMinutes(machine.remainingMinutes);
+    return hours > 0
+      ? t('remainingHourMinute', { hours: String(hours), minutes: String(minutes) })
+      : t('remainingMinute', { minutes: String(minutes) });
+  }
+
+  if (machine.elapsedMinutes === undefined || machine.elapsedMinutes < 0) return '';
+
+  const hours = Math.floor(machine.elapsedMinutes / 60);
+  const minutes = machine.elapsedMinutes % 60;
 
   return hours > 0
     ? t('elapsedHourMinute', { hours: String(hours), minutes: String(minutes) })
@@ -142,9 +151,7 @@ function Label({
 export function MachineBox({ machine, className, ...props }: MachineBox.Props) {
   const { t } = useTranslation('machine');
   const id = useId();
-  const elapsedLabel = useElapsedLabel(
-    machine.status === 'using' ? machine.elapsedMinutes : undefined,
-  );
+  const timeLabel = useTimeLabel(machine);
 
   // t('idle')
   // t('using')
@@ -158,9 +165,9 @@ export function MachineBox({ machine, className, ...props }: MachineBox.Props) {
 
   const labels = (
     <>
-      {elapsedLabel && (
+      {timeLabel && (
         <Label pathId={pathId.top} spacing={shape.labelSpacing}>
-          {elapsedLabel}
+          {timeLabel}
         </Label>
       )}
       <Label pathId={pathId.bottom} spacing={shape.labelSpacing}>
@@ -173,7 +180,7 @@ export function MachineBox({ machine, className, ...props }: MachineBox.Props) {
     <svg
       viewBox={`0 0 ${SIZE} ${SIZE}`}
       role="img"
-      aria-label={[t(machine.type), machine.id, statusLabel, elapsedLabel]
+      aria-label={[t(machine.type), machine.id, statusLabel, timeLabel]
         .filter(Boolean)
         .join(' ')}
       className={cn('block aspect-square w-full font-light', className)}
@@ -187,7 +194,7 @@ export function MachineBox({ machine, className, ...props }: MachineBox.Props) {
         <mask id={maskId} maskUnits="userSpaceOnUse" x={0} y={0} width={SIZE} height={SIZE}>
           <rect width={SIZE} height={SIZE} fill="white" />
           <g fill="none" stroke="black" strokeWidth={LABEL_GAP * 2} strokeLinejoin="round">
-            {elapsedLabel && shape.minGap && <path d={shape.minGap.top} />}
+            {timeLabel && shape.minGap && <path d={shape.minGap.top} />}
             {shape.minGap && <path d={shape.minGap.bottom} />}
             <g fill="black">{labels}</g>
           </g>
@@ -233,7 +240,13 @@ export namespace MachineBox {
   export type Status = 'idle' | 'using' | 'disabled';
 
   export type Props = {
-    machine: { type: Type; id: number; status: Status; elapsedMinutes?: number };
+    machine: {
+      type: Type;
+      id: number;
+      status: Status;
+      elapsedMinutes?: number;
+      remainingMinutes?: number;
+    };
     className?: string;
   };
 }

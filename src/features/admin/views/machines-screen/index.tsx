@@ -14,6 +14,8 @@ import {
   formatMachineCode,
   formatMachineLastSeen,
   formatThinqDeviceLabel,
+  formatThinqRemainingParts,
+  getMachineThinqRemainingMinutes,
   shiftPowerQueryStart,
   toDatetimeLocalValue,
   updateMachineSchema,
@@ -62,6 +64,9 @@ export function AdminMachinesScreen() {
   const editNow = useMachineTiming(!!editingLive);
   const editThinqUpdated = editingLive
     ? formatMachineLastSeen(editingLive.thinqUpdatedAt, editNow, i18n.resolvedLanguage ?? 'ko')
+    : null;
+  const editThinqRemaining = editingLive
+    ? formatThinqRemainingParts(getMachineThinqRemainingMinutes(editingLive))
     : null;
 
   function openCreate(next: 'single' | 'multiple') {
@@ -485,11 +490,16 @@ export function AdminMachinesScreen() {
                     </div>
                     <div>
                       {t('thinqRemaining')}:{' '}
-                      {editingLive.thinqRemainingMinutes === null
+                      {editThinqRemaining === null
                         ? t('thinqRemainingUnknown')
-                        : t('thinqRemainingMinutes', {
-                            minutes: String(editingLive.thinqRemainingMinutes),
-                          })}
+                        : editThinqRemaining.hours > 0
+                          ? t('thinqRemainingHourMinute', {
+                              hours: String(editThinqRemaining.hours),
+                              minutes: String(editThinqRemaining.minutes),
+                            })
+                          : t('thinqRemainingMinutes', {
+                              minutes: String(editThinqRemaining.minutes),
+                            })}
                     </div>
                     <div>
                       {t('thinqUpdatedAt')}:{' '}

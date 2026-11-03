@@ -5,6 +5,8 @@
   "elapsedHourMinute": "{{hours}}h {{minutes}}m elapsed",
   "elapsedMinute": "{{minutes}}m elapsed",
   "idle": "Idle",
+  "remainingHourMinute": "{{hours}}h {{minutes}}m left",
+  "remainingMinute": "{{minutes}}m left",
   "using": "Using",
   "washer": "Washer"
 }

@@ -49,3 +49,16 @@ export const DryerUsing: Story = {
     className: 'w-30',
   },
 };
+
+export const DryerUsingRemaining: Story = {
+  args: {
+    machine: {
+      type: 'dryer',
+      id: 2,
+      status: 'using',
+      elapsedMinutes: 90,
+      remainingMinutes: 75,
+    },
+    className: 'w-30',
+  },
+};
