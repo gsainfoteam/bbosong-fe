@@ -16,13 +16,17 @@ export function MachineTable({
   renderActions,
   showLinks = false,
   showTiming = false,
+  showThinq = false,
 }: MachineTable.Props) {
   const { t, i18n } = useTranslation('admin');
-  const now = useMachineTiming(showTiming && machines.length > 0);
+  const now = useMachineTiming((showTiming || showThinq) && machines.length > 0);
   const rows = machines.map((machine) => ({
     machine,
     lastSeen: showTiming
       ? formatMachineLastSeen(machine.lastSeenAt, now, i18n.resolvedLanguage ?? 'ko')
+      : null,
+    thinqUpdated: showThinq
+      ? formatMachineLastSeen(machine.thinqUpdatedAt, now, i18n.resolvedLanguage ?? 'ko')
       : null,
     operatingMinutes: getMachineOperatingMinutes(machine, now),
   }));
@@ -38,6 +42,7 @@ export function MachineTable({
               t('room'),
               t('status'),
               ...(showTiming ? [t('lastSeenAt'), t('operatingTime')] : []),
+              ...(showThinq ? [t('thinqStatus')] : []),
               ...(showLinks ? [t('registrationLink')] : []),
               ...(renderActions ? [t('actions')] : []),
             ].map((label) => (
@@ -48,7 +53,7 @@ export function MachineTable({
           </tr>
         </thead>
         <tbody className="divide-border divide-y dark:divide-slate-800">
-          {rows.map(({ machine, lastSeen, operatingMinutes }) => (
+          {rows.map(({ machine, lastSeen, thinqUpdated, operatingMinutes }) => (
             <tr key={machine.uuid}>
               <td className="px-5 py-4">
                 <div
@@ -91,6 +96,37 @@ export function MachineTable({
                   </td>
                 </>
               )}
+              {showThinq && (
+                <td className="px-5 py-4 whitespace-nowrap">
+                  {machine.thinqDeviceId ? (
+                    <div className="space-y-1">
+                      <div>{machine.thinqCurrentState ?? t('thinqStateUnknown')}</div>
+                      <div className="text-text-secondary text-xs dark:text-slate-400">
+                        {machine.thinqRemainingMinutes === null
+                          ? t('thinqRemainingUnknown')
+                          : t('thinqRemainingMinutes', {
+                              minutes: String(machine.thinqRemainingMinutes),
+                            })}
+                      </div>
+                      {thinqUpdated ? (
+                        <time
+                          className="text-text-secondary block text-xs dark:text-slate-400"
+                          dateTime={thinqUpdated.dateTime}
+                          title={thinqUpdated.absolute}
+                        >
+                          {t('thinqUpdatedAt')}: {thinqUpdated.relative}
+                        </time>
+                      ) : (
+                        <div className="text-text-secondary text-xs dark:text-slate-400">
+                          {t('thinqUpdatedAt')}: -
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    '-'
+                  )}
+                </td>
+              )}
               {showLinks && (
                 <td className="px-5 py-4">
                   {machine.shortUrl ? (
@@ -117,7 +153,13 @@ export function MachineTable({
           {!machines.length && (
             <tr>
               <td
-                colSpan={3 + 2 * Number(showTiming) + Number(showLinks) + Number(!!renderActions)}
+                colSpan={
+                  3 +
+                  2 * Number(showTiming) +
+                  Number(showThinq) +
+                  Number(showLinks) +
+                  Number(!!renderActions)
+                }
                 className="text-text-secondary px-5 py-12 text-center dark:text-slate-400"
               >
                 {t('noMachines')}
@@ -135,5 +177,6 @@ export namespace MachineTable {
     renderActions?: (machine: AdminMachine) => ReactNode;
     showLinks?: boolean;
     showTiming?: boolean;
+    showThinq?: boolean;
   };
 }

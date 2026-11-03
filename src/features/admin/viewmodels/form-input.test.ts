@@ -15,6 +15,38 @@ describe('admin form validation', () => {
       ...room,
       index: 4,
       matterPayload: undefined,
+      thinqDeviceId: undefined,
+    });
+  });
+  it('keeps ThinQ mapping for dryers and drops Matter payload', () => {
+    expect(
+      createMachineSchema.parse({
+        ...room,
+        type: MachineType.DRYER,
+        index: '2',
+        matterPayload: 'MT:123',
+        thinqDeviceId: 'device-1',
+      }),
+    ).toEqual({
+      ...room,
+      type: MachineType.DRYER,
+      index: 2,
+      matterPayload: undefined,
+      thinqDeviceId: 'device-1',
+    });
+  });
+  it('drops ThinQ mapping for washers', () => {
+    expect(
+      createMachineSchema.parse({
+        ...room,
+        index: '2',
+        thinqDeviceId: 'device-1',
+      }),
+    ).toEqual({
+      ...room,
+      index: 2,
+      matterPayload: undefined,
+      thinqDeviceId: undefined,
     });
   });
   it.each(['0', '-1', '1.5', '', 'abc'])('rejects invalid machine number %s', (index) => {
@@ -48,6 +80,42 @@ describe('admin form validation', () => {
         matterPayload: ' MT:123 ',
       }),
     ).toEqual({ isAvailable: true, posX: 0, posY: -5, matterPayload: 'MT:123' });
+  });
+  it('clears ThinQ mapping with null for dryers and keeps Matter payload when unmapped', () => {
+    expect(
+      updateMachineSchema.parse({
+        isAvailable: true,
+        posX: '',
+        posY: '',
+        matterPayload: '',
+        thinqDeviceId: '',
+        type: MachineType.DRYER,
+      }),
+    ).toEqual({
+      isAvailable: true,
+      posX: undefined,
+      posY: undefined,
+      matterPayload: undefined,
+      thinqDeviceId: null,
+    });
+  });
+  it('maps a ThinQ dryer and omits Matter payload', () => {
+    expect(
+      updateMachineSchema.parse({
+        isAvailable: true,
+        posX: '',
+        posY: '',
+        matterPayload: 'MT:123',
+        thinqDeviceId: 'device-1',
+        type: MachineType.DRYER,
+      }),
+    ).toEqual({
+      isAvailable: true,
+      posX: undefined,
+      posY: undefined,
+      matterPayload: undefined,
+      thinqDeviceId: 'device-1',
+    });
   });
   it('rejects changing own role, including UUID casing differences', () => {
     const uuid = '123e4567-e89b-42d3-a456-426614174000';
