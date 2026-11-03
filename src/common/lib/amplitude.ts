@@ -65,6 +65,20 @@ export function trackEvent<E extends AnalyticsEvent>(
   amplitude.track(event, properties);
 }
 
+let isLoginPending = false;
+
+/**
+ * 로그인 성공을 표시해 두고, 사용자 식별이 끝난 뒤 로그인 이벤트를 보낸다.
+ *
+ * 로그인 응답에는 사용자 UUID가 없어 내 정보 조회 후에야 식별할 수 있다.
+ * 바로 기록하면 로그아웃(reset) 후 재로그인한 이벤트가 익명 사용자로 집계된다.
+ */
+export function markLoginCompleted() {
+  if (!isEnabled) return;
+
+  isLoginPending = true;
+}
+
 /** 로그인 사용자를 식별한다. userId에는 이메일·학번 대신 서버 UUID를 쓴다 */
 export function identifyAnalyticsUser(userId: string, properties: Record<string, string>) {
   if (!isEnabled) return;
@@ -74,11 +88,22 @@ export function identifyAnalyticsUser(userId: string, properties: Record<string,
   const identify = new amplitude.Identify();
   Object.entries(properties).forEach(([key, value]) => identify.set(key, value));
   amplitude.identify(identify);
+
+  if (isLoginPending) {
+    isLoginPending = false;
+    amplitude.track(AnalyticsEvent.LOGIN_COMPLETED);
+  }
 }
 
-/** 로그아웃 시 호출해 같은 기기의 다음 사용자 이벤트가 이전 계정에 묶이지 않게 한다 */
+/**
+ * 같은 기기의 다음 이벤트가 이전 계정에 묶이지 않도록 식별을 해제한다.
+ *
+ * 식별된 사용자가 없으면 건너뛴다. reset은 기기 ID도 새로 만들기 때문에
+ * 비로그인 상태에서 반복 호출하면 방문할 때마다 다른 기기로 집계된다.
+ */
 export function resetAnalyticsUser() {
   if (!isEnabled) return;
+  if (!amplitude.getUserId()) return;
 
   amplitude.reset();
 }
