@@ -23,12 +23,12 @@ export function useAdminThinqDevices(enabled: boolean) {
     enabled,
     retry: false,
     queryFn: async (): Promise<ThinqDevice[]> => {
-      // OpenAPI에 200 응답 content 스키마가 없어 openapi-fetch가 body를 파싱하지 않는다.
-      const { response, error } = await api.GET(ApiPaths.MachineController_getThinqDevices);
+      // OpenAPI에 응답 스키마가 없어도 openapi-fetch는 기본 parseAs:"json"으로 body를 먼저 읽는다.
+      const { data, response, error } = await api.GET(ApiPaths.MachineController_getThinqDevices);
       if (!response.ok) {
         throw error ?? new Error(`ThinQ devices request failed (${response.status})`);
       }
-      const body: unknown = await response.json();
+      const body: unknown = data;
       if (!Array.isArray(body) || body.some((device) => !isThinqDevice(device))) {
         throw new Error('Invalid ThinQ device list.');
       }

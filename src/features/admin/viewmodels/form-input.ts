@@ -49,10 +49,7 @@ export const updateMachineSchema = z
       (value) => (value === '' ? undefined : value),
       z.coerce.number().int().optional(),
     ),
-    matterPayload: z
-      .string()
-      .trim()
-      .transform((value) => value || undefined),
+    matterPayload: optionalMatterPayload,
     thinqDeviceId: z.string().optional(),
     type: z.enum(MachineType).optional(),
   })

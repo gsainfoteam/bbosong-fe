@@ -56,9 +56,12 @@ export function AdminMachinesScreen() {
   const thinqNeeded =
     (mode === 'single' && createType === MachineType.DRYER) || editing?.type === MachineType.DRYER;
   const thinqDevices = useAdminThinqDevices(!!thinqNeeded);
-  const editNow = useMachineTiming(!!editing);
-  const editThinqUpdated = editing
-    ? formatMachineLastSeen(editing.thinqUpdatedAt, editNow, i18n.resolvedLanguage ?? 'ko')
+  const editingLive = editing
+    ? (query.machines.find((machine) => machine.uuid === editing.uuid) ?? editing)
+    : null;
+  const editNow = useMachineTiming(!!editingLive);
+  const editThinqUpdated = editingLive
+    ? formatMachineLastSeen(editingLive.thinqUpdatedAt, editNow, i18n.resolvedLanguage ?? 'ko')
     : null;
 
   function openCreate(next: 'single' | 'multiple') {
@@ -314,9 +317,19 @@ export function AdminMachinesScreen() {
                         ))}
                       </select>
                       {thinqDevices.isError && (
-                        <span className="text-text-secondary text-xs dark:text-slate-400">
-                          {t('thinqDevicesError')}
-                        </span>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-text-secondary text-xs dark:text-slate-400">
+                            {t('thinqDevicesError')}
+                          </span>
+                          <button
+                            type="button"
+                            className={secondaryButtonClass}
+                            onClick={() => void thinqDevices.refetch()}
+                            disabled={thinqDevices.isFetching}
+                          >
+                            {thinqDevices.isFetching ? t('loading') : t('refresh')}
+                          </button>
+                        </div>
                       )}
                       <span className="text-text-secondary text-xs leading-5 dark:text-slate-400">
                         {t('thinqMappingHint')}
@@ -381,9 +394,9 @@ export function AdminMachinesScreen() {
           </form>
         </AdminDialog>
       )}
-      {editing && (
+      {editingLive && (
         <AdminDialog
-          title={`${t('editMachine')} · ${formatMachineCode(editing)}`}
+          title={`${t('editMachine')} · ${formatMachineCode(editingLive)}`}
           onClose={() => setEditing(null)}
           isPending={actions.isPending}
         >
@@ -393,7 +406,7 @@ export function AdminMachinesScreen() {
                 <input
                   name="isAvailable"
                   type="checkbox"
-                  defaultChecked={editing.isAvailable}
+                  defaultChecked={editingLive.isAvailable}
                   className="accent-primary size-4"
                 />
                 {t('isAvailable')}
@@ -405,7 +418,7 @@ export function AdminMachinesScreen() {
                     name="posX"
                     type="number"
                     step={1}
-                    defaultValue={editing.posX ?? ''}
+                    defaultValue={editingLive.posX ?? ''}
                     className={inputClass}
                   />
                 </label>
@@ -415,7 +428,7 @@ export function AdminMachinesScreen() {
                     name="posY"
                     type="number"
                     step={1}
-                    defaultValue={editing.posY ?? ''}
+                    defaultValue={editingLive.posY ?? ''}
                     className={inputClass}
                   />
                 </label>
@@ -431,10 +444,12 @@ export function AdminMachinesScreen() {
                       disabled={thinqDevices.isLoading || thinqDevices.isError}
                     >
                       <option value="">{t('thinqDeviceNone')}</option>
-                      {editing.thinqDeviceId &&
-                        !thinqOptions.some((device) => device.deviceId === editing.thinqDeviceId) && (
-                          <option value={editing.thinqDeviceId}>
-                            {t('thinqDeviceCurrent', { id: editing.thinqDeviceId })}
+                      {editingLive.thinqDeviceId &&
+                        !thinqOptions.some(
+                          (device) => device.deviceId === editingLive.thinqDeviceId,
+                        ) && (
+                          <option value={editingLive.thinqDeviceId}>
+                            {t('thinqDeviceCurrent', { id: editingLive.thinqDeviceId })}
                           </option>
                         )}
                       {thinqOptions.map((device) => (
@@ -444,9 +459,19 @@ export function AdminMachinesScreen() {
                       ))}
                     </select>
                     {thinqDevices.isError && (
-                      <span className="text-text-secondary text-xs dark:text-slate-400">
-                        {t('thinqDevicesError')}
-                      </span>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-text-secondary text-xs dark:text-slate-400">
+                          {t('thinqDevicesError')}
+                        </span>
+                        <button
+                          type="button"
+                          className={secondaryButtonClass}
+                          onClick={() => void thinqDevices.refetch()}
+                          disabled={thinqDevices.isFetching}
+                        >
+                          {thinqDevices.isFetching ? t('loading') : t('refresh')}
+                        </button>
+                      </div>
                     )}
                     <span className="text-text-secondary text-xs leading-5 dark:text-slate-400">
                       {t('thinqMappingHint')}
@@ -455,14 +480,15 @@ export function AdminMachinesScreen() {
                   <div className="border-border space-y-1 rounded-lg border px-3 py-2 text-sm dark:border-slate-700">
                     <div className="font-medium">{t('thinqStatus')}</div>
                     <div>
-                      {t('thinqCurrentState')}: {editing.thinqCurrentState ?? t('thinqStateUnknown')}
+                      {t('thinqCurrentState')}:{' '}
+                      {editingLive.thinqCurrentState ?? t('thinqStateUnknown')}
                     </div>
                     <div>
                       {t('thinqRemaining')}:{' '}
-                      {editing.thinqRemainingMinutes === null
+                      {editingLive.thinqRemainingMinutes === null
                         ? t('thinqRemainingUnknown')
                         : t('thinqRemainingMinutes', {
-                            minutes: String(editing.thinqRemainingMinutes),
+                            minutes: String(editingLive.thinqRemainingMinutes),
                           })}
                     </div>
                     <div>
