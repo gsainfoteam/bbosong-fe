@@ -13,11 +13,13 @@ export function formatRemainingMinutes(totalMinutes: number): {
 /** `thinqRemainingMinutes` 또는 `currentUsage.remainingMinutes`에서 남은 분을 고른다. */
 export function resolveRemainingMinutes(machine: {
   thinqRemainingMinutes?: unknown;
-  currentUsage?: { remainingMinutes?: unknown } | null;
+  currentUsage?: unknown;
 }): number | null {
   if (typeof machine.thinqRemainingMinutes === 'number') return machine.thinqRemainingMinutes;
-  if (typeof machine.currentUsage?.remainingMinutes === 'number') {
-    return machine.currentUsage.remainingMinutes;
+  const usage = machine.currentUsage;
+  if (usage && typeof usage === 'object' && 'remainingMinutes' in usage) {
+    const remaining = (usage as { remainingMinutes?: unknown }).remainingMinutes;
+    if (typeof remaining === 'number') return remaining;
   }
   return null;
 }
