@@ -22,7 +22,8 @@ export function MypageScreen({
 
       <div className="flex flex-1 flex-col px-6 pb-6">
         <h1 className="mb-5">{t('account')}</h1>
-        <div className="text-text-secondary flex flex-col gap-1 px-2.5">
+        {/* data-amp-mask: Amplitude 자동 수집 시 이름·학번·이메일 텍스트를 가린다 */}
+        <div data-amp-mask className="text-text-secondary flex flex-col gap-1 px-2.5">
           <p>
             {t('name')}: {user.name}
           </p>

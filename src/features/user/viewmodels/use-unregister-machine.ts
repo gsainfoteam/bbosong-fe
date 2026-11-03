@@ -5,7 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
-import { $api } from '@/common/lib';
+import { $api, AnalyticsEvent, trackEvent } from '@/common/lib';
 
 import { ApiPaths } from '../models';
 
@@ -21,11 +21,12 @@ export function useUnregisterMachine(onUnregistered?: () => void) {
         typeof queryKey[1] === 'string' &&
         queryKey[1].startsWith('/machine'),
     });
-  const onSuccess = async (data: { success: boolean }) => {
+  const onSuccess = async (data: { success: boolean }, machineUuid: string) => {
     if (!data.success) {
       toast.error(t('error:generic'));
       return;
     }
+    trackEvent(AnalyticsEvent.MACHINE_UNREGISTERED, { machineUuid });
     await refreshMachines();
     toast.success(t('unregister.success'));
     onUnregistered?.();
@@ -55,7 +56,11 @@ export function useUnregisterMachine(onUnregistered?: () => void) {
   const unregistration = $api.useMutation(
     'delete',
     ApiPaths.MachineController_unregisterMachineUsage,
-    { onSuccess, onError, onSettled },
+    {
+      onSuccess: (data, variables) => onSuccess(data, variables.params.path.uuid),
+      onError,
+      onSettled,
+    },
   );
 
   return {

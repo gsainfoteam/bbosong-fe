@@ -10,6 +10,7 @@ import { useRegisterMachine } from './use-register-machine';
 
 const mocks = vi.hoisted(() => ({
   post: vi.fn(),
+  track: vi.fn(),
   error: vi.fn(),
   success: vi.fn(),
   navigate: vi.fn(),
@@ -17,6 +18,11 @@ const mocks = vi.hoisted(() => ({
 vi.mock('@/common/lib', async () => {
   const { useMutation } = await import('@tanstack/react-query');
   return {
+    AnalyticsEvent: {
+      MACHINE_REGISTERED: 'Machine Registered',
+      MACHINE_UNREGISTERED: 'Machine Unregistered',
+    },
+    trackEvent: mocks.track,
     $api: {
       useMutation: (_method: string, path: string, options: object) =>
         useMutation({
@@ -98,6 +104,10 @@ describe('machine registration', () => {
     act(() => result.current.mutate(variables));
     await waitFor(() => expect(mocks.navigate).toHaveBeenCalledWith({ to: '/' }));
     expect(mocks.success).toHaveBeenCalledExactlyOnceWith('success');
+    expect(mocks.track).toHaveBeenCalledExactlyOnceWith('Machine Registered', {
+      machineUuid: 'machine-uuid',
+      completionConfirmed: false,
+    });
     const predicate = invalidate.mock.calls[0][0]?.predicate;
     expect(predicate?.({ queryKey: ['get', '/machine/{uuid}'] } as never)).toBe(true);
     expect(predicate?.({ queryKey: ['get', '/user/me'] } as never)).toBe(false);
@@ -143,6 +153,10 @@ describe('machine registration', () => {
     expect(invalidate).toHaveBeenCalledTimes(1);
     expect(mocks.success).toHaveBeenCalledExactlyOnceWith('success');
     expect(mocks.navigate).not.toHaveBeenCalled();
+    expect(mocks.track).toHaveBeenCalledExactlyOnceWith('Machine Registered', {
+      machineUuid: 'machine-uuid',
+      completionConfirmed: true,
+    });
   });
 
   it.each([

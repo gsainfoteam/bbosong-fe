@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuthContext } from 'react-oauth2-code-pkce';
 import { toast } from 'sonner';
 
-import { $api } from '@/common/lib';
+import { $api, AnalyticsEvent, resetAnalyticsUser, trackEvent } from '@/common/lib';
 
 import { ApiPaths } from '../../models';
 import { useToken } from '../stores';
@@ -29,6 +29,9 @@ export const useLogout = ({ showToast = false }: { showToast?: boolean } = {}) =
       }
     },
     onSettled: () => {
+      // reset 이후에 보내면 익명 사용자 이벤트가 되므로 먼저 기록한다
+      trackEvent(AnalyticsEvent.LOGOUT_COMPLETED);
+      resetAnalyticsUser();
       useToken.getState().saveToken(null);
       idpLogOut();
     },

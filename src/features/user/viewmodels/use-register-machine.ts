@@ -6,7 +6,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
-import { $api } from '@/common/lib';
+import { $api, AnalyticsEvent, trackEvent } from '@/common/lib';
 
 import { ApiPaths } from '../models';
 
@@ -27,12 +27,16 @@ export function useRegisterMachine(onRegistered?: () => void) {
         typeof queryKey[1] === 'string' &&
         queryKey[1].startsWith('/machine'),
     });
-  const onSuccess = async (data: { success: boolean }) => {
+  const onSuccess = async (
+    data: { success: boolean },
+    { machineUuid, completionConfirmed }: { machineUuid: string; completionConfirmed: boolean },
+  ) => {
     setConfirmation(null);
     if (!data.success) {
       toast.error(t('error.alreadyUsing'));
       return;
     }
+    trackEvent(AnalyticsEvent.MACHINE_REGISTERED, { machineUuid, completionConfirmed });
     await refreshMachines();
     toast.success(t('success'));
     if (onRegistered) onRegistered();
@@ -75,7 +79,8 @@ export function useRegisterMachine(onRegistered?: () => void) {
   };
 
   const registration = $api.useMutation('post', ApiPaths.MachineController_registerMachineUsage, {
-    onSuccess,
+    onSuccess: (data, variables) =>
+      onSuccess(data, { machineUuid: variables.params.path.uuid, completionConfirmed: false }),
     onError: (error, variables) => {
       if (
         typeof error === 'object' &&
@@ -95,7 +100,8 @@ export function useRegisterMachine(onRegistered?: () => void) {
     onSettled,
   });
   const completion = $api.useMutation('post', ApiPaths.MachineController_confirmMachineCompletion, {
-    onSuccess,
+    onSuccess: (data, variables) =>
+      onSuccess(data, { machineUuid: variables.params.path.uuid, completionConfirmed: true }),
     onError: (error) => {
       setConfirmation(null);
       return onError(error);

@@ -1,3 +1,4 @@
+export * from './use-analytics-identity';
 export * from './use-auth';
 export * from './use-consent-form';
 export * from './use-restore-session';

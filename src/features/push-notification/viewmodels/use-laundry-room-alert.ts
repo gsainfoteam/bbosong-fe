@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { useMutation } from '@tanstack/react-query';
 
-import { subscribeToPushMessages } from '@/common/lib';
+import { AnalyticsEvent, subscribeToPushMessages, trackEvent } from '@/common/lib';
 
 import {
   subscribeLaundryRoomAlert,
@@ -63,6 +63,7 @@ export function useLaundryRoomAlert() {
       setPendingKey(key);
       try {
         await mutateAsync({ target, next });
+        trackEvent(AnalyticsEvent.LAUNDRY_ROOM_ALERT_TOGGLED, { ...target, enabled: next });
 
         setActiveKeys((prev) => {
           const draft = new Set(prev);
