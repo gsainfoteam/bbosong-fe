@@ -14,7 +14,7 @@ export function MainScreen({
   const { t } = useTranslation(['machine', 'main']);
 
   return (
-    <div className={cn(className, 'bg-bg h-dvh w-full')} {...props}>
+    <div className={cn(className, 'bg-bg w-full')} {...props}>
       <Header className="mb-6" />
       <div className="flex flex-col gap-6 px-3 pb-24">
         <UsingMachineList

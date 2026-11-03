@@ -17,7 +17,7 @@ export function MypageScreen({
   //t('female');
 
   return (
-    <div className={cn('bg-bg flex h-dvh w-full flex-col', className)} {...props}>
+    <div className={cn('bg-bg flex w-full flex-1 flex-col', className)} {...props}>
       <MyPageHeader />
 
       <div className="flex flex-1 flex-col px-6 pb-6">

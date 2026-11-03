@@ -33,6 +33,7 @@ import {
   MachineTable,
   PowerLookbackButtons,
   PowerRecordResults,
+  ThinqRemaining,
 } from '../components';
 import { buttonClass, inputClass, secondaryButtonClass } from '../styles';
 
@@ -57,7 +58,7 @@ export function AdminMachinesScreen() {
     query.machines.find((machine) => machine.uuid === powerTarget?.uuid) ?? powerTarget;
   const thinqNeeded =
     (mode === 'single' && createType === MachineType.DRYER) || editing?.type === MachineType.DRYER;
-  const thinqDevices = useAdminThinqDevices(!!thinqNeeded);
+  const thinqDevices = useAdminThinqDevices(thinqNeeded);
   const editingLive = editing
     ? (query.machines.find((machine) => machine.uuid === editing.uuid) ?? editing)
     : null;
@@ -489,17 +490,7 @@ export function AdminMachinesScreen() {
                       {editingLive.thinqCurrentState ?? t('thinqStateUnknown')}
                     </div>
                     <div>
-                      {t('thinqRemaining')}:{' '}
-                      {editThinqRemaining === null
-                        ? t('thinqRemainingUnknown')
-                        : editThinqRemaining.hours > 0
-                          ? t('thinqRemainingHourMinute', {
-                              hours: String(editThinqRemaining.hours),
-                              minutes: String(editThinqRemaining.minutes),
-                            })
-                          : t('thinqRemainingMinutes', {
-                              minutes: String(editThinqRemaining.minutes),
-                            })}
+                      {t('thinqRemaining')}: <ThinqRemaining remaining={editThinqRemaining} />
                     </div>
                     <div>
                       {t('thinqUpdatedAt')}:{' '}

@@ -11,10 +11,6 @@ export const NAV_ITEMS: NavItem[] = [
     labelKey: 'mypage', // t('nav:mypage')
   },
   {
-    to: '/status',
-    labelKey: 'status', // t('nav:status')
-  },
-  {
     to: '/map',
     labelKey: 'map', // t('nav:map')
   },

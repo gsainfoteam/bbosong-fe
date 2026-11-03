@@ -11,7 +11,7 @@ import {
   getMachineThinqRemainingMinutes,
   useMachineTiming,
 } from '../../../viewmodels';
-import { MachineStatusBadge } from '../machine-status-badge';
+import { MachineStatusBadge, ThinqRemaining } from '@/features/admin';
 
 export function MachineTable({
   machines,
@@ -105,16 +105,7 @@ export function MachineTable({
                     <div className="space-y-1">
                       <div>{machine.thinqCurrentState ?? t('thinqStateUnknown')}</div>
                       <div className="text-text-secondary text-xs dark:text-slate-400">
-                        {thinqRemaining === null
-                          ? t('thinqRemainingUnknown')
-                          : thinqRemaining.hours > 0
-                            ? t('thinqRemainingHourMinute', {
-                                hours: String(thinqRemaining.hours),
-                                minutes: String(thinqRemaining.minutes),
-                              })
-                            : t('thinqRemainingMinutes', {
-                                minutes: String(thinqRemaining.minutes),
-                              })}
+                        <ThinqRemaining remaining={thinqRemaining} />
                       </div>
                       {thinqUpdated ? (
                         <time

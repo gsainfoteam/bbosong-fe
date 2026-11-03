@@ -13,7 +13,7 @@ export function MypageFrame() {
 
   if (isLoading) {
     return (
-      <div className="bg-bg flex h-dvh w-full items-center justify-center">
+      <div className="bg-bg flex w-full flex-1 items-center justify-center">
         <p>Loading...</p>
       </div>
     );
@@ -21,7 +21,7 @@ export function MypageFrame() {
 
   if (isError || !user) {
     return (
-      <div className="bg-bg flex h-dvh w-full flex-col items-center justify-center">
+      <div className="bg-bg flex w-full flex-1 flex-col items-center justify-center">
         <p role="alert">{t('generic')}</p>
         <button type="button" onClick={() => void refetch()}>
           {t('refetch')}
