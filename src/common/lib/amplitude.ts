@@ -55,6 +55,10 @@ export type AnalyticsEventProperties = {
   [AnalyticsEvent.APP_INSTALL_PROMPTED]: { outcome: 'accepted' | 'dismissed' | 'unavailable' };
 };
 
+type AnalyticsEventWithoutProperties = {
+  [E in AnalyticsEvent]: AnalyticsEventProperties[E] extends undefined ? E : never;
+}[AnalyticsEvent];
+
 export function trackEvent<E extends AnalyticsEvent>(
   ...[event, properties]: AnalyticsEventProperties[E] extends undefined
     ? [event: E]
@@ -100,10 +104,19 @@ export function identifyAnalyticsUser(userId: string, properties: Record<string,
  *
  * 식별된 사용자가 없으면 건너뛴다. reset은 기기 ID도 새로 만들기 때문에
  * 비로그인 상태에서 반복 호출하면 방문할 때마다 다른 기기로 집계된다.
+ *
+ * @param lastEvent 해제 직전 사용자에게 귀속시킬 이벤트 (예: 로그아웃)
  */
-export function resetAnalyticsUser() {
+export function resetAnalyticsUser(lastEvent?: AnalyticsEventWithoutProperties) {
   if (!isEnabled) return;
-  if (!amplitude.getUserId()) return;
 
+  const userId = amplitude.getUserId();
+  if (!userId) return;
+
+  // track은 user_id·device_id를 비동기 처리 시점에 채우므로, 바로 reset하면 초기화된 값이 들어간다.
+  // reset 전 식별 정보를 이벤트 옵션으로 직접 실어 보낸다.
+  if (lastEvent) {
+    amplitude.track(lastEvent, undefined, { user_id: userId, device_id: amplitude.getDeviceId() });
+  }
   amplitude.reset();
 }

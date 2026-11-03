@@ -15,6 +15,7 @@ const mocks = vi.hoisted(() => {
       userId = id;
     }),
     getUserId: () => userId,
+    getDeviceId: () => 'device-before-reset',
   };
 });
 vi.mock('@amplitude/analytics-browser', () => ({
@@ -59,5 +60,20 @@ describe('amplitude', () => {
     resetAnalyticsUser();
     resetAnalyticsUser();
     expect(mocks.reset).toHaveBeenCalledOnce();
+  });
+
+  it('attaches the pre-reset identity to the last event', () => {
+    resetAnalyticsUser('Logout Completed');
+    expect(mocks.track).not.toHaveBeenCalled();
+
+    identifyAnalyticsUser('user-uuid', {});
+    resetAnalyticsUser('Logout Completed');
+    expect(mocks.track).toHaveBeenCalledExactlyOnceWith('Logout Completed', undefined, {
+      user_id: 'user-uuid',
+      device_id: 'device-before-reset',
+    });
+    expect(mocks.track.mock.invocationCallOrder[0]).toBeLessThan(
+      mocks.reset.mock.invocationCallOrder[0],
+    );
   });
 });
