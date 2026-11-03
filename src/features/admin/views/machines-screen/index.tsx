@@ -12,12 +12,16 @@ import {
   createMachineSchema,
   createMultipleMachinesSchema,
   formatMachineCode,
+  formatMachineLastSeen,
+  formatThinqDeviceLabel,
   shiftPowerQueryStart,
   toDatetimeLocalValue,
   updateMachineSchema,
   useAdminActions,
   useAdminMachines,
   useAdminPower,
+  useAdminThinqDevices,
+  useMachineTiming,
 } from '../../viewmodels';
 import {
   AdminDialog,
@@ -31,11 +35,14 @@ import {
 import { buttonClass, inputClass, secondaryButtonClass } from '../styles';
 
 export function AdminMachinesScreen() {
-  const { t } = useTranslation('admin');
+  const { t, i18n } = useTranslation('admin');
   const query = useAdminMachines();
   const actions = useAdminActions();
   const [mode, setMode] = useState<'single' | 'multiple' | null>(null);
+  const [createType, setCreateType] = useState<MachineType>(MachineType.WASHER);
+  const [createThinqDeviceId, setCreateThinqDeviceId] = useState('');
   const [editing, setEditing] = useState<AdminMachine | null>(null);
+  const [editThinqDeviceId, setEditThinqDeviceId] = useState('');
   const [confirm, setConfirm] = useState<{
     machine: AdminMachine;
     action: 'delete' | 'commission';
@@ -46,7 +53,26 @@ export function AdminMachinesScreen() {
   const power = useAdminPower(powerTarget?.uuid ?? '', startedAt);
   const powerMachine =
     query.machines.find((machine) => machine.uuid === powerTarget?.uuid) ?? powerTarget;
+  const thinqNeeded =
+    (mode === 'single' && createType === MachineType.DRYER) || editing?.type === MachineType.DRYER;
+  const thinqDevices = useAdminThinqDevices(!!thinqNeeded);
+  const editingLive = editing
+    ? (query.machines.find((machine) => machine.uuid === editing.uuid) ?? editing)
+    : null;
+  const editNow = useMachineTiming(!!editingLive);
+  const editThinqUpdated = editingLive
+    ? formatMachineLastSeen(editingLive.thinqUpdatedAt, editNow, i18n.resolvedLanguage ?? 'ko')
+    : null;
 
+  function openCreate(next: 'single' | 'multiple') {
+    setCreateType(MachineType.WASHER);
+    setCreateThinqDeviceId('');
+    setMode(next);
+  }
+  function openEdit(machine: AdminMachine) {
+    setEditThinqDeviceId(machine.thinqDeviceId ?? '');
+    setEditing(machine);
+  }
   async function create(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     const values = Object.fromEntries(new FormData(event.currentTarget));
@@ -63,7 +89,10 @@ export function AdminMachinesScreen() {
         /* The mutation reports the API error. */
       }
     } else {
-      const result = createMachineSchema.safeParse(values);
+      const result = createMachineSchema.safeParse({
+        ...values,
+        thinqDeviceId: createThinqDeviceId,
+      });
       if (!result.success) {
         toast.error(t('invalidForm'));
         return;
@@ -83,6 +112,8 @@ export function AdminMachinesScreen() {
     const result = updateMachineSchema.safeParse({
       ...Object.fromEntries(values),
       isAvailable: values.get('isAvailable') === 'on',
+      thinqDeviceId: editThinqDeviceId,
+      type: editing.type,
     });
     if (!result.success) {
       toast.error(t('invalidForm'));
@@ -91,7 +122,8 @@ export function AdminMachinesScreen() {
     try {
       await actions.update.mutateAsync({
         params: { path: { uuid: editing.uuid } },
-        body: result.data,
+        // openapi-typescript maps nullable string request fields to Record; runtime sends string|null.
+        body: result.data as never,
       });
       setEditing(null);
     } catch {
@@ -126,6 +158,9 @@ export function AdminMachinesScreen() {
       /* The mutation reports the API error. */
     }
   }
+  const thinqOptions = thinqDevices.data ?? [];
+  const createUsesThinq = mode === 'single' && createType === MachineType.DRYER;
+  const editUsesThinq = editing?.type === MachineType.DRYER;
   return (
     <AdminPage
       title={t('machines')}
@@ -143,7 +178,7 @@ export function AdminMachinesScreen() {
           <button
             type="button"
             className={secondaryButtonClass}
-            onClick={() => setMode('multiple')}
+            onClick={() => openCreate('multiple')}
             disabled={actions.isPending}
           >
             {t('createMultiple')}
@@ -151,7 +186,7 @@ export function AdminMachinesScreen() {
           <button
             type="button"
             className={buttonClass}
-            onClick={() => setMode('single')}
+            onClick={() => openCreate('single')}
             disabled={actions.isPending}
           >
             <Plus size={16} />
@@ -163,6 +198,7 @@ export function AdminMachinesScreen() {
       <MachineTable
         machines={query.filtered}
         showTiming
+        showThinq
         renderActions={(machine) => (
           <>
             <button
@@ -178,7 +214,7 @@ export function AdminMachinesScreen() {
             <button
               type="button"
               className={secondaryButtonClass}
-              onClick={() => setEditing(machine)}
+              onClick={() => openEdit(machine)}
               disabled={actions.isPending}
             >
               {t('edit')}
@@ -187,7 +223,8 @@ export function AdminMachinesScreen() {
               type="button"
               className={secondaryButtonClass}
               onClick={() => setConfirm({ machine, action: 'commission' })}
-              disabled={actions.isPending}
+              disabled={actions.isPending || !!machine.thinqDeviceId}
+              title={machine.thinqDeviceId ? t('thinqCommissionDisabled') : undefined}
             >
               {t('commission')}
             </button>
@@ -232,7 +269,16 @@ export function AdminMachinesScreen() {
               </label>
               <label className="block space-y-2 text-sm">
                 <span>{t('type')}</span>
-                <select name="type" className={inputClass}>
+                <select
+                  name="type"
+                  className={inputClass}
+                  value={createType}
+                  onChange={(event) => {
+                    const next = event.target.value as MachineType;
+                    setCreateType(next);
+                    if (next !== MachineType.DRYER) setCreateThinqDeviceId('');
+                  }}
+                >
                   {Object.values(MachineType).map((value) => (
                     <option key={value} value={value}>
                       {t(value)}
@@ -254,10 +300,48 @@ export function AdminMachinesScreen() {
                       className={inputClass}
                     />
                   </label>
-                  <label className="block space-y-2 text-sm">
-                    <span>{t('matterPayload')}</span>
-                    <input name="matterPayload" className={inputClass} placeholder="MT:…" />
-                  </label>
+                  {createUsesThinq && (
+                    <label className="block space-y-2 text-sm">
+                      <span>{t('thinqDevice')}</span>
+                      <select
+                        className={inputClass}
+                        value={createThinqDeviceId}
+                        onChange={(event) => setCreateThinqDeviceId(event.target.value)}
+                        disabled={thinqDevices.isLoading || thinqDevices.isError}
+                      >
+                        <option value="">{t('thinqDeviceNone')}</option>
+                        {thinqOptions.map((device) => (
+                          <option key={device.deviceId} value={device.deviceId}>
+                            {formatThinqDeviceLabel(device)}
+                          </option>
+                        ))}
+                      </select>
+                      {thinqDevices.isError && (
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-text-secondary text-xs dark:text-slate-400">
+                            {t('thinqDevicesError')}
+                          </span>
+                          <button
+                            type="button"
+                            className={secondaryButtonClass}
+                            onClick={() => void thinqDevices.refetch()}
+                            disabled={thinqDevices.isFetching}
+                          >
+                            {thinqDevices.isFetching ? t('loading') : t('refresh')}
+                          </button>
+                        </div>
+                      )}
+                      <span className="text-text-secondary text-xs leading-5 dark:text-slate-400">
+                        {t('thinqMappingHint')}
+                      </span>
+                    </label>
+                  )}
+                  {!createThinqDeviceId && (
+                    <label className="block space-y-2 text-sm">
+                      <span>{t('matterPayload')}</span>
+                      <input name="matterPayload" className={inputClass} placeholder="MT:…" />
+                    </label>
+                  )}
                 </>
               ) : (
                 <>
@@ -310,9 +394,9 @@ export function AdminMachinesScreen() {
           </form>
         </AdminDialog>
       )}
-      {editing && (
+      {editingLive && (
         <AdminDialog
-          title={`${t('editMachine')} · ${formatMachineCode(editing)}`}
+          title={`${t('editMachine')} · ${formatMachineCode(editingLive)}`}
           onClose={() => setEditing(null)}
           isPending={actions.isPending}
         >
@@ -322,7 +406,7 @@ export function AdminMachinesScreen() {
                 <input
                   name="isAvailable"
                   type="checkbox"
-                  defaultChecked={editing.isAvailable}
+                  defaultChecked={editingLive.isAvailable}
                   className="accent-primary size-4"
                 />
                 {t('isAvailable')}
@@ -334,7 +418,7 @@ export function AdminMachinesScreen() {
                     name="posX"
                     type="number"
                     step={1}
-                    defaultValue={editing.posX ?? ''}
+                    defaultValue={editingLive.posX ?? ''}
                     className={inputClass}
                   />
                 </label>
@@ -344,17 +428,86 @@ export function AdminMachinesScreen() {
                     name="posY"
                     type="number"
                     step={1}
-                    defaultValue={editing.posY ?? ''}
+                    defaultValue={editingLive.posY ?? ''}
                     className={inputClass}
                   />
                 </label>
               </div>
-              <label className="block space-y-2 text-sm">
-                <span>{t('matterPayload')}</span>
-                <input name="matterPayload" className={inputClass} placeholder="MT:…" />
-              </label>
+              {editUsesThinq && (
+                <>
+                  <label className="block space-y-2 text-sm">
+                    <span>{t('thinqDevice')}</span>
+                    <select
+                      className={inputClass}
+                      value={editThinqDeviceId}
+                      onChange={(event) => setEditThinqDeviceId(event.target.value)}
+                      disabled={thinqDevices.isLoading || thinqDevices.isError}
+                    >
+                      <option value="">{t('thinqDeviceNone')}</option>
+                      {editingLive.thinqDeviceId &&
+                        !thinqOptions.some(
+                          (device) => device.deviceId === editingLive.thinqDeviceId,
+                        ) && (
+                          <option value={editingLive.thinqDeviceId}>
+                            {t('thinqDeviceCurrent', { id: editingLive.thinqDeviceId })}
+                          </option>
+                        )}
+                      {thinqOptions.map((device) => (
+                        <option key={device.deviceId} value={device.deviceId}>
+                          {formatThinqDeviceLabel(device)}
+                        </option>
+                      ))}
+                    </select>
+                    {thinqDevices.isError && (
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-text-secondary text-xs dark:text-slate-400">
+                          {t('thinqDevicesError')}
+                        </span>
+                        <button
+                          type="button"
+                          className={secondaryButtonClass}
+                          onClick={() => void thinqDevices.refetch()}
+                          disabled={thinqDevices.isFetching}
+                        >
+                          {thinqDevices.isFetching ? t('loading') : t('refresh')}
+                        </button>
+                      </div>
+                    )}
+                    <span className="text-text-secondary text-xs leading-5 dark:text-slate-400">
+                      {t('thinqMappingHint')}
+                    </span>
+                  </label>
+                  <div className="border-border space-y-1 rounded-lg border px-3 py-2 text-sm dark:border-slate-700">
+                    <div className="font-medium">{t('thinqStatus')}</div>
+                    <div>
+                      {t('thinqCurrentState')}:{' '}
+                      {editingLive.thinqCurrentState ?? t('thinqStateUnknown')}
+                    </div>
+                    <div>
+                      {t('thinqRemaining')}:{' '}
+                      {editingLive.thinqRemainingMinutes === null
+                        ? t('thinqRemainingUnknown')
+                        : t('thinqRemainingMinutes', {
+                            minutes: String(editingLive.thinqRemainingMinutes),
+                          })}
+                    </div>
+                    <div>
+                      {t('thinqUpdatedAt')}:{' '}
+                      {editThinqUpdated
+                        ? `${editThinqUpdated.relative} (${editThinqUpdated.absolute})`
+                        : '-'}
+                    </div>
+                  </div>
+                </>
+              )}
+              {!editThinqDeviceId && (
+                <label className="block space-y-2 text-sm">
+                  <span>{t('matterPayload')}</span>
+                  <input name="matterPayload" className={inputClass} placeholder="MT:…" />
+                </label>
+              )}
               <p className="text-text-secondary text-sm leading-6 dark:text-slate-400">
-                {t('editHint')}
+                {editThinqDeviceId ? t('thinqEditHint') : t('editHint')}
               </p>
               <div className="flex justify-end gap-2">
                 <button
