@@ -9,6 +9,7 @@ import { initInstallPromptCapture, registerServiceWorker } from '@/common/lib/se
 import { App } from './app';
 
 import './styles.css';
+import '@/common/lib/amplitude';
 import '@/common/lib/dayjs';
 
 // SW 등록은 렌더링을 막을 이유가 없으므로 await하지 않는다

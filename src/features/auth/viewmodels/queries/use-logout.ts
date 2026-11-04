@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuthContext } from 'react-oauth2-code-pkce';
 import { toast } from 'sonner';
 
-import { $api } from '@/common/lib';
+import { $api, AnalyticsEvent, resetAnalyticsUser } from '@/common/lib';
 
 import { ApiPaths } from '../../models';
 import { useToken } from '../stores';
@@ -29,6 +29,7 @@ export const useLogout = ({ showToast = false }: { showToast?: boolean } = {}) =
       }
     },
     onSettled: () => {
+      resetAnalyticsUser(AnalyticsEvent.LOGOUT_COMPLETED);
       useToken.getState().saveToken(null);
       idpLogOut();
     },

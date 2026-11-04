@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { createFileRoute, Navigate, Outlet, useRouter } from '@tanstack/react-router';
 
 import { Loading } from '@/common/components';
-import { useAuth, useToken } from '@/features/auth';
+import { useAnalyticsIdentity, useAuth, useToken } from '@/features/auth';
 import { usePushDeviceSync } from '@/features/push-notification';
 
 export const Route = createFileRoute('/_auth-required')({
@@ -15,6 +15,8 @@ function AuthRequiredLayout() {
   const token = useToken((state) => state.token);
   // 앱 실행 시점과 로그인 직후(계정 전환 포함)마다 푸시 디바이스를 재등록한다
   usePushDeviceSync();
+  // null(세션 없음)과 undefined(확인 중)를 구분해 넘겨야 세션 종료 시에만 식별이 해제된다
+  useAnalyticsIdentity(user === null || (user && 'uuid' in user) ? user : undefined);
   const router = useRouter();
   const [shouldRedirect, setShouldRedirect] = useState(false);
 

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 
 import {
+  AnalyticsEvent,
   canPromptInstall,
   canSubscribeOnThisPlatform,
   getNotificationPermission,
@@ -14,6 +15,7 @@ import {
   showInstallPrompt,
   subscribeToInstallPromptChange,
   subscribeToPush,
+  trackEvent,
   unsubscribeFromPush,
 } from '@/common/lib';
 import { useToken } from '@/features/auth';
@@ -160,6 +162,7 @@ export function usePushPermission() {
       const result = await requestNotificationPermission();
       // 모든 훅 인스턴스가 새 권한 값을 다시 읽도록 알린다
       emitPermissionChange();
+      trackEvent(AnalyticsEvent.PUSH_PERMISSION_REQUESTED, { result });
 
       if (result !== 'granted') return;
 
@@ -196,6 +199,7 @@ export function useInstallPrompt() {
     setIsPrompting(true);
     try {
       const outcome = await showInstallPrompt();
+      trackEvent(AnalyticsEvent.APP_INSTALL_PROMPTED, { outcome });
       setNeedsManualInstall(outcome !== 'accepted');
     } catch (error) {
       setNeedsManualInstall(true);

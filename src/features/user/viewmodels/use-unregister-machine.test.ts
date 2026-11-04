@@ -10,12 +10,18 @@ import { useUnregisterMachine } from './use-unregister-machine';
 
 const mocks = vi.hoisted(() => ({
   request: vi.fn(),
+  track: vi.fn(),
   error: vi.fn(),
   success: vi.fn(),
 }));
 vi.mock('@/common/lib', async () => {
   const { useMutation } = await import('@tanstack/react-query');
   return {
+    AnalyticsEvent: {
+      MACHINE_REGISTERED: 'Machine Registered',
+      MACHINE_UNREGISTERED: 'Machine Unregistered',
+    },
+    trackEvent: mocks.track,
     $api: {
       useMutation: (method: string, path: string, options: object) =>
         useMutation({
@@ -86,6 +92,9 @@ describe('machine unregistration', () => {
       variables,
     );
     expect(mocks.success).toHaveBeenCalledExactlyOnceWith('unregister.success');
+    expect(mocks.track).toHaveBeenCalledExactlyOnceWith('Machine Unregistered', {
+      machineUuid: 'machine-uuid',
+    });
     const predicate = invalidate.mock.calls[0][0]?.predicate;
     expect(predicate?.({ queryKey: ['get', '/machine/me'] } as never)).toBe(true);
     expect(predicate?.({ queryKey: ['get', '/user/me'] } as never)).toBe(false);
