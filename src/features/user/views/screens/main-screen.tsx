@@ -28,7 +28,6 @@ export function MainScreen({
           dropDownProps={selectBuilding.dropDownProps}
           className={selectBuilding.className}
         />
-        <span className="text-caption">{t('main:mvpNotification')}</span>
         <div>
           <p className="mb-2">{t('washer')}</p>
           <MachineList
