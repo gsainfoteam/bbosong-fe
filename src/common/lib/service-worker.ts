@@ -170,17 +170,103 @@ export function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuf
   return output;
 }
 
+const SKIP_WAITING_MESSAGE = { type: 'SKIP_WAITING' } as const;
+const DEFAULT_UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000;
+
+export namespace SetupServiceWorkerAutoUpdate {
+  export type Options = {
+    /** 테스트용. 기본은 location.reload */
+    reload?: () => void;
+    /** 주기적 update() 간격. 0 이하면 비활성 */
+    updateCheckIntervalMs?: number;
+  };
+}
+
+/**
+ * 새 SW가 waiting에 머물지 않게 하고, controller 교체 시 1회만 reload한다.
+ * 앱이 다시 보일 때(및 주기적으로) registration.update()로 업데이트를 확인한다.
+ *
+ * vite-plugin-pwa의 registerType:autoUpdate 클라이언트 동작을
+ * injectRegister:false + 수동 등록 환경에서 대체한다.
+ */
+export function setupServiceWorkerAutoUpdate(
+  registration: ServiceWorkerRegistration,
+  options: SetupServiceWorkerAutoUpdate.Options = {},
+): () => void {
+  const reload = options.reload ?? (() => window.location.reload());
+  const updateCheckIntervalMs =
+    options.updateCheckIntervalMs ?? DEFAULT_UPDATE_CHECK_INTERVAL_MS;
+
+  const promoteWaiting = () => {
+    registration.waiting?.postMessage(SKIP_WAITING_MESSAGE);
+  };
+
+  promoteWaiting();
+
+  const onUpdateFound = () => {
+    const installing = registration.installing;
+    if (!installing) return;
+
+    installing.addEventListener('statechange', () => {
+      if (installing.state === 'installed') promoteWaiting();
+    });
+  };
+
+  registration.addEventListener('updatefound', onUpdateFound);
+
+  // 이미 제어 중인 페이지만 업데이트 reload. 최초 설치 시 controllerchange로 인한 불필요 reload 방지
+  const shouldReloadOnControllerChange = navigator.serviceWorker.controller !== null;
+  let hasReloaded = false;
+
+  const onControllerChange = () => {
+    if (!shouldReloadOnControllerChange || hasReloaded) return;
+    hasReloaded = true;
+    reload();
+  };
+
+  if (shouldReloadOnControllerChange) {
+    navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
+  }
+
+  const checkForUpdate = () => {
+    void registration.update();
+  };
+
+  const onVisibilityChange = () => {
+    if (document.visibilityState === 'visible') checkForUpdate();
+  };
+
+  document.addEventListener('visibilitychange', onVisibilityChange);
+
+  const intervalId =
+    updateCheckIntervalMs > 0 ? window.setInterval(checkForUpdate, updateCheckIntervalMs) : undefined;
+
+  return () => {
+    registration.removeEventListener('updatefound', onUpdateFound);
+    if (shouldReloadOnControllerChange) {
+      navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
+    }
+    document.removeEventListener('visibilitychange', onVisibilityChange);
+    if (intervalId !== undefined) window.clearInterval(intervalId);
+  };
+}
+
 /** SW 등록. 미지원 환경에서는 null을 반환한다 */
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
   if (!('serviceWorker' in navigator)) return null;
 
   try {
-    return await navigator.serviceWorker.register(
+    const registration = await navigator.serviceWorker.register(
       import.meta.env.DEV ? '/push-sw.js' : SERVICE_WORKER_URL,
       {
         scope: SERVICE_WORKER_SCOPE,
       },
     );
+
+    // injectRegister:false 라 플러그인 자동 등록/reload가 없으므로 직접 연결한다
+    setupServiceWorkerAutoUpdate(registration);
+
+    return registration;
   } catch (error) {
     console.error('Failed to register service worker.', error);
     return null;

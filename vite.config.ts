@@ -32,6 +32,10 @@ export default defineConfig(({ mode }) => {
           'locales/**/*.json',
         ],
         workbox: {
+          // injectRegister:false 이면 플러그인이 autoUpdate여도 skipWaiting/clientsClaim을 넣지 않는다.
+          skipWaiting: true,
+          clientsClaim: true,
+          cleanupOutdatedCaches: true,
           importScripts: ['/push-sw.js'],
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
           navigateFallbackDenylist: [/^\/api(?:\/|$)/],
