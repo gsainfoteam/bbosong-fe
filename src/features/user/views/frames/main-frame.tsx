@@ -116,13 +116,7 @@ export function MainFrame() {
         };
       })
       .sort((a, b) => a.id - b.id);
-  }, [
-    allMachines,
-    currentLocation,
-    elapsedMinutesByUuid,
-    remainingMinutesByUuid,
-    user?.gender,
-  ]);
+  }, [allMachines, currentLocation, elapsedMinutesByUuid, remainingMinutesByUuid, user?.gender]);
 
   const usingMachineList = {
     machineList: usingMachines,
@@ -149,7 +143,7 @@ export function MainFrame() {
 
   if (isLoading) {
     return (
-      <div className="bg-bg flex h-dvh w-full items-center justify-center">
+      <div className="bg-bg flex w-full flex-1 items-center justify-center">
         <p>Loading...</p>
       </div>
     );
@@ -163,7 +157,7 @@ export function MainFrame() {
 
   if (isError) {
     return (
-      <div className="bg-bg flex h-dvh w-full flex-col items-center justify-center">
+      <div className="bg-bg flex w-full flex-1 flex-col items-center justify-center">
         <p role="alert">{t('generic')}</p>
         <button type="button" onClick={onRetry}>
           {t('refetch')}

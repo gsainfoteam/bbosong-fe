@@ -5,4 +5,5 @@ export * from './machine-status-badge/index';
 export * from './machine-table/index';
 export * from './power-lookback/index';
 export * from './power-record-results/index';
+export * from './thinq-remaining/index';
 export * from './user-table/index';

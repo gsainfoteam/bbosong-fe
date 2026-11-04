@@ -61,7 +61,7 @@ export const updateMachineSchema = z
     // 빈 값은 매핑 해제(null). OpenAPI/Swagger nullable 필드와 맞춘다.
     return {
       ...rest,
-      thinqDeviceId: thinqDeviceId ? thinqDeviceId : null,
+      thinqDeviceId: thinqDeviceId || null,
       ...(thinqDeviceId ? { matterPayload: undefined } : {}),
     };
   });
