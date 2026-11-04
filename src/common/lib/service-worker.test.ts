@@ -8,9 +8,22 @@ import {
   isAppInstalled,
   isIOS,
   needsInstall,
+  setupServiceWorkerAutoUpdate,
   showInstallPrompt,
   subscribeToInstallPromptChange,
 } from './service-worker';
+
+function createRegistrationMock(overrides?: {
+  waiting?: { postMessage: ReturnType<typeof vi.fn> } | null;
+  update?: ReturnType<typeof vi.fn>;
+}) {
+  return {
+    waiting: overrides?.waiting ?? null,
+    update: overrides?.update ?? vi.fn().mockResolvedValue(undefined),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+  } as unknown as ServiceWorkerRegistration;
+}
 
 function capturePrompt(
   prompt: () => Promise<void>,
@@ -100,4 +113,93 @@ describe('PWA installation', () => {
       expect(isAndroid()).toBe(android);
     },
   );
+});
+
+describe('service worker auto update', () => {
+  it('asks a waiting worker to skip waiting', () => {
+    const postMessage = vi.fn();
+    const registration = createRegistrationMock({ waiting: { postMessage } });
+    vi.stubGlobal('navigator', {
+      ...navigator,
+      serviceWorker: {
+        controller: {},
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      },
+    });
+
+    setupServiceWorkerAutoUpdate(registration, { updateCheckIntervalMs: 0 });
+
+    expect(postMessage).toHaveBeenCalledWith({ type: 'SKIP_WAITING' });
+  });
+
+  it('reloads once on controllerchange when already controlled', () => {
+    const reload = vi.fn();
+    const listeners = new Map<string, EventListener>();
+    vi.stubGlobal('navigator', {
+      ...navigator,
+      serviceWorker: {
+        controller: {},
+        addEventListener: (type: string, listener: EventListener) => {
+          listeners.set(type, listener);
+        },
+        removeEventListener: vi.fn(),
+      },
+    });
+
+    setupServiceWorkerAutoUpdate(createRegistrationMock(), {
+      reload,
+      updateCheckIntervalMs: 0,
+    });
+    listeners.get('controllerchange')?.(new Event('controllerchange'));
+    listeners.get('controllerchange')?.(new Event('controllerchange'));
+
+    expect(reload).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not reload on first install when there was no controller', () => {
+    const reload = vi.fn();
+    const listeners = new Map<string, EventListener>();
+    vi.stubGlobal('navigator', {
+      ...navigator,
+      serviceWorker: {
+        controller: null,
+        addEventListener: (type: string, listener: EventListener) => {
+          listeners.set(type, listener);
+        },
+        removeEventListener: vi.fn(),
+      },
+    });
+
+    setupServiceWorkerAutoUpdate(createRegistrationMock(), {
+      reload,
+      updateCheckIntervalMs: 0,
+    });
+    listeners.get('controllerchange')?.(new Event('controllerchange'));
+
+    expect(reload).not.toHaveBeenCalled();
+  });
+
+  it('checks for updates when the app becomes visible again', () => {
+    const update = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      get: () => 'visible',
+    });
+    vi.stubGlobal('navigator', {
+      ...navigator,
+      serviceWorker: {
+        controller: {},
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      },
+    });
+
+    setupServiceWorkerAutoUpdate(createRegistrationMock({ update }), {
+      updateCheckIntervalMs: 0,
+    });
+    document.dispatchEvent(new Event('visibilitychange'));
+
+    expect(update).toHaveBeenCalledTimes(1);
+  });
 });
