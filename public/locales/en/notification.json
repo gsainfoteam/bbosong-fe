@@ -1,7 +1,12 @@
 {
   "laundryRoom": {
+    "alreadyAvailable": "A {{type}} is already available.",
     "blockedByDenied": "Notifications are blocked, so you can't request an alert.",
     "cancel": "Cancel alert request",
+    "cancelDescription": "You won't be notified when a {{type}} frees up.",
+    "canceled": "The {{type}} alert has been canceled.",
+    "cancelShort": "Cancel alert",
+    "cancelTitle": "Cancel the {{type}} alert?",
     "dryer": "dryer",
     "failed": "Could not update the alert. Please try again in a moment.",
     "female": "women's",
@@ -11,6 +16,10 @@
     "male": "men's",
     "needsPermission": "Please allow notifications first.",
     "request": "Request alert",
+    "requestDescription": "We'll let you know once when a {{type}} becomes available in the laundry room you're viewing.",
+    "requested": "We'll let you know when a {{type}} frees up.",
+    "requestShort": "Notify me",
+    "requestTitle": "Get notified when a {{type}} frees up?",
     "washer": "washer"
   },
   "permission": {

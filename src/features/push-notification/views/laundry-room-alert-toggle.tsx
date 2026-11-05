@@ -14,9 +14,6 @@ import {
 
 /**
  * 빈 기기 알림 신청 토글.
- *
- * 구독 조회 API가 없어 신청 상태가 새로고침을 넘겨 유지되지 않으므로,
- * 문구를 "알림 신청"이라는 일회성 액션으로 표현해 상태 유지 기대를 낮춘다.
  */
 export function LaundryRoomAlertToggle({
   target,

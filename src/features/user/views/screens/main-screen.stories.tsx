@@ -52,6 +52,14 @@ export const Default: Story = {
         { type: 'dryer', id: 3, status: 'disabled' },
       ],
     },
+    roomNotification: {
+      washer: {
+        machineType: 'washer',
+        active: false,
+        onToggle: () => console.log('Toggle washer'),
+      },
+      dryer: { machineType: 'dryer', active: true, onToggle: () => console.log('Toggle dryer') },
+    },
   },
   // 생활관 선택을 스토리 내부 상태로 관리해 실제 사용 흐름을 재현
   render: function Render({ selectBuilding, ...args }) {

@@ -10,3 +10,4 @@ export * from './select-building/index';
 export * from './using-machine-box/index';
 export * from './using-machine-list/index';
 export * from './welcome-message/index';
+export * from './get-room-notification-button/index';

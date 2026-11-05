@@ -60,9 +60,11 @@ export namespace Button {
           'w-full text-heading text-text-primary border border-border',
           'transition-all duration-150',
         ],
+        minimum: ['text-text-primary border border-border', 'transition-all duration-150'],
       },
       size: {
         default: 'p-2',
+        minimum: 'p-2',
       },
     },
   });

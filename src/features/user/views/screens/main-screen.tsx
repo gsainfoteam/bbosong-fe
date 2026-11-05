@@ -2,16 +2,25 @@ import { useTranslation } from 'react-i18next';
 
 import { Button, Header } from '@/common/components';
 import { cn } from '@/common/utils';
-import { MachineList, SelectBuilding, UsingMachineList } from '@/features/user';
+import {
+  GetRoomNotificationButton,
+  MachineList,
+  SelectBuilding,
+  UsingMachineList,
+} from '@/features/user';
 
 export function MainScreen({
   usingMachineList,
   selectBuilding,
   machines,
+  roomNotification,
   className,
   ...props
 }: MainScreen.Props) {
   const { t } = useTranslation(['machine', 'main']);
+
+  const washers = machines.machines.filter((machine) => machine.type === 'washer');
+  const dryers = machines.machines.filter((machine) => machine.type === 'dryer');
 
   return (
     <div className={cn(className, 'bg-bg w-full')} {...props}>
@@ -29,18 +38,22 @@ export function MainScreen({
           className={selectBuilding.className}
         />
         <div>
-          <p className="mb-2">{t('washer')}</p>
-          <MachineList
-            machines={machines.machines.filter((machine) => machine.type === 'washer')}
-            className={machines.className}
-          />
+          <div className="mb-4 flex items-center justify-between">
+            <p>{t('washer')}</p>
+            {washers.filter((i) => i.status === 'idle').length === 0 && (
+              <GetRoomNotificationButton {...roomNotification.washer} />
+            )}
+          </div>
+          <MachineList machines={washers} className={machines.className} />
         </div>
         <div>
-          <p className="mb-2">{t('dryer')}</p>
-          <MachineList
-            machines={machines.machines.filter((machine) => machine.type === 'dryer')}
-            className={machines.className}
-          />
+          <div className="mb-4 flex items-center justify-between">
+            <p>{t('dryer')}</p>
+            {dryers.filter((i) => i.status === 'idle').length === 0 && (
+              <GetRoomNotificationButton {...roomNotification.dryer} />
+            )}
+          </div>
+          <MachineList machines={dryers} className={machines.className} />
         </div>
       </div>
       <div className="fixed inset-x-0 bottom-0 mx-auto max-w-120 px-6 pb-6">
@@ -63,6 +76,10 @@ export namespace MainScreen {
     usingMachineList: UsingMachineList.Props;
     selectBuilding: SelectBuilding.Props;
     machines: MachineList.Props;
+    roomNotification: Record<
+      GetRoomNotificationButton.MachineType,
+      GetRoomNotificationButton.Props
+    >;
     className?: string;
   };
 }
