@@ -1,11 +1,11 @@
 import { Link } from '@tanstack/react-router';
 
-import { Menu, X } from 'lucide-react';
+import { Menu, RefreshCw, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/common/utils';
 
-export const Header = ({ className, ...props }: Header.Props) => {
+export const Header = ({ onRefresh, isRefreshing = false, className, ...props }: Header.Props) => {
   const { t } = useTranslation('common');
 
   return (
@@ -14,9 +14,23 @@ export const Header = ({ className, ...props }: Header.Props) => {
       {...props}
     >
       <h1>{t('bbosong')}</h1>
-      <Link to="/mypage" aria-label={t('myPage')}>
-        <Menu />
-      </Link>
+      <div className="flex gap-3">
+        {onRefresh && (
+          <button
+            type="button"
+            aria-label={t('refresh')}
+            aria-busy={isRefreshing}
+            disabled={isRefreshing}
+            onClick={onRefresh}
+            className="disabled:cursor-not-allowed"
+          >
+            <RefreshCw className={cn(isRefreshing && 'animate-spin')} />
+          </button>
+        )}
+        <Link to="/mypage" aria-label={t('myPage')}>
+          <Menu />
+        </Link>
+      </div>
     </header>
   );
 };
@@ -34,6 +48,9 @@ export const MyPageHeader = () => {
 
 export namespace Header {
   export type Props = {
+    /** 없으면 새로고침 버튼을 숨긴다 */
+    onRefresh?: () => void;
+    isRefreshing?: boolean;
     className?: string;
   };
 }

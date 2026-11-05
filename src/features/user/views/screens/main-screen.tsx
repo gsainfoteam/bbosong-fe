@@ -10,6 +10,7 @@ import {
 } from '@/features/user';
 
 export function MainScreen({
+  header,
   usingMachineList,
   selectBuilding,
   machines,
@@ -24,7 +25,7 @@ export function MainScreen({
 
   return (
     <div className={cn(className, 'bg-bg w-full')} {...props}>
-      <Header className="mb-6" />
+      <Header {...header} className="mb-6" />
       <div className="flex flex-col gap-6 px-3 pb-24">
         <UsingMachineList
           machineList={usingMachineList.machineList}
@@ -73,6 +74,7 @@ export function MainScreen({
 
 export namespace MainScreen {
   export type Props = {
+    header?: Header.Props;
     usingMachineList: UsingMachineList.Props;
     selectBuilding: SelectBuilding.Props;
     machines: MachineList.Props;
