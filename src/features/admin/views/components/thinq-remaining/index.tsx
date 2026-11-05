@@ -1,9 +1,10 @@
 import { useTranslation } from 'react-i18next';
 
-/** ThinQ 남은 시간 문구. 1시간 이상이면 시간·분, 미만이면 분만 표시한다 */
-export function ThinqRemaining({ remaining }: ThinqRemaining.Props) {
+/** ThinQ 남은 시간 문구. 감지 중 / 시·분 / 알 수 없음. */
+export function ThinqRemaining({ remaining, isDetecting = false }: ThinqRemaining.Props) {
   const { t } = useTranslation('admin');
 
+  if (isDetecting) return t('thinqRemainingDetecting');
   if (remaining === null) return t('thinqRemainingUnknown');
 
   const minutes = String(remaining.minutes);
@@ -16,5 +17,6 @@ export function ThinqRemaining({ remaining }: ThinqRemaining.Props) {
 export namespace ThinqRemaining {
   export type Props = {
     remaining: { hours: number; minutes: number } | null;
+    isDetecting?: boolean;
   };
 }

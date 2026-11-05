@@ -11,6 +11,7 @@ import {
   formatThinqRemainingParts,
   getMachineOperatingMinutes,
   getMachineThinqRemainingMinutes,
+  isMachineThinqRemainingDetecting,
   useMachineTiming,
 } from '../../../viewmodels';
 
@@ -33,6 +34,7 @@ export function MachineTable({
       : null,
     operatingMinutes: getMachineOperatingMinutes(machine, now),
     thinqRemaining: formatThinqRemainingParts(getMachineThinqRemainingMinutes(machine)),
+    thinqDetecting: isMachineThinqRemainingDetecting(machine),
   }));
   // Keep translations for API enum values during i18next extraction.
   // t('WASHER'); t('DRYER'); t('MALE'); t('FEMALE');
@@ -57,7 +59,15 @@ export function MachineTable({
           </tr>
         </thead>
         <tbody className="divide-border divide-y dark:divide-slate-800">
-          {rows.map(({ machine, lastSeen, thinqUpdated, operatingMinutes, thinqRemaining }) => (
+          {rows.map(
+            ({
+              machine,
+              lastSeen,
+              thinqUpdated,
+              operatingMinutes,
+              thinqRemaining,
+              thinqDetecting,
+            }) => (
             <tr key={machine.uuid}>
               <td className="px-5 py-4">
                 <div
@@ -104,9 +114,13 @@ export function MachineTable({
                 <td className="px-5 py-4 whitespace-nowrap">
                   {machine.thinqDeviceId ? (
                     <div className="space-y-1">
-                      <div>{machine.thinqCurrentState ?? t('thinqStateUnknown')}</div>
+                      <div>
+                        {machine.thinqCurrentState === 'DETECTING'
+                          ? t('thinqStateDetecting')
+                          : (machine.thinqCurrentState ?? t('thinqStateUnknown'))}
+                      </div>
                       <div className="text-text-secondary text-xs dark:text-slate-400">
-                        <ThinqRemaining remaining={thinqRemaining} />
+                        <ThinqRemaining remaining={thinqRemaining} isDetecting={thinqDetecting} />
                       </div>
                       {thinqUpdated ? (
                         <time

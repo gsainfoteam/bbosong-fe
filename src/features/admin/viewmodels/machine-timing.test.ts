@@ -6,6 +6,7 @@ import { type AdminMachine } from '../models';
 import {
   formatThinqRemainingParts,
   getMachineThinqRemainingMinutes,
+  isMachineThinqRemainingDetecting,
   useMachineTiming,
 } from './machine-timing';
 
@@ -36,14 +37,39 @@ describe('getMachineThinqRemainingMinutes', () => {
       getMachineThinqRemainingMinutes({
         thinqDeviceId: 'device-1',
         thinqRemainingMinutes: 45,
+        status: 'DRY',
       } as AdminMachine),
     ).toBe(45);
     expect(
       getMachineThinqRemainingMinutes({
         thinqDeviceId: null,
         thinqRemainingMinutes: 45,
+        status: 'DRY',
       } as AdminMachine),
     ).toBeNull();
+  });
+
+  it('returns null while ThinQ remaining is detecting', () => {
+    expect(
+      getMachineThinqRemainingMinutes({
+        thinqDeviceId: 'device-1',
+        thinqCurrentState: 'DETECTING',
+        thinqRemainingMinutes: null,
+        status: 'DRY',
+      } as AdminMachine),
+    ).toBeNull();
+  });
+});
+
+describe('isMachineThinqRemainingDetecting', () => {
+  it('detects DETECTING ThinQ dryers', () => {
+    expect(
+      isMachineThinqRemainingDetecting({
+        thinqDeviceId: 'device-1',
+        thinqCurrentState: 'DETECTING',
+        status: 'DRY',
+      } as AdminMachine),
+    ).toBe(true);
   });
 });
 

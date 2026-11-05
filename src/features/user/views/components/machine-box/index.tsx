@@ -103,13 +103,17 @@ const SURFACE: Record<MachineBox.Type, Record<MachineBox.Status, string>> = {
   },
 };
 
-function useTimeLabel(machine: Pick<MachineBox.Props['machine'], 'status' | 'elapsedMinutes' | 'remainingMinutes'>) {
+function useTimeLabel(
+  machine: Pick<MachineBox.Props['machine'], 'status' | 'elapsedMinutes' | 'remainingDisplay'>,
+) {
   const { t } = useTranslation('machine');
 
   if (machine.status !== 'using') return '';
 
-  if (machine.remainingMinutes !== undefined && machine.remainingMinutes >= 0) {
-    const { hours, minutes } = formatRemainingMinutes(machine.remainingMinutes);
+  if (machine.remainingDisplay?.kind === 'detecting') return t('remainingDetecting');
+
+  if (machine.remainingDisplay?.kind === 'minutes') {
+    const { hours, minutes } = formatRemainingMinutes(machine.remainingDisplay.minutes);
     return hours > 0
       ? t('remainingHourMinute', { hours: String(hours), minutes: String(minutes) })
       : t('remainingMinute', { minutes: String(minutes) });
@@ -239,13 +243,17 @@ export namespace MachineBox {
 
   export type Status = 'idle' | 'using' | 'disabled';
 
+  export type RemainingDisplay =
+    | { kind: 'minutes'; minutes: number }
+    | { kind: 'detecting' };
+
   export type Props = {
     machine: {
       type: Type;
       id: number;
       status: Status;
       elapsedMinutes?: number;
-      remainingMinutes?: number;
+      remainingDisplay?: RemainingDisplay;
     };
     className?: string;
   };

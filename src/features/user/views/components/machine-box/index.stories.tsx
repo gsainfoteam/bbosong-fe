@@ -57,7 +57,20 @@ export const DryerUsingRemaining: Story = {
       id: 2,
       status: 'using',
       elapsedMinutes: 90,
-      remainingMinutes: 75,
+      remainingDisplay: { kind: 'minutes', minutes: 75 },
+    },
+    className: 'w-30',
+  },
+};
+
+export const DryerDetecting: Story = {
+  args: {
+    machine: {
+      type: 'dryer',
+      id: 2,
+      status: 'using',
+      elapsedMinutes: 5,
+      remainingDisplay: { kind: 'detecting' },
     },
     className: 'w-30',
   },
