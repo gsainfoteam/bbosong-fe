@@ -5,6 +5,7 @@
   "elapsedHourMinute": "{{hours}}h {{minutes}}m elapsed",
   "elapsedMinute": "{{minutes}}m elapsed",
   "idle": "Idle",
+  "remainingDetecting": "Calculating time",
   "remainingHourMinute": "{{hours}}h {{minutes}}m left",
   "remainingMinute": "{{minutes}}m left",
   "using": "Using",

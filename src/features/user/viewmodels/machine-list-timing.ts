@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { resolveRemainingMinutes } from '@/common/utils';
+import { isThinqRemainingDetecting, resolveRemainingMinutes } from '@/common/utils';
 
 export function useNowTick(enabled: boolean, intervalMs = 1000) {
   const [now, setNow] = useState(Date.now);
@@ -23,13 +23,21 @@ export function getMachineElapsedMinutes(
   return Math.max(0, Math.floor((now - startedAtMs) / 60_000));
 }
 
-export function getMachineDisplayRemainingMinutes(machine: {
+export type MachineRemainingDisplay =
+  | { kind: 'minutes'; minutes: number }
+  | { kind: 'detecting' };
+
+/** ThinQ 매핑 기기의 남은 시간 표시. 미매핑이면 undefined(경과 시간으로 폴백). */
+export function getMachineRemainingDisplay(machine: {
   thinqDeviceId?: unknown;
+  thinqCurrentState?: unknown;
   thinqRemainingMinutes?: unknown;
   currentUsage?: unknown;
-}): number | undefined {
-  const isThinqMapped = typeof machine.thinqDeviceId === 'string' && !!machine.thinqDeviceId;
-  if (!isThinqMapped) return undefined;
+  status?: string;
+}): MachineRemainingDisplay | undefined {
+  if (typeof machine.thinqDeviceId !== 'string' || !machine.thinqDeviceId) return undefined;
+  if (isThinqRemainingDetecting(machine)) return { kind: 'detecting' };
   const remainingMinutes = resolveRemainingMinutes(machine);
-  return remainingMinutes === null ? undefined : remainingMinutes;
+  if (remainingMinutes === null) return undefined;
+  return { kind: 'minutes', minutes: remainingMinutes };
 }

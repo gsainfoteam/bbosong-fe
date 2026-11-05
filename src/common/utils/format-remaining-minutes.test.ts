@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatRemainingMinutes, resolveRemainingMinutes } from './format-remaining-minutes';
+import {
+  formatRemainingMinutes,
+  isThinqRemainingDetecting,
+  resolveRemainingMinutes,
+} from './format-remaining-minutes';
 
 describe('formatRemainingMinutes', () => {
   it('splits minutes into hours and minutes', () => {
@@ -38,5 +42,47 @@ describe('resolveRemainingMinutes', () => {
   it('returns null when neither value is a number', () => {
     expect(resolveRemainingMinutes({ thinqRemainingMinutes: null, currentUsage: null })).toBeNull();
     expect(resolveRemainingMinutes({})).toBeNull();
+  });
+});
+
+describe('isThinqRemainingDetecting', () => {
+  it('is true when ThinQ state is DETECTING', () => {
+    expect(
+      isThinqRemainingDetecting({
+        thinqDeviceId: 'device-1',
+        thinqCurrentState: 'DETECTING',
+        thinqRemainingMinutes: 0,
+        status: 'DRY',
+      }),
+    ).toBe(true);
+  });
+
+  it('is true when a running ThinQ machine has no remaining minutes', () => {
+    expect(
+      isThinqRemainingDetecting({
+        thinqDeviceId: 'device-1',
+        thinqCurrentState: 'DRYING',
+        thinqRemainingMinutes: null,
+        status: 'DRY',
+      }),
+    ).toBe(true);
+  });
+
+  it('is false for IDLE ThinQ machines and unmapped machines', () => {
+    expect(
+      isThinqRemainingDetecting({
+        thinqDeviceId: 'device-1',
+        thinqCurrentState: 'WRINKLE_CARE',
+        thinqRemainingMinutes: null,
+        status: 'IDLE',
+      }),
+    ).toBe(false);
+    expect(
+      isThinqRemainingDetecting({
+        thinqDeviceId: null,
+        thinqRemainingMinutes: null,
+        status: 'DRY',
+      }),
+    ).toBe(false);
   });
 });

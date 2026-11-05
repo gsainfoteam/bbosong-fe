@@ -23,3 +23,19 @@ export function resolveRemainingMinutes(machine: {
   }
   return null;
 }
+
+type ThinqRemainingMachine = {
+  thinqDeviceId?: unknown;
+  thinqCurrentState?: unknown;
+  thinqRemainingMinutes?: unknown;
+  currentUsage?: unknown;
+  status?: string;
+};
+
+/** ThinQ 매핑 기기가 부하/시간 감지 중인지. DETECTING이거나 가동 중인데 남은 분이 null일 때. */
+export function isThinqRemainingDetecting(machine: ThinqRemainingMachine): boolean {
+  if (typeof machine.thinqDeviceId !== 'string' || !machine.thinqDeviceId) return false;
+  if (machine.thinqCurrentState === 'DETECTING') return true;
+  if (machine.status === 'IDLE') return false;
+  return resolveRemainingMinutes(machine) === null;
+}

@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 
 import { usePushPermission } from '@/features/push-notification';
 import {
-  getMachineDisplayRemainingMinutes,
   getMachineElapsedMinutes,
+  getMachineRemainingDisplay,
   useFindMachines,
   useFindMyMachine,
   useFindUserProfile,
@@ -109,7 +109,7 @@ export function MainFrame() {
           id: machine.index,
           status,
           elapsedMinutes: getMachineElapsedMinutes(machine.currentUsage?.startedAt, now),
-          remainingMinutes: getMachineDisplayRemainingMinutes(machine),
+          remainingDisplay: getMachineRemainingDisplay(machine),
         };
       })
       .sort((a, b) => a.id - b.id);
