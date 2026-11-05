@@ -1,12 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
-
-import { type UseQueryResult, useQueries } from '@tanstack/react-query';
+import { useEffect, useMemo } from 'react';
 
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { $api } from '@/common/lib';
-import { resolveRemainingMinutes } from '@/common/utils';
 
 import { ApiPaths } from '../models';
 
@@ -54,68 +51,5 @@ export function useFindMachineByUuid(uuid: string) {
     machine: data,
     isLoading,
     isNotFound,
-  };
-}
-
-export function useFindMachinesByUuids(uuids: string[]) {
-  const [now, setNow] = useState(() => Date.now());
-  const hasMachines = uuids.length > 0;
-
-  useEffect(() => {
-    if (!hasMachines) return;
-
-    const interval = window.setInterval(() => setNow(Date.now()), 1000);
-    return () => window.clearInterval(interval);
-  }, [hasMachines]);
-
-  const result = useQueries({
-    queries: uuids.map((uuid) =>
-      $api.queryOptions('get', ApiPaths.MachineController_getMachine, {
-        params: { path: { uuid } },
-      }),
-    ),
-    combine: combineMachineResults,
-  });
-
-  const elapsedMinutesByUuid = useMemo(
-    () =>
-      new Map(
-        [...result.machineByUuid].map(([uuid, machine]) => {
-          const startedAt = machine.currentUsage?.startedAt;
-          const startedAtMs = startedAt ? Date.parse(startedAt) : Number.NaN;
-          const elapsedMinutes = Number.isFinite(startedAtMs)
-            ? Math.max(0, Math.floor((now - startedAtMs) / 60_000))
-            : undefined;
-
-          return [uuid, elapsedMinutes] as const;
-        }),
-      ),
-    [result.machineByUuid, now],
-  );
-
-  const remainingMinutesByUuid = useMemo(
-    () =>
-      new Map(
-        [...result.machineByUuid].flatMap(([uuid, machine]) => {
-          const isThinqMapped = typeof machine.thinqDeviceId === 'string' && !!machine.thinqDeviceId;
-          if (!isThinqMapped) return [];
-          const remainingMinutes = resolveRemainingMinutes(machine);
-          return remainingMinutes === null ? [] : ([[uuid, remainingMinutes] as const]);
-        }),
-      ),
-    [result.machineByUuid],
-  );
-
-  return { ...result, elapsedMinutesByUuid, remainingMinutesByUuid };
-}
-
-// combine은 참조가 고정돼야 결과가 메모이즈되므로 컴포넌트 밖에 둔다
-function combineMachineResults<T extends { uuid: string }>(results: UseQueryResult<T, unknown>[]) {
-  return {
-    machineByUuid: new Map(
-      results.flatMap((result) => (result.data ? [[result.data.uuid, result.data] as const] : [])),
-    ),
-    isLoading: results.some((result) => result.isLoading),
-    isError: results.some((result) => result.isError),
   };
 }

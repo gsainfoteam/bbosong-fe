@@ -16,6 +16,7 @@ import {
   formatThinqDeviceLabel,
   formatThinqRemainingParts,
   getMachineThinqRemainingMinutes,
+  isMachineThinqRemainingDetecting,
   shiftPowerQueryStart,
   toDatetimeLocalValue,
   updateMachineSchema,
@@ -69,6 +70,9 @@ export function AdminMachinesScreen() {
   const editThinqRemaining = editingLive
     ? formatThinqRemainingParts(getMachineThinqRemainingMinutes(editingLive))
     : null;
+  const editThinqDetecting = editingLive
+    ? isMachineThinqRemainingDetecting(editingLive)
+    : false;
 
   function openCreate(next: 'single' | 'multiple') {
     setCreateType(MachineType.WASHER);
@@ -487,10 +491,16 @@ export function AdminMachinesScreen() {
                     <div className="font-medium">{t('thinqStatus')}</div>
                     <div>
                       {t('thinqCurrentState')}:{' '}
-                      {editingLive.thinqCurrentState ?? t('thinqStateUnknown')}
+                      {editingLive.thinqCurrentState === 'DETECTING'
+                        ? t('thinqStateDetecting')
+                        : (editingLive.thinqCurrentState ?? t('thinqStateUnknown'))}
                     </div>
                     <div>
-                      {t('thinqRemaining')}: <ThinqRemaining remaining={editThinqRemaining} />
+                      {t('thinqRemaining')}:{' '}
+                      <ThinqRemaining
+                        remaining={editThinqRemaining}
+                        isDetecting={editThinqDetecting}
+                      />
                     </div>
                     <div>
                       {t('thinqUpdatedAt')}:{' '}

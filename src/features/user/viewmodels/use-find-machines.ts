@@ -1,5 +1,6 @@
-import { ApiPaths } from '@/@types/api-schema.ts';
 import { $api } from '@/common/lib';
+
+import { ApiPaths } from '../models';
 
 export function useFindMachines() {
   const { data, isError, isLoading, error, refetch } = $api.useQuery(

@@ -5,10 +5,12 @@ import { useTranslation } from 'react-i18next';
 
 import { usePushPermission } from '@/features/push-notification';
 import {
+  getMachineElapsedMinutes,
+  getMachineRemainingDisplay,
   useFindMachines,
-  useFindMachinesByUuids,
   useFindMyMachine,
   useFindUserProfile,
+  useNowTick,
 } from '@/features/user/viewmodels';
 
 import { type MachineBox } from '../components';
@@ -71,16 +73,11 @@ export function MainFrame() {
     refetch: refetchAllMachines,
   } = useFindMachines();
 
-  const usingMachineUuids = useMemo(
-    () =>
-      (allMachines ?? [])
-        .filter((machine) => machine.status !== 'IDLE')
-        .map((machine) => machine.uuid),
+  const hasUsingMachines = useMemo(
+    () => (allMachines ?? []).some((machine) => machine.status !== 'IDLE'),
     [allMachines],
   );
-
-  const { elapsedMinutesByUuid, remainingMinutesByUuid } =
-    useFindMachinesByUuids(usingMachineUuids);
+  const now = useNowTick(hasUsingMachines);
 
   useEffect(() => {
     localStorage.setItem('location', currentLocation);
@@ -111,12 +108,12 @@ export function MainFrame() {
           type,
           id: machine.index,
           status,
-          elapsedMinutes: elapsedMinutesByUuid.get(machine.uuid),
-          remainingMinutes: remainingMinutesByUuid.get(machine.uuid),
+          elapsedMinutes: getMachineElapsedMinutes(machine.currentUsage?.startedAt, now),
+          remainingDisplay: getMachineRemainingDisplay(machine),
         };
       })
       .sort((a, b) => a.id - b.id);
-  }, [allMachines, currentLocation, elapsedMinutesByUuid, remainingMinutesByUuid, user?.gender]);
+  }, [allMachines, currentLocation, now, user?.gender]);
 
   const usingMachineList = {
     machineList: usingMachines,
