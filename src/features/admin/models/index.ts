@@ -9,11 +9,6 @@ export {
   GetUsersResDtoRole as UserRole,
 } from '@/@types/api-schema';
 
-// Optional for backends that omit connectivity or the current usage session.
-type AdminMachineTiming = {
-  lastSeenAt?: string | null;
-  currentUsage?: Pick<components['schemas']['MachineUsageInfoDto'], 'startedAt'> | null;
-};
 // Swagger represents these nullable scalar fields as objects. Normalize them at the model boundary.
 export type AdminMachine = Omit<
   components['schemas']['GetMachineResDto'],
@@ -22,23 +17,25 @@ export type AdminMachine = Omit<
   | 'shortUrl'
   | 'shortCode'
   | 'lastSeenAt'
-  | 'currentUsage'
   | 'thinqDeviceId'
   | 'thinqCurrentState'
   | 'thinqRemainingMinutes'
   | 'thinqUpdatedAt'
+  | 'currentUsage'
 > & {
   posX: number | null;
   posY: number | null;
   shortUrl: string | null;
   shortCode: string | null;
+  lastSeenAt: string | null;
   thinqDeviceId: string | null;
   thinqCurrentState: string | null;
   thinqRemainingMinutes: number | null;
   thinqUpdatedAt: string | null;
-} & AdminMachineTiming;
+  currentUsage: Pick<components['schemas']['MachineUsageInfoDto'], 'startedAt'> | null;
+};
 export function normalizeAdminMachine(
-  machine: components['schemas']['GetMachineResDto'] & AdminMachineTiming,
+  machine: components['schemas']['GetMachineResDto'],
 ): AdminMachine {
   return {
     ...machine,
@@ -46,12 +43,17 @@ export function normalizeAdminMachine(
     posY: typeof machine.posY === 'number' ? machine.posY : null,
     shortUrl: typeof machine.shortUrl === 'string' ? machine.shortUrl : null,
     shortCode: typeof machine.shortCode === 'string' ? machine.shortCode : null,
+    lastSeenAt: typeof machine.lastSeenAt === 'string' ? machine.lastSeenAt : null,
     thinqDeviceId: typeof machine.thinqDeviceId === 'string' ? machine.thinqDeviceId : null,
     thinqCurrentState:
       typeof machine.thinqCurrentState === 'string' ? machine.thinqCurrentState : null,
     thinqRemainingMinutes:
       typeof machine.thinqRemainingMinutes === 'number' ? machine.thinqRemainingMinutes : null,
     thinqUpdatedAt: typeof machine.thinqUpdatedAt === 'string' ? machine.thinqUpdatedAt : null,
+    currentUsage:
+      machine.currentUsage && typeof machine.currentUsage.startedAt === 'string'
+        ? { startedAt: machine.currentUsage.startedAt }
+        : null,
   };
 }
 /** BE `ThinqService.getDevices()` 응답. OpenAPI에 응답 스키마가 없어 수동 정의. */
