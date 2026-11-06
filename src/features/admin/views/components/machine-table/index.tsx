@@ -2,6 +2,8 @@ import { type ReactNode } from 'react';
 
 import { useTranslation } from 'react-i18next';
 
+import { MachineStatusBadge, ThinqRemaining } from '@/features/admin';
+
 import {
   type AdminMachine,
   formatMachineCode,
@@ -12,7 +14,6 @@ import {
   isMachineThinqRemainingDetecting,
   useMachineTiming,
 } from '../../../viewmodels';
-import { MachineStatusBadge, ThinqRemaining } from '@/features/admin';
 
 export function MachineTable({
   machines,
