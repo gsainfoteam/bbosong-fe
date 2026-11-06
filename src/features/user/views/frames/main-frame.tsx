@@ -21,6 +21,7 @@ import {
   useFindMyMachine,
   useFindUserProfile,
   useNowTick,
+  useRefreshMainData,
 } from '@/features/user/viewmodels';
 
 import { type GetRoomNotificationButton, type MachineBox } from '../components';
@@ -98,6 +99,8 @@ export function MainFrame() {
     isPending: isAlertPending,
     toggle: toggleAlert,
   } = useLaundryRoomAlert();
+
+  const { isRefreshing, refresh } = useRefreshMainData();
 
   const [isQrOpen, setIsQrOpen] = useState(false);
 
@@ -180,6 +183,11 @@ export function MainFrame() {
       onSelect: onSelectLocation,
       disabled: isLoading,
     },
+  };
+
+  const header = {
+    onRefresh: () => void refresh(),
+    isRefreshing,
   };
 
   const machineList = {
@@ -266,6 +274,7 @@ export function MainFrame() {
   return (
     <>
       <MainScreen
+        header={header}
         usingMachineList={usingMachineList}
         selectBuilding={selectBuilding}
         machines={machineList}
