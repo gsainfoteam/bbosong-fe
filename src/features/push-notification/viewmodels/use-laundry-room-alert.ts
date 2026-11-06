@@ -27,6 +27,7 @@ export function useLaundryRoomAlert() {
   const {
     data: subscriptions,
     isLoading,
+    isError,
     refresh: refreshSubscriptions,
   } = useLaundryRoomSubscriptions();
 
@@ -61,25 +62,32 @@ export function useLaundryRoomAlert() {
       ? toLaundryRoomAlertKey(mutation.variables.target)
       : null;
 
+  // 조회에 실패하면 구독 여부를 알 수 없어 신청/취소 중 무엇을 보낼지 정할 수 없다
+  const isUnknown = isLoading || isError || !subscriptions;
+
   const isPending = useCallback(
-    (target: LaundryRoomAlertTarget) => isLoading || pendingKey === toLaundryRoomAlertKey(target),
-    [isLoading, pendingKey],
+    (target: LaundryRoomAlertTarget) => isUnknown || pendingKey === toLaundryRoomAlertKey(target),
+    [isUnknown, pendingKey],
   );
 
   const { mutateAsync } = mutation;
 
   const toggle = useCallback(
     async (target: LaundryRoomAlertTarget) => {
-      if (!canSubscribe) return;
+      if (isUnknown) throw new Error('빈 기기 알림 구독 상태를 아직 알 수 없습니다.');
+
+      const next = !activeKeys.has(toLaundryRoomAlertKey(target));
+      // 권한이 없어도 이미 걸어 둔 구독은 취소할 수 있어야 한다
+      if (next && !canSubscribe) return;
 
       try {
-        await mutateAsync({ target, next: !activeKeys.has(toLaundryRoomAlertKey(target)) });
+        await mutateAsync({ target, next });
       } catch (error) {
         console.error('빈 기기 알림 설정에 실패했습니다.', error);
         throw error;
       }
     },
-    [activeKeys, canSubscribe, mutateAsync],
+    [activeKeys, canSubscribe, isUnknown, mutateAsync],
   );
 
   return { canSubscribe, permissionStatus: status, isActive, isPending, toggle };

@@ -93,3 +93,17 @@ export const NoUsingMachine: Story = {
     },
   },
 };
+
+export const NoIdleMachine: Story = {
+  args: {
+    ...Default.args,
+    machines: {
+      machines: [
+        { type: 'washer', id: 1, status: 'using', elapsedMinutes: 90 },
+        { type: 'washer', id: 2, status: 'disabled' },
+        { type: 'dryer', id: 1, status: 'using', elapsedMinutes: 90 },
+        { type: 'dryer', id: 2, status: 'disabled' },
+      ],
+    },
+  },
+};

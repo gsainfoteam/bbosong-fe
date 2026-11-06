@@ -60,8 +60,9 @@ const toAlertBlocker = (
   permissionStatus: PushPermissionStatus,
 ): GetRoomNotificationButton.Blocker | undefined => {
   if (canSubscribe) return undefined;
-  if (permissionStatus === 'denied') return 'denied';
-  return 'needs-permission';
+  // 설치 전·미지원 상태에서는 권한 요청 자체가 불가능하므로 사유를 그대로 전달한다
+  if (permissionStatus === 'default' || permissionStatus === 'granted') return 'needs-permission';
+  return permissionStatus;
 };
 
 const toMachineStatus = (isAvailable: boolean, status: string): MachineBox.Status => {

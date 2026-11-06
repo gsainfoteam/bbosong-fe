@@ -8,7 +8,7 @@ import { Button, Modal } from '@/common/components';
  * 빈 기기 알림 신청/취소 버튼.
  *
  * 누르면 확인 모달을 띄우고, 확인 시 `onToggle`을 호출한다.
- * 알림을 받을 수 없는 상태(`blocker`)라면 신청 대신 사유만 안내한다.
+ * 알림을 받을 수 없는 상태(`blocker`)라면 신청 대신 사유만 안내한다. 이미 신청한 알림의 취소는 막지 않는다.
  */
 export function GetRoomNotificationButton({
   machineType,
@@ -34,16 +34,19 @@ export function GetRoomNotificationButton({
     }
   };
 
+  const blockerDescription: Record<GetRoomNotificationButton.Blocker, string> = {
+    'needs-permission': t('laundryRoom.needsPermission'),
+    denied: t('laundryRoom.blockedByDenied'),
+    'needs-install': t('permission.needsInstall'),
+    unsupported: t('permission.unsupported'),
+  };
+
   const renderModal = () => {
-    if (blocker) {
+    if (blocker && !active) {
       return (
         <Modal
           title={t('laundryRoom.requestTitle', { type })}
-          description={
-            blocker === 'denied'
-              ? t('laundryRoom.blockedByDenied')
-              : t('laundryRoom.needsPermission')
-          }
+          description={blockerDescription[blocker]}
           onConfirm={onModalClose}
           onClose={onModalClose}
         />
@@ -90,7 +93,7 @@ export namespace GetRoomNotificationButton {
   export type MachineType = 'washer' | 'dryer';
 
   /** 알림을 받을 수 없는 사유. 권한이 있으면 undefined */
-  export type Blocker = 'needs-permission' | 'denied';
+  export type Blocker = 'needs-permission' | 'denied' | 'needs-install' | 'unsupported';
 
   export type Props = {
     machineType: MachineType;
@@ -98,6 +101,7 @@ export namespace GetRoomNotificationButton {
     active: boolean;
     /** 구독 상태 조회 중이거나 신청/취소 요청 중 */
     isPending?: boolean;
+    /** 신청만 막는다. `active`면 취소는 그대로 할 수 있다 */
     blocker?: Blocker;
     /** 실패 처리(토스트 등)는 호출 측 책임이므로 reject하지 않아야 한다. 끝나면 모달은 닫힌다 */
     onToggle: () => Promise<void> | void;
