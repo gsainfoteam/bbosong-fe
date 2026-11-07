@@ -39,3 +39,14 @@ export const NeedsPermission: Story = {
     blocker: 'needs-permission',
   },
 };
+
+// 알림이 차단된 상태에서 버튼을 눌렀을 때 뜨는 모달을 바로 확인할 수 있도록 자동으로 연다
+export const Denied: Story = {
+  args: {
+    ...Default.args,
+    blocker: 'denied',
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button'));
+  },
+};

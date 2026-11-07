@@ -30,3 +30,6 @@ export const WithChildren: Story = {
 };
 
 export const Pending: Story = { args: { isPending: true } };
+
+// 안내만 하는 모달은 확인 버튼 하나만 보여줌
+export const ConfirmOnly: Story = { args: { description: undefined, hideCancel: true } };
