@@ -45,8 +45,11 @@ export namespace Button {
   export type Props = {
     variant?: NonNullable<VariantProps<typeof Button.styles>['variant']>;
     size?: NonNullable<VariantProps<typeof Button.styles>['size']>;
-    asChild?: boolean;
-  };
+  } & (
+    | { asChild?: false }
+    // asChild면 실제 요소는 자식이 정하므로 HTMLButtonElement ref를 받지 않는다. ref는 자식에 직접 단다.
+    | { asChild: true; ref?: never }
+  );
 
   export const styles = cv({
     base: [

@@ -42,9 +42,11 @@ export function Modal({
     };
   }, []);
 
-  // 열린 상태에서 취소 버튼이 숨겨지면 포커스가 사라지므로 확인 버튼으로 옮긴다. 다른 곳에 있던 포커스는 건드리지 않는다.
+  // 열린 상태에서 취소 버튼이 숨겨지면 포커스가 사라지므로 확인 버튼으로 옮긴다.
+  // 그 사이 포커스가 다른 곳으로 옮겨졌다면(예: isPending으로 숨겨진 뒤 이동) 건드리지 않는다.
   useLayoutEffect(() => {
-    if (hideCancel && cancelHadFocusRef.current) confirmRef.current?.focus();
+    const focusLost = !document.activeElement || document.activeElement === document.body;
+    if (hideCancel && cancelHadFocusRef.current && focusLost) confirmRef.current?.focus();
     cancelHadFocusRef.current = false;
   }, [hideCancel]);
 
