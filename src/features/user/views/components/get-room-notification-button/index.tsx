@@ -34,15 +34,26 @@ export function GetRoomNotificationButton({
     }
   };
 
-  const blockerDescription: Record<GetRoomNotificationButton.Blocker, string> = {
+  const blockerDescription: Record<Exclude<GetRoomNotificationButton.Blocker, 'denied'>, string> = {
     'needs-permission': t('laundryRoom.needsPermission'),
-    denied: t('laundryRoom.blockedByDenied'),
     'needs-install': t('permission.needsInstall'),
     unsupported: t('permission.unsupported'),
   };
 
   const renderModal = () => {
     if (blocker && !active) {
+      // 차단은 브라우저 설정에서 직접 풀어야 하므로 사유를 제목으로만 알리고 확인 버튼 하나만 둔다.
+      if (blocker === 'denied') {
+        return (
+          <Modal
+            title={t('laundryRoom.blockedByDenied')}
+            hideCancel
+            onConfirm={onModalClose}
+            onClose={onModalClose}
+          />
+        );
+      }
+
       return (
         <Modal
           title={t('laundryRoom.requestTitle', { type })}

@@ -13,6 +13,7 @@ export function Modal({
   confirmText,
   cancelText,
   isPending = false,
+  hideCancel = false,
   onConfirm,
   onClose,
   className,
@@ -55,12 +56,12 @@ export function Modal({
       {children && <div className="mt-3">{children}</div>}
       <div className="mt-6 flex gap-3">
         {/* 처리 중에는 닫을 수 없으므로 취소 버튼을 숨기고 진행 상태만 보여준다. */}
-        {!isPending && (
+        {!isPending && !hideCancel && (
           <Button type="button" autoFocus onClick={onClose}>
             {cancelText ?? t('modal.cancel')}
           </Button>
         )}
-        <Button type="button" disabled={isPending} onClick={onConfirm}>
+        <Button type="button" autoFocus={hideCancel} disabled={isPending} onClick={onConfirm}>
           {confirmText ?? t('modal.confirm')}
         </Button>
       </div>
@@ -79,6 +80,8 @@ export namespace Modal {
     cancelText?: ReactNode;
     /** true면 취소 버튼을 숨기고 확인 버튼을 비활성화하며 Escape로 닫히지 않는다. */
     isPending?: boolean;
+    /** true면 취소 버튼 없이 확인 버튼만 보여준다. 안내만 하는 모달에 쓴다. */
+    hideCancel?: boolean;
     onConfirm: () => void;
     onClose: () => void;
     className?: string;
