@@ -11,7 +11,7 @@ export function Button({
   children,
   className,
   ...props
-}: Button.Props & React.ButtonHTMLAttributes<HTMLButtonElement>) {
+}: Button.Props & React.ComponentProps<'button'>) {
   const Comp = asChild ? Slot : 'button';
 
   // asChild와 disabled 속성이 동시 활성화될 때 비버튼 자식 엘리먼트의 진입 차단 및 aria 속성 대행 주입
