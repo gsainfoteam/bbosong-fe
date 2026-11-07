@@ -14,7 +14,7 @@ export const Header = ({ onRefresh, isRefreshing = false, className, ...props }:
       {...props}
     >
       <h1>{t('bbosong')}</h1>
-      <div className="flex gap-3">
+      <div className="flex gap-3 items-center">
         {onRefresh && (
           <button
             type="button"
