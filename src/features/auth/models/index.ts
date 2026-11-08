@@ -1,6 +1,7 @@
 import { type components, PathsMachineSummaryGetParametersQueryGender } from '@/@types/api-schema';
 
 export * from './gender';
+export * from './role';
 export { ApiPaths } from '@/@types/api-schema';
 export type RequiredConsents = components['schemas']['RequiredConsents'];
 export type ConsentRequiredErrorDto = components['schemas']['ConsentRequiredErrorDto'];
