@@ -1,9 +1,12 @@
+import { Link } from '@tanstack/react-router';
+
 import { useTranslation } from 'react-i18next';
 
 import { LanguageToggle, MyPageHeader } from '@/common/components';
 import { cn } from '@/common/utils';
-import { type Gender } from '@/features/auth';
 import { PushPermissionCard } from '@/features/push-notification';
+
+import { type UserProfile } from '../../viewmodels';
 
 export function MypageScreen({
   user,
@@ -46,6 +49,14 @@ export function MypageScreen({
         <PushPermissionCard className="mt-8" />
 
         <div className="mt-auto flex flex-col gap-3">
+          {user.role === 'admin' && (
+            <Link
+              to="/admin"
+              className="bg-bg-surface text-text-primary w-full rounded-md py-3.5 text-center font-medium"
+            >
+              {t('toAdmin')}
+            </Link>
+          )}
           <a
             href={`https://cs.gistory.me/?service=bbosong&email=${encodeURIComponent(user.email)}`}
             target="_blank"
@@ -70,12 +81,7 @@ export function MypageScreen({
 
 export namespace MyPageScreen {
   export type Props = {
-    user: {
-      name: string;
-      studentNumber: string;
-      email: string;
-      gender: Gender;
-    };
+    user: UserProfile;
     onLogout: () => void;
     isLoggingOut?: boolean;
     className?: string;
