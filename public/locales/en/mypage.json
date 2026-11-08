@@ -1,8 +1,6 @@
 {
   "account": "Account",
   "addMachine": "Add machine in use",
-  "count_one": "unit",
-  "count_other": "units",
   "email": "Email",
   "feedback": "Send feedback",
   "female": "Female",
@@ -12,7 +10,6 @@
   "logout": "Logout",
   "male": "Male",
   "name": "Name",
-  "roomStatusTitle": "Status of available machines",
   "studentNumber": "Student Number",
-  "welcome": "Welcome, {{name}}"
+  "toAdmin": "Admin Console"
 }
