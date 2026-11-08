@@ -1,10 +1,12 @@
+import { Link } from '@tanstack/react-router';
+
 import { useTranslation } from 'react-i18next';
 
 import { LanguageToggle, MyPageHeader } from '@/common/components';
 import { cn } from '@/common/utils';
-import { type Gender, type Role } from '@/features/auth';
 import { PushPermissionCard } from '@/features/push-notification';
-import { Link } from '@tanstack/react-router';
+
+import { type UserProfile } from '../../viewmodels';
 
 export function MypageScreen({
   user,
@@ -79,13 +81,7 @@ export function MypageScreen({
 
 export namespace MyPageScreen {
   export type Props = {
-    user: {
-      name: string;
-      studentNumber: string;
-      email: string;
-      gender: Gender;
-      role: Role;
-    };
+    user: UserProfile;
     onLogout: () => void;
     isLoggingOut?: boolean;
     className?: string;

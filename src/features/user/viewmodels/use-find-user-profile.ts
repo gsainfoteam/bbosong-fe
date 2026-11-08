@@ -5,6 +5,14 @@ import { toast } from 'sonner';
 
 import { type Gender, type Role, useUser } from '@/features/auth';
 
+export type UserProfile = {
+  name: string;
+  studentNumber: string;
+  email: string;
+  gender: Gender;
+  role: Role;
+};
+
 export function useFindUserProfile() {
   const { t } = useTranslation('error');
 
@@ -25,7 +33,7 @@ export function useFindUserProfile() {
     }
   }, [error, isError, t]);
 
-  const user = useMemo(() => {
+  const user = useMemo((): UserProfile | undefined => {
     if (!data) return undefined;
     return {
       name: data.name,
