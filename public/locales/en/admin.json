@@ -64,6 +64,7 @@
   "machine": "Machine",
   "machineCount_one": "{{count}} machine found",
   "machineCount_other": "{{count}} machines found",
+  "machineUsageCount": "Usage count",
   "machines": "Machines",
   "machinesDescription": "Register washers and dryers, manage availability and positions, and connect devices.",
   "MALE": "Men",
