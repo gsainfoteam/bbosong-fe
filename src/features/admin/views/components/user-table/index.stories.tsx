@@ -19,6 +19,7 @@ export const Default: Story = {
         studentNumber: '20260001',
         gender: Gender.MALE,
         role: UserRole.ADMIN,
+        machineUsageCount: 3,
         pushSubscriptions: [
           {
             uuid: 'device-1',
@@ -41,6 +42,7 @@ export const Default: Story = {
         studentNumber: '20260002',
         gender: Gender.FEMALE,
         role: UserRole.USER,
+        machineUsageCount: 0,
         pushSubscriptions: [],
       },
     ],

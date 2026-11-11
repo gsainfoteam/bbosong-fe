@@ -40,6 +40,7 @@ const users: AdminUserWithSubscriptions[] = [
     studentNumber: '20260001',
     gender: Gender.MALE,
     role: UserRole.ADMIN,
+    machineUsageCount: 3,
     pushSubscriptions: [],
   },
   {
@@ -49,6 +50,7 @@ const users: AdminUserWithSubscriptions[] = [
     studentNumber: '20260002',
     gender: Gender.FEMALE,
     role: UserRole.USER,
+    machineUsageCount: 0,
     pushSubscriptions: [
       { uuid: 'device', userAgent: null, createdAt: '2026-10-20T01:00:00Z', lastActivatedAt: null },
     ],
