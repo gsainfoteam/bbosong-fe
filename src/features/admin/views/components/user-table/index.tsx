@@ -16,6 +16,7 @@ export function UserTable({ users, currentUserUuid, isPending, onSelect }: UserT
               t('studentNumber'),
               t('gender'),
               t('role'),
+              t('machineUsageCount'),
               t('pushDevices'),
               t('actions'),
             ].map((label) => (
@@ -40,6 +41,7 @@ export function UserTable({ users, currentUserUuid, isPending, onSelect }: UserT
               <td className="px-5 py-4 whitespace-nowrap">{user.studentNumber}</td>
               <td className="px-5 py-4 whitespace-nowrap">{t(user.gender)}</td>
               <td className="px-5 py-4 whitespace-nowrap">{t(user.role)}</td>
+              <td className="px-5 py-4 whitespace-nowrap">{user.machineUsageCount}</td>
               <td className="min-w-64 px-5 py-4">
                 {user.pushSubscriptions.length ? (
                   <details>
@@ -102,7 +104,7 @@ export function UserTable({ users, currentUserUuid, isPending, onSelect }: UserT
           {!users.length && (
             <tr>
               <td
-                colSpan={6}
+                colSpan={7}
                 className="text-text-secondary px-5 py-12 text-center dark:text-slate-400"
               >
                 {t('noUsers')}
