@@ -49,8 +49,11 @@ export function AdminOverviewScreen() {
       description={t('overviewDescription')}
       isLoading={query.isLoading}
       isError={query.isError}
-      isRefreshing={query.isFetching}
-      onRefresh={() => void query.refetch()}
+      isRefreshing={query.isFetching || sessionStats.isFetching}
+      onRefresh={() => {
+        void query.refetch();
+        void sessionStats.refetch();
+      }}
     >
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         {cards.map(({ label, value, icon: Icon, color }) => (
