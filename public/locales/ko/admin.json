@@ -103,6 +103,7 @@
   "recordCount": "전력 기록 {{count}}건",
   "recordedAt": "측정 시간",
   "refresh": "새로고침",
+  "registeredSessionRatio": "등록 비율",
   "registeredSessions": "등록",
   "registrationLink": "등록 링크",
   "requestFailed": "요청을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.",

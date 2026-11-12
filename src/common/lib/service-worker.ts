@@ -194,8 +194,7 @@ export function setupServiceWorkerAutoUpdate(
   options: SetupServiceWorkerAutoUpdate.Options = {},
 ): () => void {
   const reload = options.reload ?? (() => window.location.reload());
-  const updateCheckIntervalMs =
-    options.updateCheckIntervalMs ?? DEFAULT_UPDATE_CHECK_INTERVAL_MS;
+  const updateCheckIntervalMs = options.updateCheckIntervalMs ?? DEFAULT_UPDATE_CHECK_INTERVAL_MS;
 
   const promoteWaiting = () => {
     registration.waiting?.postMessage(SKIP_WAITING_MESSAGE);
@@ -239,7 +238,9 @@ export function setupServiceWorkerAutoUpdate(
   document.addEventListener('visibilitychange', onVisibilityChange);
 
   const intervalId =
-    updateCheckIntervalMs > 0 ? window.setInterval(checkForUpdate, updateCheckIntervalMs) : undefined;
+    updateCheckIntervalMs > 0
+      ? window.setInterval(checkForUpdate, updateCheckIntervalMs)
+      : undefined;
 
   return () => {
     registration.removeEventListener('updatefound', onUpdateFound);

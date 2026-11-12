@@ -70,9 +70,7 @@ export function AdminMachinesScreen() {
   const editThinqRemaining = editingLive
     ? formatThinqRemainingParts(getMachineThinqRemainingMinutes(editingLive))
     : null;
-  const editThinqDetecting = editingLive
-    ? isMachineThinqRemainingDetecting(editingLive)
-    : false;
+  const editThinqDetecting = editingLive ? isMachineThinqRemainingDetecting(editingLive) : false;
 
   function openCreate(next: 'single' | 'multiple') {
     setCreateType(MachineType.WASHER);
