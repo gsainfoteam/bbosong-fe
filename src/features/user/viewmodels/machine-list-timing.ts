@@ -23,9 +23,7 @@ export function getMachineElapsedMinutes(
   return Math.max(0, Math.floor((now - startedAtMs) / 60_000));
 }
 
-export type MachineRemainingDisplay =
-  | { kind: 'minutes'; minutes: number }
-  | { kind: 'detecting' };
+export type MachineRemainingDisplay = { kind: 'minutes'; minutes: number } | { kind: 'detecting' };
 
 /** ThinQ 매핑 기기의 남은 시간 표시. 미매핑이면 undefined(경과 시간으로 폴백). */
 export function getMachineRemainingDisplay(machine: {

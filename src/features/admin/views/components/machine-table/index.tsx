@@ -68,102 +68,103 @@ export function MachineTable({
               thinqRemaining,
               thinqDetecting,
             }) => (
-            <tr key={machine.uuid}>
-              <td className="px-5 py-4">
-                <div
-                  className="font-mono text-sm font-medium tracking-wide whitespace-nowrap"
-                  title={`${t('building', { location: machine.location })} · ${t(machine.gender)} · ${t(machine.type)} #${machine.index}`}
-                >
-                  {formatMachineCode(machine)}
-                </div>
-                <div className="text-text-secondary mt-1 font-mono text-xs dark:text-slate-400">
-                  {machine.uuid}
-                </div>
-              </td>
-              <td className="px-5 py-4 whitespace-nowrap">
-                {t('building', { location: machine.location })} · {t(machine.gender)}
-              </td>
-              <td className="px-5 py-4 whitespace-nowrap">
-                <MachineStatusBadge isAvailable={machine.isAvailable} status={machine.status} />
-              </td>
-              {showTiming && (
-                <>
+              <tr key={machine.uuid}>
+                <td className="px-5 py-4">
+                  <div
+                    className="font-mono text-sm font-medium tracking-wide whitespace-nowrap"
+                    title={`${t('building', { location: machine.location })} · ${t(machine.gender)} · ${t(machine.type)} #${machine.index}`}
+                  >
+                    {formatMachineCode(machine)}
+                  </div>
+                  <div className="text-text-secondary mt-1 font-mono text-xs dark:text-slate-400">
+                    {machine.uuid}
+                  </div>
+                </td>
+                <td className="px-5 py-4 whitespace-nowrap">
+                  {t('building', { location: machine.location })} · {t(machine.gender)}
+                </td>
+                <td className="px-5 py-4 whitespace-nowrap">
+                  <MachineStatusBadge isAvailable={machine.isAvailable} status={machine.status} />
+                </td>
+                {showTiming && (
+                  <>
+                    <td className="px-5 py-4 whitespace-nowrap">
+                      {lastSeen ? (
+                        <time dateTime={lastSeen.dateTime} title={lastSeen.absolute}>
+                          {lastSeen.relative}
+                          <span className="text-text-secondary mt-1 block text-xs dark:text-slate-400">
+                            {lastSeen.absolute}
+                          </span>
+                        </time>
+                      ) : (
+                        '-'
+                      )}
+                    </td>
+                    <td className="px-5 py-4 whitespace-nowrap">
+                      {operatingMinutes === null
+                        ? '-'
+                        : t('operatingDuration', {
+                            hours: String(Math.floor(operatingMinutes / 60)),
+                            minutes: String(operatingMinutes % 60),
+                          })}
+                    </td>
+                  </>
+                )}
+                {showThinq && (
                   <td className="px-5 py-4 whitespace-nowrap">
-                    {lastSeen ? (
-                      <time dateTime={lastSeen.dateTime} title={lastSeen.absolute}>
-                        {lastSeen.relative}
-                        <span className="text-text-secondary mt-1 block text-xs dark:text-slate-400">
-                          {lastSeen.absolute}
-                        </span>
-                      </time>
+                    {machine.thinqDeviceId ? (
+                      <div className="space-y-1">
+                        <div>
+                          {machine.thinqCurrentState === 'DETECTING'
+                            ? t('thinqStateDetecting')
+                            : (machine.thinqCurrentState ?? t('thinqStateUnknown'))}
+                        </div>
+                        <div className="text-text-secondary text-xs dark:text-slate-400">
+                          <ThinqRemaining remaining={thinqRemaining} isDetecting={thinqDetecting} />
+                        </div>
+                        {thinqUpdated ? (
+                          <time
+                            className="text-text-secondary block text-xs dark:text-slate-400"
+                            dateTime={thinqUpdated.dateTime}
+                            title={thinqUpdated.absolute}
+                          >
+                            {t('thinqUpdatedAt')}: {thinqUpdated.relative}
+                          </time>
+                        ) : (
+                          <div className="text-text-secondary text-xs dark:text-slate-400">
+                            {t('thinqUpdatedAt')}: -
+                          </div>
+                        )}
+                      </div>
                     ) : (
                       '-'
                     )}
                   </td>
-                  <td className="px-5 py-4 whitespace-nowrap">
-                    {operatingMinutes === null
-                      ? '-'
-                      : t('operatingDuration', {
-                          hours: String(Math.floor(operatingMinutes / 60)),
-                          minutes: String(operatingMinutes % 60),
-                        })}
+                )}
+                {showLinks && (
+                  <td className="px-5 py-4">
+                    {machine.shortUrl ? (
+                      <a
+                        className="text-primary break-all underline underline-offset-4"
+                        href={machine.shortUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {machine.shortUrl}
+                      </a>
+                    ) : (
+                      <span className="text-amber-600 dark:text-amber-400">{t('missingLink')}</span>
+                    )}
                   </td>
-                </>
-              )}
-              {showThinq && (
-                <td className="px-5 py-4 whitespace-nowrap">
-                  {machine.thinqDeviceId ? (
-                    <div className="space-y-1">
-                      <div>
-                        {machine.thinqCurrentState === 'DETECTING'
-                          ? t('thinqStateDetecting')
-                          : (machine.thinqCurrentState ?? t('thinqStateUnknown'))}
-                      </div>
-                      <div className="text-text-secondary text-xs dark:text-slate-400">
-                        <ThinqRemaining remaining={thinqRemaining} isDetecting={thinqDetecting} />
-                      </div>
-                      {thinqUpdated ? (
-                        <time
-                          className="text-text-secondary block text-xs dark:text-slate-400"
-                          dateTime={thinqUpdated.dateTime}
-                          title={thinqUpdated.absolute}
-                        >
-                          {t('thinqUpdatedAt')}: {thinqUpdated.relative}
-                        </time>
-                      ) : (
-                        <div className="text-text-secondary text-xs dark:text-slate-400">
-                          {t('thinqUpdatedAt')}: -
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    '-'
-                  )}
-                </td>
-              )}
-              {showLinks && (
-                <td className="px-5 py-4">
-                  {machine.shortUrl ? (
-                    <a
-                      className="text-primary break-all underline underline-offset-4"
-                      href={machine.shortUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {machine.shortUrl}
-                    </a>
-                  ) : (
-                    <span className="text-amber-600 dark:text-amber-400">{t('missingLink')}</span>
-                  )}
-                </td>
-              )}
-              {renderActions && (
-                <td className="px-5 py-4">
-                  <div className="flex items-center gap-2">{renderActions(machine)}</div>
-                </td>
-              )}
-            </tr>
-          ))}
+                )}
+                {renderActions && (
+                  <td className="px-5 py-4">
+                    <div className="flex items-center gap-2">{renderActions(machine)}</div>
+                  </td>
+                )}
+              </tr>
+            ),
+          )}
           {!machines.length && (
             <tr>
               <td

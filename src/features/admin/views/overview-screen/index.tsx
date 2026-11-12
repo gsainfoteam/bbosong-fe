@@ -111,7 +111,12 @@ export function AdminOverviewScreen() {
                     </div>
                     <div>
                       <div className="text-text-secondary dark:text-slate-400">{t('running')}</div>
-                      <div className="text-primary mt-2 text-xl font-semibold">{room.running}</div>
+                      <div className="text-primary mt-2 text-xl font-semibold">
+                        {room.running}
+                        <span className="text-text-secondary text-base font-medium dark:text-slate-400">
+                          /{room.total}
+                        </span>
+                      </div>
                     </div>
                     <div>
                       <div className="text-text-secondary dark:text-slate-400">

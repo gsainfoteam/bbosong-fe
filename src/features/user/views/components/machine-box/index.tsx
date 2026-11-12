@@ -184,9 +184,7 @@ export function MachineBox({ machine, className, ...props }: MachineBox.Props) {
     <svg
       viewBox={`0 0 ${SIZE} ${SIZE}`}
       role="img"
-      aria-label={[t(machine.type), machine.id, statusLabel, timeLabel]
-        .filter(Boolean)
-        .join(' ')}
+      aria-label={[t(machine.type), machine.id, statusLabel, timeLabel].filter(Boolean).join(' ')}
       className={cn('block aspect-square w-full font-light', className)}
       {...props}
     >
@@ -243,9 +241,7 @@ export namespace MachineBox {
 
   export type Status = 'idle' | 'using' | 'disabled';
 
-  export type RemainingDisplay =
-    | { kind: 'minutes'; minutes: number }
-    | { kind: 'detecting' };
+  export type RemainingDisplay = { kind: 'minutes'; minutes: number } | { kind: 'detecting' };
 
   export type Props = {
     machine: {

@@ -42,12 +42,12 @@ Add a chart section on overview. Fetch via a dedicated viewmodel hook with prese
 
 Keys in `public/locales/ko/admin.json` and `public/locales/en/admin.json` (exact copy may be refined in plan):
 
-| Key | ko | en |
-|-----|----|----|
-| Section title | 일별 이용 세션 | Daily usage sessions |
-| Registered legend | 등록 | Registered |
-| Unregistered legend | 미등록 | Unregistered |
-| Preset labels | 7일 / 14일 / 30일 / 90일 | 7 days / 14 days / 30 days / 90 days |
+| Key                 | ko                       | en                                   |
+| ------------------- | ------------------------ | ------------------------------------ |
+| Section title       | 일별 이용 세션           | Daily usage sessions                 |
+| Registered legend   | 등록                     | Registered                           |
+| Unregistered legend | 미등록                   | Unregistered                         |
+| Preset labels       | 7일 / 14일 / 30일 / 90일 | 7 days / 14 days / 30 days / 90 days |
 
 Run `bun run gen:i18n` so extract keeps keys used via `t()`.
 

@@ -108,6 +108,7 @@
   "recordCount_other": "{{count}} power records",
   "recordedAt": "Measured at",
   "refresh": "Refresh",
+  "registeredSessionRatio": "Registered share",
   "registeredSessions": "Registered",
   "registrationLink": "Registration link",
   "requestFailed": "Unable to process the request. Try again shortly.",

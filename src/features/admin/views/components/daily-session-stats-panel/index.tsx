@@ -15,6 +15,16 @@ import { buttonClass, panelClass, secondaryButtonClass } from '../../styles';
 
 const RANGES = [7, 14, 30, 90] as const satisfies readonly DailySessionStatsRange[];
 
+function toChartData(data: DailySessionStat[]) {
+  return data.map((row) => {
+    const total = row.registeredCount + row.unregisteredCount;
+    return {
+      ...row,
+      registeredRatio: total === 0 ? null : Math.round((row.registeredCount / total) * 100),
+    };
+  });
+}
+
 export function DailySessionStatsPanel({
   days,
   onDaysChange,
@@ -23,6 +33,8 @@ export function DailySessionStatsPanel({
   isError,
 }: DailySessionStatsPanel.Props) {
   const { t } = useTranslation('admin');
+  const chartData = toChartData(data);
+  const showDots = chartData.length <= 14;
 
   return (
     <div className={panelClass}>
@@ -65,28 +77,56 @@ export function DailySessionStatsPanel({
       ) : (
         <div className="h-72 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
+            <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" vertical={false} />
               <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-              <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
-              <Tooltip />
+              <YAxis yAxisId="count" allowDecimals={false} tick={{ fontSize: 12 }} />
+              <YAxis
+                yAxisId="ratio"
+                orientation="right"
+                domain={[0, 100]}
+                tick={{ fontSize: 12 }}
+                tickFormatter={(value: number) => `${value}%`}
+              />
+              <Tooltip
+                formatter={(value, name, item) => {
+                  if (item.dataKey === 'registeredRatio') {
+                    return value == null ? ['—', name] : [`${value}%`, name];
+                  }
+                  return [value, name];
+                }}
+              />
               <Legend />
               <Line
+                yAxisId="count"
                 name={t('registeredSessions')}
                 type="monotone"
                 dataKey="registeredCount"
                 stroke="#4f7df3"
                 strokeWidth={2}
-                dot={data.length <= 14}
+                dot={showDots}
                 isAnimationActive={false}
               />
               <Line
+                yAxisId="count"
                 name={t('unregisteredSessions')}
                 type="monotone"
                 dataKey="unregisteredCount"
                 stroke="#f59e0b"
                 strokeWidth={2}
-                dot={data.length <= 14}
+                dot={showDots}
+                isAnimationActive={false}
+              />
+              <Line
+                yAxisId="ratio"
+                name={t('registeredSessionRatio')}
+                type="monotone"
+                dataKey="registeredRatio"
+                stroke="#10b981"
+                strokeWidth={2}
+                strokeDasharray="4 4"
+                connectNulls={false}
+                dot={showDots}
                 isAnimationActive={false}
               />
             </LineChart>

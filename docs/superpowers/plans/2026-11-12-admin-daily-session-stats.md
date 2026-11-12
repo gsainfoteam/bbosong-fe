@@ -22,26 +22,27 @@
 
 ## File map
 
-| File | Responsibility |
-|------|----------------|
-| `src/@types/api-schema.ts` | Regenerated OpenAPI types for daily session stats (gitignored) |
-| `src/features/admin/models/index.ts` | Export `DailySessionStat` type |
-| `src/features/admin/viewmodels/daily-session-stats-range.ts` | KST `from`/`to` helper + `DailySessionStatsRange` |
-| `src/features/admin/viewmodels/daily-session-stats-range.test.ts` | Unit tests for inclusive KST ranges |
-| `src/features/admin/viewmodels/use-daily-session-stats.ts` | Query hook wrapping the stats endpoint |
-| `src/features/admin/viewmodels/index.ts` | Re-export new viewmodel modules |
-| `src/features/admin/views/components/daily-session-stats-panel/index.tsx` | Presets + dual LineChart + loading/error |
-| `src/features/admin/views/components/daily-session-stats-panel/index.stories.tsx` | Storybook mocks |
-| `src/features/admin/views/components/index.ts` | Barrel export |
-| `src/features/admin/views/overview-screen/index.tsx` | Mount panel with range state |
-| `public/locales/ko/admin.json` | Korean copy |
-| `public/locales/en/admin.json` | English copy |
+| File                                                                              | Responsibility                                                 |
+| --------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `src/@types/api-schema.ts`                                                        | Regenerated OpenAPI types for daily session stats (gitignored) |
+| `src/features/admin/models/index.ts`                                              | Export `DailySessionStat` type                                 |
+| `src/features/admin/viewmodels/daily-session-stats-range.ts`                      | KST `from`/`to` helper + `DailySessionStatsRange`              |
+| `src/features/admin/viewmodels/daily-session-stats-range.test.ts`                 | Unit tests for inclusive KST ranges                            |
+| `src/features/admin/viewmodels/use-daily-session-stats.ts`                        | Query hook wrapping the stats endpoint                         |
+| `src/features/admin/viewmodels/index.ts`                                          | Re-export new viewmodel modules                                |
+| `src/features/admin/views/components/daily-session-stats-panel/index.tsx`         | Presets + dual LineChart + loading/error                       |
+| `src/features/admin/views/components/daily-session-stats-panel/index.stories.tsx` | Storybook mocks                                                |
+| `src/features/admin/views/components/index.ts`                                    | Barrel export                                                  |
+| `src/features/admin/views/overview-screen/index.tsx`                              | Mount panel with range state                                   |
+| `public/locales/ko/admin.json`                                                    | Korean copy                                                    |
+| `public/locales/en/admin.json`                                                    | English copy                                                   |
 
 ---
 
 ### Task 1: Confirm schema + export `DailySessionStat` + KST range helper (TDD)
 
 **Files:**
+
 - Verify / regenerate: `src/@types/api-schema.ts` (generated, gitignored)
 - Modify: `src/features/admin/models/index.ts`
 - Create: `src/features/admin/viewmodels/daily-session-stats-range.ts`
@@ -49,6 +50,7 @@
 - Modify: `src/features/admin/viewmodels/index.ts`
 
 **Interfaces:**
+
 - Consumes: `components['schemas']['GetDailySessionStatsResDto']`; `ApiPaths.MachineController_getDailySessionStats` already in schema
 - Produces:
   - `export type DailySessionStat = components['schemas']['GetDailySessionStatsResDto']`
@@ -181,10 +183,12 @@ EOF
 ### Task 2: `useDailySessionStats` hook
 
 **Files:**
+
 - Create: `src/features/admin/viewmodels/use-daily-session-stats.ts`
 - Modify: `src/features/admin/viewmodels/index.ts`
 
 **Interfaces:**
+
 - Consumes: `getDailySessionStatsQueryRange`, `DailySessionStatsRange`, `ApiPaths`, `$api`
 - Produces: `useDailySessionStats(days: DailySessionStatsRange)` returning the `$api.useQuery` result for the daily stats endpoint (same shape as other admin hooks: `data`, `isLoading`, `isError`, `isFetching`, `refetch`, …)
 
@@ -243,10 +247,12 @@ EOF
 ### Task 3: i18n labels for session stats panel
 
 **Files:**
+
 - Modify: `public/locales/ko/admin.json`
 - Modify: `public/locales/en/admin.json`
 
 **Interfaces:**
+
 - Consumes: none
 - Produces: translation keys used by Task 4/5
 
@@ -300,12 +306,14 @@ EOF
 ### Task 4: `DailySessionStatsPanel` + Storybook
 
 **Files:**
+
 - Create: `src/features/admin/views/components/daily-session-stats-panel/index.tsx`
 - Create: `src/features/admin/views/components/daily-session-stats-panel/index.stories.tsx`
 - Modify: `src/features/admin/views/components/index.ts`
 - Possibly re-touch: `public/locales/ko/admin.json`, `public/locales/en/admin.json` (after `gen:i18n`)
 
 **Interfaces:**
+
 - Consumes: `DailySessionStat[]`, `DailySessionStatsRange`, `t('dailySessionStats'|…)`, `panelClass`, `secondaryButtonClass` / `buttonClass`
 - Produces: `DailySessionStatsPanel` with props:
 
@@ -548,9 +556,11 @@ EOF
 ### Task 5: Wire panel into overview screen
 
 **Files:**
+
 - Modify: `src/features/admin/views/overview-screen/index.tsx`
 
 **Interfaces:**
+
 - Consumes: `useState` for `DailySessionStatsRange` (default `7`), `useDailySessionStats`, `DailySessionStatsPanel`
 - Produces: overview renders the chart section below status cards and above room overview
 
@@ -621,18 +631,18 @@ EOF
 
 ## Spec coverage checklist
 
-| Spec requirement | Task |
-|------------------|------|
-| Regenerated OpenAPI / confirm endpoint types | Task 1 Step 1 |
-| `DailySessionStat` model export | Task 1 |
-| KST `from`/`to` helper + unit tests (7/14/30/90) | Task 1 |
-| `useDailySessionStats` hook | Task 2 |
-| Dual LineChart registered/unregistered | Task 4 |
-| Presets 7/14/30/90, default 7 | Task 4 + Task 5 |
-| Placement below status cards, above room overview | Task 5 |
-| i18n ko/en | Task 3 (+ Task 4 gen:i18n) |
-| Storybook mocks incl. zeros | Task 4 |
-| No sum cards / custom picker / separate page | Not added |
+| Spec requirement                                  | Task                       |
+| ------------------------------------------------- | -------------------------- |
+| Regenerated OpenAPI / confirm endpoint types      | Task 1 Step 1              |
+| `DailySessionStat` model export                   | Task 1                     |
+| KST `from`/`to` helper + unit tests (7/14/30/90)  | Task 1                     |
+| `useDailySessionStats` hook                       | Task 2                     |
+| Dual LineChart registered/unregistered            | Task 4                     |
+| Presets 7/14/30/90, default 7                     | Task 4 + Task 5            |
+| Placement below status cards, above room overview | Task 5                     |
+| i18n ko/en                                        | Task 3 (+ Task 4 gen:i18n) |
+| Storybook mocks incl. zeros                       | Task 4                     |
+| No sum cards / custom picker / separate page      | Not added                  |
 
 ## Self-review notes
 

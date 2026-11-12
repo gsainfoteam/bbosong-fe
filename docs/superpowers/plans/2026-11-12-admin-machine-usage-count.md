@@ -20,24 +20,26 @@
 
 ## File map
 
-| File | Responsibility |
-|------|----------------|
-| `src/@types/api-schema.ts` | Regenerated OpenAPI types including `GetUsersResDto.machineUsageCount` |
-| `src/features/admin/views/components/user-table/index.tsx` | Render usage-count column |
-| `src/features/admin/views/components/user-table/index.stories.tsx` | Typed Storybook mocks with counts |
-| `public/locales/ko/admin.json` | Korean label `machineUsageCount` |
-| `public/locales/en/admin.json` | English label `machineUsageCount` |
-| `src/@types/resources.d.ts` | Regenerated i18n types (via `gen:i18n`) |
+| File                                                               | Responsibility                                                         |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| `src/@types/api-schema.ts`                                         | Regenerated OpenAPI types including `GetUsersResDto.machineUsageCount` |
+| `src/features/admin/views/components/user-table/index.tsx`         | Render usage-count column                                              |
+| `src/features/admin/views/components/user-table/index.stories.tsx` | Typed Storybook mocks with counts                                      |
+| `public/locales/ko/admin.json`                                     | Korean label `machineUsageCount`                                       |
+| `public/locales/en/admin.json`                                     | English label `machineUsageCount`                                      |
+| `src/@types/resources.d.ts`                                        | Regenerated i18n types (via `gen:i18n`)                                |
 
 ---
 
 ### Task 1: Regenerate API schema with `machineUsageCount`
 
 **Files:**
+
 - Modify: `src/@types/api-schema.ts` (generated)
 - Verify: staging swagger already exposes the field (confirmed 2026-11-12)
 
 **Interfaces:**
+
 - Consumes: `.env.local` `SWAGGER_URL`, `SWAGGER_USER`, `SWAGGER_PASSWORD`
 - Produces: `components['schemas']['GetUsersResDto']` includes `machineUsageCount: number` (required)
 
@@ -81,11 +83,13 @@ EOF
 ### Task 2: i18n labels for the usage-count column
 
 **Files:**
+
 - Modify: `public/locales/ko/admin.json`
 - Modify: `public/locales/en/admin.json`
 - Modify: `src/@types/resources.d.ts` (via `gen:i18n`)
 
 **Interfaces:**
+
 - Consumes: none from Task 1 beyond shared feature
 - Produces: translation key `admin:machineUsageCount` → `"이용 횟수"` / `"Usage count"`
 
@@ -133,11 +137,13 @@ EOF
 ### Task 3: UserTable column + Storybook mocks
 
 **Files:**
+
 - Modify: `src/features/admin/views/components/user-table/index.tsx`
 - Modify: `src/features/admin/views/components/user-table/index.stories.tsx`
 - Test: typecheck / lint (no dedicated unit test file for this presentational table)
 
 **Interfaces:**
+
 - Consumes: `AdminUserWithSubscriptions` with `machineUsageCount: number`; `t('machineUsageCount')`
 - Produces: permissions table column showing the numeric count between role and push devices
 
@@ -241,16 +247,16 @@ EOF
 
 ## Spec coverage checklist
 
-| Spec requirement | Task |
-|------------------|------|
-| `bun run gen:api` / confirm `machineUsageCount` | Task 1 |
-| Fallback if swagger missing field | Task 1 Step 2 stop |
-| UserTable column between role and push | Task 3 |
-| Numeric display including 0 | Task 3 (story has 0 and 3) |
-| i18n ko/en | Task 2 |
-| Storybook mocks | Task 3 |
-| No filter/sort | Not added |
-| Keep `AdminUserWithSubscriptions` | No model change needed |
+| Spec requirement                                | Task                       |
+| ----------------------------------------------- | -------------------------- |
+| `bun run gen:api` / confirm `machineUsageCount` | Task 1                     |
+| Fallback if swagger missing field               | Task 1 Step 2 stop         |
+| UserTable column between role and push          | Task 3                     |
+| Numeric display including 0                     | Task 3 (story has 0 and 3) |
+| i18n ko/en                                      | Task 2                     |
+| Storybook mocks                                 | Task 3                     |
+| No filter/sort                                  | Not added                  |
+| Keep `AdminUserWithSubscriptions`               | No model change needed     |
 
 ## Self-review notes
 
