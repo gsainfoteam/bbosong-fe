@@ -6,18 +6,14 @@ import { toast } from 'sonner';
 import { api } from '@/common/lib';
 
 import { ApiPaths } from '../models';
+import { extractMachineShortCodeFromQr } from './normalize-qr-scan-url';
 
 export function useResolveMachineShortlink() {
   const { t } = useTranslation('error');
 
   return useCallback(
     async (data: string, signal: AbortSignal) => {
-      let shortCode: string | null;
-      try {
-        shortCode = new URL(data).pathname.split('/').findLast(Boolean) ?? null;
-      } catch {
-        shortCode = data.trim() || null;
-      }
+      const shortCode = extractMachineShortCodeFromQr(data);
 
       if (!shortCode) {
         toast.error(t('badRequest'));
