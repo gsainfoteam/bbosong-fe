@@ -2,14 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useNavigate } from '@tanstack/react-router';
 
-import QrScanner from 'qr-scanner';
-
 import { useResolveMachineShortlink } from '../../viewmodels';
 import { QrScanScreen } from '../screens';
+import { createQrDecodeEngine } from './qr-decode-engine';
 import {
   calculateQrScanRegion,
-  improveQrCameraTrack,
   QR_SCAN_MAX_SCANS_PER_SECOND,
+  startQrCamera,
+  stopQrCamera,
 } from './qr-scan-settings';
 
 export function QrScanFrame() {
@@ -23,61 +23,99 @@ export function QrScanFrame() {
     if (!video) return;
 
     const controller = new AbortController();
+    const canvas = document.createElement('canvas');
     let isResolving = false;
     let lastScanData: string | null = null;
     let retryAfter = 0;
+    let lastScanAt = 0;
+    let rafId = 0;
 
-    const scanner = new QrScanner(
-      video,
-      async ({ data }) => {
-        if (isResolving || controller.signal.aborted) return;
-        if (data === lastScanData && Date.now() < retryAfter) return;
-        lastScanData = data;
-        isResolving = true;
-        try {
-          const machineUuid = await resolveMachineShortlink(data, controller.signal);
-          if (!machineUuid || controller.signal.aborted) return;
+    const scanLoop = async (
+      engine: Awaited<ReturnType<typeof createQrDecodeEngine>>,
+    ): Promise<void> => {
+      if (controller.signal.aborted) return;
 
-          scanner.stop();
-          await navigate({
-            to: '/machine-register/$machineUuid',
-            params: { machineUuid },
-          });
-        } finally {
-          retryAfter = Date.now() + 2000;
-          isResolving = false;
+      const minIntervalMs = 1000 / QR_SCAN_MAX_SCANS_PER_SECOND;
+      const elapsed = Date.now() - lastScanAt;
+      if (elapsed < minIntervalMs) {
+        rafId = requestAnimationFrame(() => {
+          void scanLoop(engine);
+        });
+        return;
+      }
+      lastScanAt = Date.now();
+
+      if (!isResolving && video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+        const region = calculateQrScanRegion(video);
+        if (region.downScaledWidth > 0 && region.downScaledHeight > 0) {
+          canvas.width = region.downScaledWidth;
+          canvas.height = region.downScaledHeight;
+          const context = canvas.getContext('2d', { willReadFrequently: true });
+          if (context) {
+            context.drawImage(
+              video,
+              region.x,
+              region.y,
+              region.width,
+              region.height,
+              0,
+              0,
+              canvas.width,
+              canvas.height,
+            );
+            const data = await engine.decode(canvas);
+            if (data && !controller.signal.aborted) {
+              if (!(data === lastScanData && Date.now() < retryAfter) && !isResolving) {
+                lastScanData = data;
+                isResolving = true;
+                try {
+                  const machineUuid = await resolveMachineShortlink(data, controller.signal);
+                  if (machineUuid && !controller.signal.aborted) {
+                    stopQrCamera(video);
+                    await navigate({
+                      to: '/machine-register/$machineUuid',
+                      params: { machineUuid },
+                    });
+                    return;
+                  }
+                } finally {
+                  retryAfter = Date.now() + 2000;
+                  isResolving = false;
+                }
+              }
+            }
+          }
         }
-      },
-      {
-        preferredCamera: 'environment',
-        maxScansPerSecond: QR_SCAN_MAX_SCANS_PER_SECOND,
-        calculateScanRegion: calculateQrScanRegion,
-        returnDetailedScanResult: true,
-      },
-    );
-    scanner.setInversionMode('both');
+      }
 
-    scanner
-      .start()
-      .then(async () => {
+      if (!controller.signal.aborted) {
+        rafId = requestAnimationFrame(() => {
+          void scanLoop(engine);
+        });
+      }
+    };
+
+    void (async () => {
+      try {
+        await startQrCamera(video);
         if (controller.signal.aborted) return;
-        if (video.srcObject instanceof MediaStream) {
-          await improveQrCameraTrack(video.srcObject);
-        }
-      })
-      .catch((error: unknown) => {
+        const engine = await createQrDecodeEngine();
+        if (controller.signal.aborted) return;
+        rafId = requestAnimationFrame(() => {
+          void scanLoop(engine);
+        });
+      } catch (error: unknown) {
         if (controller.signal.aborted) return;
         console.error('Failed to start camera.', error);
-        if (video.srcObject instanceof MediaStream) {
-          video.srcObject.getTracks().forEach((track) => track.stop());
-        }
-        video.srcObject = null;
+        stopQrCamera(video);
         setIsCameraError(true);
-      });
+      }
+    })();
 
     return () => {
       controller.abort();
-      scanner.destroy();
+      cancelAnimationFrame(rafId);
+      stopQrCamera(video);
     };
   }, [navigate, resolveMachineShortlink]);
 

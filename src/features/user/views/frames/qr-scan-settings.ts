@@ -68,3 +68,30 @@ export async function improveQrCameraTrack(stream: MediaStream): Promise<void> {
     // 기기/브라우저가 제약을 거부해도 스캔은 계속한다.
   }
 }
+
+/** 후면 카메라 스트림을 video에 연결하고 해상도/포커스를 맞춘다. */
+export async function startQrCamera(video: HTMLVideoElement): Promise<MediaStream> {
+  const stream = await navigator.mediaDevices.getUserMedia({
+    audio: false,
+    video: {
+      facingMode: { ideal: 'environment' },
+      width: { ideal: QR_SCAN_TARGET_RESOLUTION.width },
+      height: { ideal: QR_SCAN_TARGET_RESOLUTION.height },
+    },
+  });
+
+  video.srcObject = stream;
+  video.playsInline = true;
+  video.muted = true;
+  await video.play();
+  await improveQrCameraTrack(stream);
+  return stream;
+}
+
+export function stopQrCamera(video: HTMLVideoElement): void {
+  const stream = video.srcObject;
+  if (stream instanceof MediaStream) {
+    stream.getTracks().forEach((track) => track.stop());
+  }
+  video.srcObject = null;
+}
