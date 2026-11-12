@@ -20,3 +20,6 @@ src/@types/*.ts
 !src/@types/string.d.ts
 
 .worktrees
+
+# zxing-wasm reader binary; synced from node_modules by vite.config.ts
+public/zxing_reader.wasm

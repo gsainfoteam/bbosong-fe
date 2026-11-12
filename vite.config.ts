@@ -1,3 +1,4 @@
+import { copyFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
@@ -7,6 +8,17 @@ import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv } from 'vite';
 import { VitePWA as vitePWA } from 'vite-plugin-pwa';
 import tsconfigPaths from 'vite-tsconfig-paths';
+
+function syncZxingReaderWasm() {
+  const source = fileURLToPath(
+    new URL('./node_modules/zxing-wasm/dist/reader/zxing_reader.wasm', import.meta.url),
+  );
+  const destination = fileURLToPath(new URL('./public/zxing_reader.wasm', import.meta.url));
+  if (!existsSync(source)) return;
+  copyFileSync(source, destination);
+}
+
+syncZxingReaderWasm();
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -37,7 +49,7 @@ export default defineConfig(({ mode }) => {
           clientsClaim: true,
           cleanupOutdatedCaches: true,
           importScripts: ['/push-sw.js'],
-          globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+          globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,wasm}'],
           navigateFallbackDenylist: [/^\/api(?:\/|$)/],
           runtimeCaching: [
             {
@@ -89,6 +101,7 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+    assetsInclude: ['**/*.wasm'],
     build: {
       rollupOptions: {
         output: {
@@ -103,5 +116,6 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+
   };
 });
