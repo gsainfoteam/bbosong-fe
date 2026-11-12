@@ -1,4 +1,4 @@
-import { copyFileSync, existsSync } from 'node:fs';
+import { copyFileSync, existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
@@ -20,10 +20,17 @@ function syncZxingReaderWasm() {
 
 syncZxingReaderWasm();
 
+const packageJson = JSON.parse(
+  readFileSync(fileURLToPath(new URL('./package.json', import.meta.url)), 'utf-8'),
+) as { version: string };
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
+    define: {
+      __APP_VERSION__: JSON.stringify(packageJson.version),
+    },
     plugins: [
       tanstackRouter({
         autoCodeSplitting: true,
