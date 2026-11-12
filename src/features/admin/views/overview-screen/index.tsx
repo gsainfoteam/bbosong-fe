@@ -114,7 +114,7 @@ export function AdminOverviewScreen() {
                       <div className="text-primary mt-2 text-xl font-semibold">
                         {room.running}
                         <span className="text-text-secondary text-base font-medium dark:text-slate-400">
-                          /{room.total}
+                          /{room.registered}
                         </span>
                       </div>
                     </div>

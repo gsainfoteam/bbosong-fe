@@ -32,7 +32,10 @@ export type AdminMachine = Omit<
   thinqCurrentState: string | null;
   thinqRemainingMinutes: number | null;
   thinqUpdatedAt: string | null;
-  currentUsage: Pick<components['schemas']['MachineUsageInfoDto'], 'startedAt'> | null;
+  currentUsage: {
+    startedAt: string;
+    userUuid: string | null;
+  } | null;
 };
 export function normalizeAdminMachine(
   machine: components['schemas']['GetMachineResDto'],
@@ -52,7 +55,13 @@ export function normalizeAdminMachine(
     thinqUpdatedAt: typeof machine.thinqUpdatedAt === 'string' ? machine.thinqUpdatedAt : null,
     currentUsage:
       machine.currentUsage && typeof machine.currentUsage.startedAt === 'string'
-        ? { startedAt: machine.currentUsage.startedAt }
+        ? {
+            startedAt: machine.currentUsage.startedAt,
+            userUuid:
+              typeof machine.currentUsage.userUuid === 'string'
+                ? machine.currentUsage.userUuid
+                : null,
+          }
         : null,
   };
 }

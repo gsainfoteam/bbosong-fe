@@ -56,6 +56,8 @@ export function getMachineStats(machines: AdminMachine[]) {
     available: machines.filter((machine) => machine.isAvailable && machine.status === 'IDLE')
       .length,
     running: machines.filter((machine) => machine.isAvailable && machine.status !== 'IDLE').length,
+    /** register machine으로 알림을 받는 사용 중 세션 수 */
+    registered: machines.filter((machine) => machine.currentUsage?.userUuid != null).length,
     unavailable: machines.filter((machine) => !machine.isAvailable).length,
     missingLinks: machines.filter((machine) => !machine.shortUrl).length,
   };

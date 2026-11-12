@@ -45,7 +45,10 @@ export const Timing: Story = {
         ...Default.args.machines[0],
         status: 'WASH' as MachineTable.Props['machines'][number]['status'],
         lastSeenAt: new Date(Date.now() - 3 * 60_000).toISOString(),
-        currentUsage: { startedAt: new Date(Date.now() - 90 * 60_000).toISOString() },
+        currentUsage: {
+          startedAt: new Date(Date.now() - 90 * 60_000).toISOString(),
+          userUuid: null,
+        },
       },
       { ...Default.args.machines[0], uuid: 'missing-timing', index: 3 },
     ],
