@@ -10,3 +10,4 @@ export * from './use-admin-machines';
 export * from './use-admin-power';
 export * from './use-admin-thinq-devices';
 export * from './use-admin-users';
+export * from './use-daily-session-stats';
