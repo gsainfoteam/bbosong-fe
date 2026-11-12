@@ -7,6 +7,7 @@ export {
   type AdminMachine,
   type AdminUser,
   type AdminUserWithSubscriptions,
+  type DailySessionStat,
   type ThinqDevice,
   type UpdateMachineInput,
 } from '../models';

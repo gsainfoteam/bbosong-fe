@@ -1,5 +1,6 @@
 export * from './admin-dialog/index';
 export * from './admin-page/index';
+export * from './daily-session-stats-panel/index';
 export * from './machine-filters/index';
 export * from './machine-status-badge/index';
 export * from './machine-table/index';

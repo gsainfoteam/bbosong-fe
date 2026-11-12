@@ -66,6 +66,7 @@ export type ThinqDevice = {
   };
 };
 export type AdminUser = components['schemas']['UserResDto'];
+export type DailySessionStat = components['schemas']['GetDailySessionStatsResDto'];
 export type CreateMachineInput =
   operations['MachineController_createMachine']['parameters']['query'];
 export type CreateMultipleMachinesInput =

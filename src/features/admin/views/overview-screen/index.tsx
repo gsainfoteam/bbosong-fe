@@ -1,15 +1,26 @@
+import { useState } from 'react';
+
 import { Link } from '@tanstack/react-router';
 
 import { ArrowUpRight, CircleAlert, CircleCheck, Link2, WashingMachine } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { Gender, Location, getMachineStats, useAdminMachines } from '../../viewmodels';
-import { AdminPage } from '../components';
+import {
+  Gender,
+  Location,
+  getMachineStats,
+  useAdminMachines,
+  useDailySessionStats,
+  type DailySessionStatsRange,
+} from '../../viewmodels';
+import { AdminPage, DailySessionStatsPanel } from '../components';
 import { panelClass } from '../styles';
 
 export function AdminOverviewScreen() {
   const { t } = useTranslation('admin');
   const query = useAdminMachines();
+  const [statsDays, setStatsDays] = useState<DailySessionStatsRange>(7);
+  const sessionStats = useDailySessionStats(statsDays);
   const stats = getMachineStats(query.machines);
   const cards = [
     { label: t('totalMachines'), value: stats.total, icon: WashingMachine, color: 'text-primary' },
@@ -38,8 +49,11 @@ export function AdminOverviewScreen() {
       description={t('overviewDescription')}
       isLoading={query.isLoading}
       isError={query.isError}
-      isRefreshing={query.isFetching}
-      onRefresh={() => void query.refetch()}
+      isRefreshing={query.isFetching || sessionStats.isFetching}
+      onRefresh={() => {
+        void query.refetch();
+        void sessionStats.refetch();
+      }}
     >
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         {cards.map(({ label, value, icon: Icon, color }) => (
@@ -57,6 +71,13 @@ export function AdminOverviewScreen() {
           </div>
         ))}
       </div>
+      <DailySessionStatsPanel
+        days={statsDays}
+        onDaysChange={setStatsDays}
+        data={sessionStats.data ?? []}
+        isLoading={sessionStats.isLoading}
+        isError={sessionStats.isError}
+      />
       <div className={panelClass}>
         <div className="mb-5 flex items-center justify-between">
           <h2 className="font-semibold">{t('roomOverview')}</h2>
