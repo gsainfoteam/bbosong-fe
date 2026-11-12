@@ -74,6 +74,10 @@ export function MypageScreen({
             {isLoggingOut ? t('loggingOut') : t('logout')}
           </button>
         </div>
+
+        <p className="text-text-secondary mt-4 text-center text-sm">
+          {t('version', { version: __APP_VERSION__ })}
+        </p>
       </div>
     </div>
   );

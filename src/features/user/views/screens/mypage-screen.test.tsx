@@ -31,3 +31,10 @@ describe('MypageScreen admin link', () => {
     expect(screen.queryByRole('link', { name: 'toAdmin' })).toBeNull();
   });
 });
+
+describe('MypageScreen version', () => {
+  it('shows the current app version', () => {
+    render(<MypageScreen user={{ ...baseUser, role: 'user' }} onLogout={() => {}} />);
+    expect(screen.getByText('version')).toBeTruthy();
+  });
+});
