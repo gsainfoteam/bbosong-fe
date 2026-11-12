@@ -9,6 +9,8 @@ import { defineConfig, loadEnv } from 'vite';
 import { VitePWA as vitePWA } from 'vite-plugin-pwa';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
+import { rewriteIndexHtmlPrecacheToRoot } from './src/common/lib/pwa-precache-manifest';
+
 function syncZxingReaderWasm() {
   const source = fileURLToPath(
     new URL('./node_modules/zxing-wasm/dist/reader/zxing_reader.wasm', import.meta.url),
@@ -57,7 +59,15 @@ export default defineConfig(({ mode }) => {
           cleanupOutdatedCaches: true,
           importScripts: ['/push-sw.js'],
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,wasm}'],
+          // CF Pages: /index.html → / 308. 리다이렉트 URL 대신 최종 URL을 SPA shell로 쓴다.
+          navigateFallback: '/',
           navigateFallbackDenylist: [/^\/api(?:\/|$)/],
+          manifestTransforms: [
+            async (entries) => ({
+              manifest: rewriteIndexHtmlPrecacheToRoot(entries),
+              warnings: [],
+            }),
+          ],
           runtimeCaching: [
             {
               urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/gh\/orioncactus\/pretendard@/,
