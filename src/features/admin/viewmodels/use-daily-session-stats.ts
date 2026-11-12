@@ -9,7 +9,12 @@ import {
 export function useDailySessionStats(days: DailySessionStatsRange) {
   const { from, to } = getDailySessionStatsQueryRange(days);
 
-  return $api.useQuery('get', ApiPaths.MachineController_getDailySessionStats, {
-    params: { query: { from, to } },
-  });
+  return $api.useQuery(
+    'get',
+    ApiPaths.MachineController_getDailySessionStats,
+    {
+      params: { query: { from, to } },
+    },
+    { retry: false },
+  );
 }
