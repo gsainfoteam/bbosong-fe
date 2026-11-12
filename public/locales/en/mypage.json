@@ -11,5 +11,6 @@
   "male": "Male",
   "name": "Name",
   "studentNumber": "Student Number",
-  "toAdmin": "Admin Console"
+  "toAdmin": "Admin Console",
+  "version": "Version {{version}}"
 }

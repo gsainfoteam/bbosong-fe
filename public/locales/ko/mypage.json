@@ -11,5 +11,6 @@
   "male": "남성",
   "name": "이름",
   "studentNumber": "학번",
-  "toAdmin": "관리자 콘솔"
+  "toAdmin": "관리자 콘솔",
+  "version": "버전 {{version}}"
 }
