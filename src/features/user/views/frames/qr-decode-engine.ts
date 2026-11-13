@@ -41,7 +41,8 @@ async function canUseNativeBarcodeDetector(): Promise<boolean> {
 }
 
 function createBarcodeDetectorEngine(): QrDecodeEngine {
-  const Detector = (globalThis as { BarcodeDetector?: BarcodeDetectorConstructor }).BarcodeDetector!;
+  const Detector = (globalThis as { BarcodeDetector?: BarcodeDetectorConstructor })
+    .BarcodeDetector!;
   const detector = new Detector({ formats: ['qr_code'] });
   return {
     kind: 'barcode-detector',

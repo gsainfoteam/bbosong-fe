@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  extractMachineShortCodeFromQr,
-  normalizeQrScanUrl,
-} from './normalize-qr-scan-url';
+import { extractMachineShortCodeFromQr, normalizeQrScanUrl } from './normalize-qr-scan-url';
 
 describe('normalizeQrScanUrl', () => {
   it('trims whitespace', () => {
@@ -13,18 +10,12 @@ describe('normalizeQrScanUrl', () => {
   });
 
   it('keeps http and https schemes (case-insensitive)', () => {
-    expect(normalizeQrScanUrl('https://bbosong.example/abc')).toBe(
-      'https://bbosong.example/abc',
-    );
-    expect(normalizeQrScanUrl('HTTP://bbosong.example/abc')).toBe(
-      'HTTP://bbosong.example/abc',
-    );
+    expect(normalizeQrScanUrl('https://bbosong.example/abc')).toBe('https://bbosong.example/abc');
+    expect(normalizeQrScanUrl('HTTP://bbosong.example/abc')).toBe('HTTP://bbosong.example/abc');
   });
 
   it('prepends https:// when scheme is missing', () => {
-    expect(normalizeQrScanUrl('bbosong.example/abc')).toBe(
-      'https://bbosong.example/abc',
-    );
+    expect(normalizeQrScanUrl('bbosong.example/abc')).toBe('https://bbosong.example/abc');
     expect(normalizeQrScanUrl('bbosong.example/path/to/abc?x=1')).toBe(
       'https://bbosong.example/path/to/abc?x=1',
     );
