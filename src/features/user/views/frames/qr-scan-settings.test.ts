@@ -35,9 +35,7 @@ describe('calculateQrScanRegion', () => {
   });
 
   it('returns a safe empty region when metadata is missing', () => {
-    expect(
-      calculateQrScanRegion({ videoWidth: 0, videoHeight: 0 } as HTMLVideoElement),
-    ).toEqual({
+    expect(calculateQrScanRegion({ videoWidth: 0, videoHeight: 0 } as HTMLVideoElement)).toEqual({
       x: 0,
       y: 0,
       width: 0,

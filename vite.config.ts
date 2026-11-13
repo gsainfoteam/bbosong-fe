@@ -9,8 +9,6 @@ import { defineConfig, loadEnv } from 'vite';
 import { VitePWA as vitePWA } from 'vite-plugin-pwa';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-import { rewriteIndexHtmlPrecacheToRoot } from './src/common/lib/pwa-precache-manifest';
-
 function syncZxingReaderWasm() {
   const source = fileURLToPath(
     new URL('./node_modules/zxing-wasm/dist/reader/zxing_reader.wasm', import.meta.url),
@@ -58,17 +56,20 @@ export default defineConfig(({ mode }) => {
           clientsClaim: true,
           cleanupOutdatedCaches: true,
           importScripts: ['/push-sw.js'],
-          globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,wasm}'],
-          // CF Pages: /index.html → / 308. 리다이렉트 URL 대신 최종 URL을 SPA shell로 쓴다.
-          navigateFallback: '/',
-          navigateFallbackDenylist: [/^\/api(?:\/|$)/],
-          manifestTransforms: [
-            async (entries) => ({
-              manifest: rewriteIndexHtmlPrecacheToRoot(entries),
-              warnings: [],
-            }),
-          ],
+          // HTML은 precache하지 않는다. 구 셸이 삭제된 해시 번들을 가리키는 것을 막는다.
+          globPatterns: ['**/*.{js,css,ico,png,svg,woff2,wasm}'],
           runtimeCaching: [
+            {
+              // 문서 요청은 네트워크 우선. 타임아웃/오프라인 시에만 html-cache.
+              urlPattern: ({ request, url }) =>
+                request.mode === 'navigate' && !url.pathname.startsWith('/api'),
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'html-cache',
+                networkTimeoutSeconds: 3,
+                cacheableResponse: { statuses: [0, 200] },
+              },
+            },
             {
               urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/gh\/orioncactus\/pretendard@/,
               handler: 'CacheFirst',
@@ -133,6 +134,5 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-
   };
 });
