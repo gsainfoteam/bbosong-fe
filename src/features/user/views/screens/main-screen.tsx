@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import { Button, Header } from '@/common/components';
+import { Header } from '@/common/components';
 import { cn } from '@/common/utils';
 import {
   GetRoomNotificationButton,
@@ -18,7 +18,7 @@ export function MainScreen({
   className,
   ...props
 }: MainScreen.Props) {
-  const { t } = useTranslation(['machine', 'main']);
+  const { t } = useTranslation(['machine']);
 
   const washers = machines.machines.filter((machine) => machine.type === 'washer');
   const dryers = machines.machines.filter((machine) => machine.type === 'dryer');
@@ -26,7 +26,7 @@ export function MainScreen({
   return (
     <div className={cn(className, 'bg-bg w-full')} {...props}>
       <Header {...header} className={cn('mb-6', header?.className)} />
-      <div className="flex flex-col gap-6 px-3 pb-24">
+      <div className="flex flex-col gap-6 px-3">
         <UsingMachineList
           machineList={usingMachineList.machineList}
           isNotificationEnabled={usingMachineList.isNotificationEnabled}
@@ -56,17 +56,6 @@ export function MainScreen({
           </div>
           <MachineList machines={dryers} className={machines.className} />
         </div>
-      </div>
-      <div className="fixed inset-x-0 bottom-0 mx-auto max-w-120 px-6 pb-6">
-        <Button asChild className="bg-bg-surface border-0 py-3.5 text-base font-medium">
-          <a
-            href="https://infoteam-rulrudino.notion.site/3a4365ea27df802bb3f8c2b8c224a0e1?pvs=105"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {t('main:surveyNotification')}
-          </a>
-        </Button>
       </div>
     </div>
   );
