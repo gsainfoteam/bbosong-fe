@@ -20,9 +20,14 @@ function toChartData(data: DailySessionStat[]) {
     const total = row.registeredCount + row.unregisteredCount;
     return {
       ...row,
-      registeredRatio: total === 0 ? null : Math.round((row.registeredCount / total) * 100),
+      registeredRatio:
+        total === 0 ? null : Math.round((row.registeredCount / total) * 1000) / 10,
     };
   });
+}
+
+function formatRegisteredRatio(value: number) {
+  return `${value.toFixed(1)}%`;
 }
 
 export function DailySessionStatsPanel({
@@ -86,12 +91,14 @@ export function DailySessionStatsPanel({
                 orientation="right"
                 domain={[0, 100]}
                 tick={{ fontSize: 12 }}
-                tickFormatter={(value: number) => `${value}%`}
+                tickFormatter={(value: number) => formatRegisteredRatio(value)}
               />
               <Tooltip
                 formatter={(value, name, item) => {
                   if (item.dataKey === 'registeredRatio') {
-                    return value == null ? ['—', name] : [`${value}%`, name];
+                    return value == null
+                      ? ['—', name]
+                      : [formatRegisteredRatio(Number(value)), name];
                   }
                   return [value, name];
                 }}
