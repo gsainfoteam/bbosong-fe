@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Gender,
   Location,
+  MachineType,
   getMachineStats,
   useAdminMachines,
   useDailySessionStats,
@@ -15,6 +16,54 @@ import {
 } from '../../viewmodels';
 import { AdminPage, DailySessionStatsPanel } from '../components';
 import { panelClass } from '../styles';
+
+function RoomTypeStats({
+  label,
+  available,
+  running,
+  registered,
+  unavailable,
+}: RoomTypeStats.Props) {
+  const { t } = useTranslation('admin');
+  return (
+    <div>
+      <div className="text-text-secondary mb-2 text-sm font-medium dark:text-slate-400">
+        {label}
+      </div>
+      <div className="grid grid-cols-3 gap-2 text-sm">
+        <div>
+          <div className="text-text-secondary dark:text-slate-400">{t('IDLE')}</div>
+          <div className="mt-2 text-xl font-semibold text-emerald-600 dark:text-emerald-400">
+            {available}
+          </div>
+        </div>
+        <div>
+          <div className="text-text-secondary dark:text-slate-400">{t('running')}</div>
+          <div className="text-primary mt-2 text-xl font-semibold">
+            {running}
+            <span className="text-text-secondary text-base font-medium dark:text-slate-400">
+              ({registered})
+            </span>
+          </div>
+        </div>
+        <div>
+          <div className="text-text-secondary dark:text-slate-400">{t('unavailable')}</div>
+          <div className="mt-2 text-xl font-semibold text-red-500">{unavailable}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+namespace RoomTypeStats {
+  export type Props = {
+    label: string;
+    available: number;
+    running: number;
+    registered: number;
+    unavailable: number;
+  };
+}
 
 export function AdminOverviewScreen() {
   const { t } = useTranslation('admin');
@@ -89,10 +138,8 @@ export function AdminOverviewScreen() {
         <div className="grid gap-4 sm:grid-cols-2">
           {Object.values(Location).flatMap((location) =>
             Object.values(Gender).map((gender) => {
-              const room = getMachineStats(
-                query.machines.filter(
-                  (machine) => machine.location === location && machine.gender === gender,
-                ),
+              const roomMachines = query.machines.filter(
+                (machine) => machine.location === location && machine.gender === gender,
               );
               return (
                 <div
@@ -102,30 +149,22 @@ export function AdminOverviewScreen() {
                   <div className="mb-3 font-medium">
                     {t('building', { location })} · {t(gender)}
                   </div>
-                  <div className="grid grid-cols-3 gap-2 text-sm">
-                    <div>
-                      <div className="text-text-secondary dark:text-slate-400">{t('IDLE')}</div>
-                      <div className="mt-2 text-xl font-semibold text-emerald-600 dark:text-emerald-400">
-                        {room.available}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-text-secondary dark:text-slate-400">{t('running')}</div>
-                      <div className="text-primary mt-2 text-xl font-semibold">
-                        {room.running}
-                        <span className="text-text-secondary text-base font-medium dark:text-slate-400">
-                          /{room.registered}
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-text-secondary dark:text-slate-400">
-                        {t('unavailable')}
-                      </div>
-                      <div className="mt-2 text-xl font-semibold text-red-500">
-                        {room.unavailable}
-                      </div>
-                    </div>
+                  <div className="space-y-4">
+                    {Object.values(MachineType).map((type) => {
+                      const typeStats = getMachineStats(
+                        roomMachines.filter((machine) => machine.type === type),
+                      );
+                      return (
+                        <RoomTypeStats
+                          key={type}
+                          label={t(type)}
+                          available={typeStats.available}
+                          running={typeStats.running}
+                          registered={typeStats.registered}
+                          unavailable={typeStats.unavailable}
+                        />
+                      );
+                    })}
                   </div>
                 </div>
               );
