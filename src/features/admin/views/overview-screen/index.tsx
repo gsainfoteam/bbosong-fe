@@ -11,10 +11,11 @@ import {
   MachineType,
   getMachineStats,
   useAdminMachines,
+  useDailyRoomSubscriptionStats,
   useDailySessionStats,
   type DailySessionStatsRange,
 } from '../../viewmodels';
-import { AdminPage, DailySessionStatsPanel } from '../components';
+import { AdminPage, DailyRoomSubscriptionStatsPanel, DailySessionStatsPanel } from '../components';
 import { panelClass } from '../styles';
 
 function RoomTypeStats({
@@ -70,6 +71,8 @@ export function AdminOverviewScreen() {
   const query = useAdminMachines();
   const [statsDays, setStatsDays] = useState<DailySessionStatsRange>(7);
   const sessionStats = useDailySessionStats(statsDays);
+  const [subscriptionDays, setSubscriptionDays] = useState<DailySessionStatsRange>(7);
+  const subscriptionStats = useDailyRoomSubscriptionStats(subscriptionDays);
   const stats = getMachineStats(query.machines);
   const cards = [
     { label: t('totalMachines'), value: stats.total, icon: WashingMachine, color: 'text-primary' },
@@ -98,10 +101,11 @@ export function AdminOverviewScreen() {
       description={t('overviewDescription')}
       isLoading={query.isLoading}
       isError={query.isError}
-      isRefreshing={query.isFetching || sessionStats.isFetching}
+      isRefreshing={query.isFetching || sessionStats.isFetching || subscriptionStats.isFetching}
       onRefresh={() => {
         void query.refetch();
         void sessionStats.refetch();
+        void subscriptionStats.refetch();
       }}
     >
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
@@ -126,6 +130,13 @@ export function AdminOverviewScreen() {
         data={sessionStats.data ?? []}
         isLoading={sessionStats.isLoading}
         isError={sessionStats.isError}
+      />
+      <DailyRoomSubscriptionStatsPanel
+        days={subscriptionDays}
+        onDaysChange={setSubscriptionDays}
+        data={subscriptionStats.data ?? []}
+        isLoading={subscriptionStats.isLoading}
+        isError={subscriptionStats.isError}
       />
       <div className={panelClass}>
         <div className="mb-5 flex items-center justify-between">
