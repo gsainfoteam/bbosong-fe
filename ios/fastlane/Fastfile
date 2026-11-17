@@ -1,0 +1,110 @@
+default_platform(:ios)
+
+# 웹 빌드(`bun run build`)와 `cap sync ios`는 fastlane 실행 전에 끝나 있어야 한다.
+platform :ios do
+  APP_IDENTIFIER = "me.gistory.bbosong"
+  APP_NAME = "뽀송"
+  PROJECT_PATH = "App/App.xcodeproj"
+  SCHEME = "App"
+
+  def package_version
+    JSON.parse(File.read("../../package.json"))["version"]
+  end
+
+  desc "Test build"
+  lane :test do
+    UI.message("Building for testing")
+    build_app(
+      project: PROJECT_PATH,
+      scheme: SCHEME,
+      configuration: "Release",
+      destination: "generic/platform=iOS",
+      skip_codesigning: true,
+      skip_archive: true,
+      skip_package_ipa: true,
+      xcargs: "MARKETING_VERSION=#{package_version} CODE_SIGNING_ALLOWED=NO",
+    )
+  end
+
+  desc "Register the App ID, create the App Store Connect app and the signing assets (run once, locally)"
+  lane :bootstrap do
+    produce(
+      app_identifier: APP_IDENTIFIER,
+      app_name: APP_NAME,
+      language: "ko",
+      app_version: package_version,
+      sku: APP_IDENTIFIER,
+    )
+    # 인증서와 provisioning profile을 만들어 match 저장소에 올린다 (readonly: false)
+    sync_code_signing(type: "appstore", readonly: false)
+  end
+
+  desc "Push a new beta build to TestFlight"
+  lane :internal do
+    setup_ci if ENV['CI']
+    sync_code_signing(type: "appstore", readonly: true)
+    app_store_connect_api_key(duration: 1200) if ENV['CI']
+
+    build_version = package_version
+    build_number = latest_testflight_build_number(initial_build_number: 0) + 1
+    UI.message("Building bbosong #{build_version} (#{build_number})")
+
+    profile_name = ENV["sigh_#{APP_IDENTIFIER}_appstore_profile-name"]
+    team_id = ENV["sigh_#{APP_IDENTIFIER}_appstore_team-id"]
+    # CI의 임시 체크아웃에서만 수동 서명으로 바꾼다. 로컬에서 실행하면 프로젝트 파일이 수정된다
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: PROJECT_PATH,
+      team_id: team_id,
+      targets: ["App"],
+      code_sign_identity: "Apple Distribution",
+      profile_name: profile_name,
+    )
+
+    build_app(
+      project: PROJECT_PATH,
+      scheme: SCHEME,
+      configuration: "Release",
+      export_method: "app-store",
+      export_options: {
+        provisioningProfiles: lane_context[SharedValues::MATCH_PROVISIONING_PROFILE_MAPPING],
+      },
+      xcargs: "MARKETING_VERSION=#{build_version} CURRENT_PROJECT_VERSION=#{build_number}",
+    )
+
+    upload_to_testflight(skip_waiting_for_build_processing: true)
+
+    slack(
+      payload: {
+        "Build Date" => Time.now.to_s,
+        "Build Version" => build_version,
+        "Build Number" => build_number,
+      }
+    ) if ENV['CI']
+  end
+
+  desc "Submit the latest TestFlight build for App Store review"
+  lane :production do
+    app_store_connect_api_key(duration: 1200) if ENV['CI']
+    latest_testflight_build_number
+    deliver(
+      app_version: lane_context[SharedValues::LATEST_TESTFLIGHT_VERSION],
+      submit_for_review: true,
+      automatic_release: true,
+      force: true,
+      skip_binary_upload: true,
+      skip_screenshots: true,
+      skip_metadata: true,
+      precheck_include_in_app_purchases: false,
+      submission_information: {
+        add_id_info_uses_idfa: false,
+      },
+      reject_if_possible: true,
+    )
+    slack(
+      payload: {
+        "Promoted At" => Time.now.to_s,
+      }
+    ) if ENV['CI']
+  end
+end
