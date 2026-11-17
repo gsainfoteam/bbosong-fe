@@ -15,7 +15,8 @@ vi.mock('@capacitor-firebase/messaging', () => ({
   FirebaseMessaging: plugin,
   Importance: { High: 4 },
 }));
-vi.mock('@capacitor/app', () => ({ App: { addListener: vi.fn() } }));
+const app = vi.hoisted(() => ({ addListener: vi.fn() }));
+vi.mock('@capacitor/app', () => ({ App: app }));
 vi.mock('@capacitor/core', () => ({
   Capacitor: { getPlatform: () => capacitor.platform },
 }));
@@ -30,6 +31,7 @@ import {
   refreshNativeNotificationPermission,
   requestNativeNotificationPermission,
   subscribeToNativePermissionChange,
+  subscribeToNativeResume,
 } from './native-push';
 
 beforeEach(() => {
@@ -118,5 +120,43 @@ describe('initNativePush', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
     plugin.checkPermissions.mockRejectedValue(new Error('unavailable'));
     await expect(initNativePush()).resolves.toBeUndefined();
+  });
+});
+
+describe('resume handling', () => {
+  const resumeHandler = () =>
+    app.addListener.mock.calls.find(([event]) => event === 'resume')?.[1] as () => void;
+
+  it('registers the resume listener even when the initial work fails', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    plugin.checkPermissions.mockRejectedValue(new Error('unavailable'));
+    plugin.createChannel.mockRejectedValue(new Error('channel'));
+
+    await initNativePush();
+
+    expect(resumeHandler()).toBeTypeOf('function');
+  });
+
+  it('refreshes the permission, then notifies resume listeners', async () => {
+    await initNativePush();
+    const listener = vi.fn();
+    subscribeToNativeResume(listener);
+    plugin.checkPermissions.mockResolvedValue({ receive: 'granted' });
+
+    resumeHandler()();
+    await vi.waitFor(() => expect(listener).toHaveBeenCalledOnce());
+
+    expect(getNativeNotificationPermission()).toBe('granted');
+  });
+
+  it('still notifies resume listeners when the permission lookup fails', async () => {
+    await initNativePush();
+    const listener = vi.fn();
+    subscribeToNativeResume(listener);
+    plugin.checkPermissions.mockRejectedValue(new Error('unavailable'));
+
+    resumeHandler()();
+
+    await vi.waitFor(() => expect(listener).toHaveBeenCalledOnce());
   });
 });

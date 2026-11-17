@@ -7,6 +7,7 @@ import {
   unregisterPushDeviceFromServer,
   useInstallPrompt,
   usePostInstallPermission,
+  usePushDeviceSync,
   usePushPermission,
 } from './use-push-device';
 
@@ -28,9 +29,13 @@ const browser = vi.hoisted(() => ({
   deleteNativePushToken: vi.fn(),
   subscribeToNativePermissionChange: vi.fn(),
   subscribeToNativeTokenRefresh: vi.fn(),
+  subscribeToNativeResume: vi.fn(),
   trackEvent: vi.fn(),
   nativePermissionListeners: new Set<() => void>(),
+  resumeListeners: new Set<() => void>(),
 }));
+
+const auth = vi.hoisted(() => ({ token: null as string | null }));
 
 const models = vi.hoisted(() => ({
   registerNativePushDevice: vi.fn(),
@@ -44,7 +49,7 @@ vi.mock('@/common/lib', () => ({
     return () => browser.installListeners.delete(listener);
   },
 }));
-vi.mock('@/features/auth', () => ({ useToken: () => ({ token: null }) }));
+vi.mock('@/features/auth', () => ({ useToken: () => ({ token: auth.token }) }));
 vi.mock('../models', () => ({
   ...models,
   NativePushPlatform: { IOS: 'IOS', ANDROID: 'ANDROID' },
@@ -70,6 +75,12 @@ beforeEach(() => {
     return () => browser.nativePermissionListeners.delete(listener);
   });
   browser.subscribeToNativeTokenRefresh.mockReturnValue(() => {});
+  browser.subscribeToNativeResume.mockImplementation((listener: () => void) => {
+    browser.resumeListeners.add(listener);
+    return () => browser.resumeListeners.delete(listener);
+  });
+  browser.resumeListeners.clear();
+  auth.token = null;
   models.registerNativePushDevice.mockResolvedValue({ success: true });
   models.unregisterNativePushDevice.mockResolvedValue({ success: true });
   browser.nativePermissionListeners.clear();
@@ -292,5 +303,35 @@ describe('native app (FCM)', () => {
   it('never asks the user to install the app', () => {
     const { result } = renderHook(() => usePushPermission());
     expect(result.current.status).not.toBe('needs-install');
+  });
+
+  describe('registration retry', () => {
+    beforeEach(() => {
+      auth.token = 'access-token';
+      browser.getNativeNotificationPermission.mockReturnValue('granted');
+      vi.spyOn(console, 'error').mockImplementation(() => {});
+    });
+
+    it('retries on app resume only after a failed registration', async () => {
+      models.registerNativePushDevice.mockRejectedValueOnce(new Error('offline'));
+      renderHook(() => usePushDeviceSync());
+      await vi.waitFor(() => expect(models.registerNativePushDevice).toHaveBeenCalledTimes(1));
+
+      await act(async () => browser.resumeListeners.forEach((listener) => listener()));
+      await vi.waitFor(() => expect(models.registerNativePushDevice).toHaveBeenCalledTimes(2));
+
+      // 성공한 뒤의 복귀에서는 다시 등록하지 않는다
+      await act(async () => browser.resumeListeners.forEach((listener) => listener()));
+      expect(models.registerNativePushDevice).toHaveBeenCalledTimes(2);
+    });
+
+    it('does not re-register on resume when the first registration succeeded', async () => {
+      renderHook(() => usePushDeviceSync());
+      await vi.waitFor(() => expect(models.registerNativePushDevice).toHaveBeenCalledTimes(1));
+
+      await act(async () => browser.resumeListeners.forEach((listener) => listener()));
+
+      expect(models.registerNativePushDevice).toHaveBeenCalledTimes(1);
+    });
   });
 });

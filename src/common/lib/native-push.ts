@@ -51,6 +51,15 @@ export function subscribeToNativePermissionChange(listener: () => void): () => v
   return () => permissionListeners.delete(listener);
 }
 
+const resumeListeners = new Set<() => void>();
+
+/** 앱이 포그라운드로 돌아오고 권한 캐시 갱신이 끝난 뒤 호출된다. 반환되는 함수로 해제한다 */
+export function subscribeToNativeResume(listener: () => void): () => void {
+  resumeListeners.add(listener);
+
+  return () => resumeListeners.delete(listener);
+}
+
 /** OS의 현재 권한을 다시 읽어 캐시에 반영한다 */
 export async function refreshNativeNotificationPermission(): Promise<NotificationPermission> {
   const { receive } = await FirebaseMessaging.checkPermissions();
@@ -97,10 +106,18 @@ export function subscribeToNativeTokenRefresh(listener: (token: string) => void)
  * 네이티브 푸시 초기 설정. 웹에서는 아무것도 하지 않으며 실패해도 앱 시작을 막지 않는다.
  * - 권한 캐시를 채운다 (첫 렌더가 올바른 상태로 그려지도록 렌더 전에 끝낸다)
  * - Android 알림 채널을 서버가 쓰는 ID로 만든다
- * - 앱 복귀 시 권한을 다시 읽는다 (OS 설정에서 바꾼 경우)
+ * - 앱 복귀 시 권한을 다시 읽는다 (OS 설정에서 바꾼 경우). 이 리스너는 초기 작업이 실패해도 등록된다
  */
 export async function initNativePush(): Promise<void> {
   if (!isNativeApp()) return;
+
+  // 앱 복귀 리스너는 아래 초기 작업의 성공 여부와 무관하게 등록한다.
+  // 초기 조회/채널 생성이 실패해도 다음 복귀에서 권한 캐시를 복구할 수 있어야 한다
+  void App.addListener('resume', () => {
+    void refreshNativeNotificationPermission()
+      .catch(() => {})
+      .finally(() => resumeListeners.forEach((listener) => listener()));
+  });
 
   try {
     await Promise.all([
@@ -113,10 +130,6 @@ export async function initNativePush(): Promise<void> {
           })
         : Promise.resolve(),
     ]);
-
-    void App.addListener('resume', () => {
-      void refreshNativeNotificationPermission().catch(() => {});
-    });
   } catch (error) {
     console.error('Failed to initialize native push.', error);
   }

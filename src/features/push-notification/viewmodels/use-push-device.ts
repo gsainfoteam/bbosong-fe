@@ -21,6 +21,7 @@ import {
   showInstallPrompt,
   subscribeToInstallPromptChange,
   subscribeToNativePermissionChange,
+  subscribeToNativeResume,
   subscribeToNativeTokenRefresh,
   subscribeToPush,
   trackEvent,
@@ -161,10 +162,18 @@ export function usePushDeviceSync(): void {
   useEffect(() => {
     if (!token) return;
 
+    // 직전 등록이 실패했는지 여부. 네이티브는 앱 복귀 시 실패한 등록만 다시 시도한다
+    let failed = false;
+
     const sync = () => {
-      syncPushDevice().catch((error) => {
-        console.error('푸시 디바이스 등록에 실패했습니다.', error);
-      });
+      syncPushDevice()
+        .then(() => {
+          failed = false;
+        })
+        .catch((error) => {
+          failed = true;
+          console.error('푸시 디바이스 등록에 실패했습니다.', error);
+        });
     };
 
     sync();
@@ -174,10 +183,15 @@ export function usePushDeviceSync(): void {
     // 네이티브: FCM이 토큰을 갱신하거나, OS 설정에서 권한을 허용하고 돌아오면 서버 등록을 다시 맞춘다
     const unsubscribeRefresh = subscribeToNativeTokenRefresh(sync);
     const unsubscribePermission = subscribeToNativePermissionChange(sync);
+    // 권한이 그대로면 권한 변경 알림이 없고 토큰 갱신도 오지 않으므로, 실패한 등록은 복귀 시점에 재시도한다
+    const unsubscribeResume = subscribeToNativeResume(() => {
+      if (failed) sync();
+    });
 
     return () => {
       unsubscribeRefresh();
       unsubscribePermission();
+      unsubscribeResume();
     };
   }, [token]);
 }
