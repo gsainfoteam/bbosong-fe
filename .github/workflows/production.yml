@@ -14,6 +14,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - name: build
         env:
+          OTA_BUNDLE: 'true'
           VITE_AMPLITUDE_API_KEY: ${{ secrets.VITE_AMPLITUDE_API_KEY }}
           VITE_IDP_CLIENT_ID: ${{ secrets.VITE_IDP_CLIENT_ID }}
           SWAGGER_URL: ${{ secrets.SWAGGER_URL }}
