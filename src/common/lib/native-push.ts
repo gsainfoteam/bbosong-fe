@@ -1,5 +1,6 @@
 import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
+import { LocalNotifications } from '@capacitor/local-notifications';
 import { FirebaseMessaging, Importance } from '@capacitor-firebase/messaging';
 
 import { isNativeApp } from './platform';
@@ -190,6 +191,33 @@ export function subscribeToNativeNotificationTap(listener: (path: string) => voi
   return () => tapListeners.delete(listener);
 }
 
+let localNotificationId = Date.now() % 2_000_000_000;
+
+/**
+ * Android는 앱이 포그라운드일 때 FCM이 시스템 알림을 만들지 않으므로 로컬 알림으로 head-up을 직접 띄운다.
+ * (iOS는 capacitor.config.ts의 presentationOptions로 시스템 배너를 띄운다)
+ * 탭하면 원격 알림과 같은 경로(`url`)로 이동하도록 data를 extra로 넘긴다.
+ */
+async function showForegroundNotification(notification: NativeNotification): Promise<void> {
+  if (permission !== 'granted') return;
+  if (!notification.title && !notification.body) return;
+
+  const { url } = toPushMessagePayload(notification);
+  localNotificationId = (localNotificationId + 1) % 2_000_000_000;
+
+  await LocalNotifications.schedule({
+    notifications: [
+      {
+        id: localNotificationId,
+        title: notification.title ?? '',
+        body: notification.body ?? '',
+        channelId: NATIVE_PUSH_ANDROID_CHANNEL_ID,
+        extra: { url },
+      },
+    ],
+  });
+}
+
 /**
  * 네이티브 푸시 초기 설정. 웹에서는 아무것도 하지 않으며 실패해도 앱 시작을 막지 않는다.
  * - 권한 캐시를 채운다 (첫 렌더가 올바른 상태로 그려지도록 렌더 전에 끝낸다)
@@ -211,6 +239,17 @@ export async function initNativePush(): Promise<void> {
   void FirebaseMessaging.addListener('notificationActionPerformed', ({ notification }) =>
     handleNotificationTap(notification),
   );
+
+  if (Capacitor.getPlatform() === 'android') {
+    void FirebaseMessaging.addListener('notificationReceived', ({ notification }) => {
+      void showForegroundNotification(notification).catch((error) =>
+        console.error('Failed to show foreground notification.', error),
+      );
+    });
+    void LocalNotifications.addListener('localNotificationActionPerformed', ({ notification }) =>
+      handleNotificationTap({ data: notification.extra }),
+    );
+  }
 
   try {
     await Promise.all([

@@ -9,6 +9,7 @@ const plugin = vi.hoisted(() => ({
   createChannel: vi.fn(),
   addListener: vi.fn(),
 }));
+const localNotifications = vi.hoisted(() => ({ schedule: vi.fn(), addListener: vi.fn() }));
 const capacitor = vi.hoisted(() => ({ platform: 'android', native: true }));
 
 vi.mock('@capacitor-firebase/messaging', () => ({
@@ -16,6 +17,7 @@ vi.mock('@capacitor-firebase/messaging', () => ({
   Importance: { High: 4 },
 }));
 const app = vi.hoisted(() => ({ addListener: vi.fn() }));
+vi.mock('@capacitor/local-notifications', () => ({ LocalNotifications: localNotifications }));
 vi.mock('@capacitor/app', () => ({ App: app }));
 vi.mock('@capacitor/core', () => ({
   Capacitor: { getPlatform: () => capacitor.platform },
@@ -284,5 +286,62 @@ describe('notification tap', () => {
     const second = vi.fn();
     subscribeToNativeNotificationTap(second)();
     expect(second).not.toHaveBeenCalled();
+  });
+});
+
+describe('Android foreground head-up', () => {
+  const received = () =>
+    plugin.addListener.mock.calls.find(([event]) => event === 'notificationReceived')?.[1] as (e: {
+      notification: unknown;
+    }) => void;
+
+  beforeEach(() => {
+    localNotifications.schedule.mockResolvedValue(undefined);
+  });
+
+  it('shows a local notification on the default channel when permission is granted', async () => {
+    plugin.checkPermissions.mockResolvedValue({ receive: 'granted' });
+    await initNativePush();
+
+    received()({ notification: { title: 't', body: 'b', data: { url: '/machines', type: 'x' } } });
+
+    expect(localNotifications.schedule).toHaveBeenCalledWith({
+      notifications: [
+        expect.objectContaining({
+          title: 't',
+          body: 'b',
+          channelId: NATIVE_PUSH_ANDROID_CHANNEL_ID,
+          extra: { url: '/machines' },
+        }),
+      ],
+    });
+  });
+
+  it('does nothing without permission', async () => {
+    plugin.checkPermissions.mockResolvedValue({ receive: 'denied' });
+    await initNativePush();
+
+    received()({ notification: { title: 't' } });
+    expect(localNotifications.schedule).not.toHaveBeenCalled();
+  });
+
+  it('is not registered on iOS (the system shows the banner)', async () => {
+    capacitor.platform = 'ios';
+    await initNativePush();
+    expect(localNotifications.addListener).not.toHaveBeenCalled();
+    expect(received()).toBeUndefined();
+  });
+
+  it('routes a tap on the local notification like a remote one', async () => {
+    await initNativePush();
+    const tap = localNotifications.addListener.mock.calls[0][1] as (e: {
+      notification: { extra: unknown };
+    }) => void;
+    const listener = vi.fn();
+    const unsubscribe = subscribeToNativeNotificationTap(listener);
+
+    tap({ notification: { extra: { url: '/machines' } } });
+    expect(listener).toHaveBeenCalledExactlyOnceWith('/machines');
+    unsubscribe();
   });
 });

@@ -25,9 +25,10 @@ const config: CapacitorConfig = {
     // 앱 Origin(capacitor://localhost, https://localhost)은 서버 CORS 허용 목록에 없고,
     // refresh 쿠키가 크로스 사이트 쿠키로 차단되는 문제를 함께 피한다.
     CapacitorHttp: { enabled: true },
-    // iOS 포그라운드에서는 시스템 배너를 띄우지 않는다.
-    // Android도 포그라운드에서는 FCM이 배너를 만들지 않으므로 동작을 맞추고, 앱 화면은 notificationReceived로 갱신한다
-    FirebaseMessaging: { presentationOptions: [] },
+    // iOS: 앱이 포그라운드여도 시스템 배너(head-up)와 소리를 띄운다. 서버가 badge를 보내지 않으므로 badge는 뺀다.
+    // Android는 FCM이 포그라운드 알림을 만들지 않아 native-push.ts가 로컬 알림으로 대신 띄운다.
+    // 앱 화면 갱신은 두 플랫폼 모두 notificationReceived로 처리한다
+    FirebaseMessaging: { presentationOptions: ['alert', 'sound'] },
     // 웹 앱이 준비될 때까지 스플래시를 유지한다. 숨기는 시점은 app.tsx의 SessionRouter에서 제어한다
     SplashScreen: { launchAutoHide: false, backgroundColor: '#ffffff' },
   },
