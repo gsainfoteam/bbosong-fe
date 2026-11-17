@@ -6,7 +6,7 @@ import { I18nextProvider } from 'react-i18next';
 import { i18n } from '@/common/lib/i18n';
 import { initNativePush } from '@/common/lib/native-push';
 import { installNativeStorage } from '@/common/lib/native-storage';
-import { initNativeAuthCallback } from '@/common/lib/platform';
+import { initNativeAuthCallback, initNativeBackButton } from '@/common/lib/platform';
 import { initInstallPromptCapture, registerServiceWorker } from '@/common/lib/service-worker';
 
 import { App } from './app';
@@ -34,6 +34,8 @@ function renderApp() {
 // 네이티브 앱: 저장소 미러링과 인앱 브라우저 인증 콜백 복원은 인증 공급자가 마운트되기 전에
 // 끝나야 하므로(라이브러리는 마운트 시 저장소와 URL을 읽는다) 끝난 뒤 렌더한다.
 // 푸시 권한 상태도 첫 렌더에서 올바르게 보이도록 함께 기다린다.
+initNativeBackButton();
+
 void Promise.all([installNativeStorage(), initNativeAuthCallback(), initNativePush()]).finally(
   renderApp,
 );
