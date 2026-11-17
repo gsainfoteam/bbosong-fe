@@ -16,6 +16,8 @@ export default defineConfig(
   {
     ignores: [
       'dist',
+      'android',
+      'ios',
       'routeTree.gen.ts',
       'storybook-static',
       '.storybook',

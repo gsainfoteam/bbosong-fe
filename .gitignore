@@ -23,3 +23,9 @@ src/@types/*.ts
 
 # zxing-wasm reader binary; synced from node_modules by vite.config.ts
 public/zxing_reader.wasm
+
+# Capacitor: 웹 번들은 cap sync로 복사되는 산출물
+android/app/src/main/assets/public
+android/app/src/main/assets/capacitor.config.json
+android/app/src/main/assets/capacitor.plugins.json
+android/app/src/main/res/xml/config.xml

@@ -6,12 +6,24 @@ import { useTranslation } from 'react-i18next';
 import { useAuthContext } from 'react-oauth2-code-pkce';
 import { toast } from 'sonner';
 
+import { isNativeApp } from '@/common/lib';
 import { ApiGender, useAuthPrompt, useToken } from '@/features/auth';
 
 import { useLogin, useLogout, useUser } from '.';
 
 export const useAuth = ({ showToast = false }: { showToast?: boolean } = {}) => {
-  const { token: idpToken, logIn: idpLogIn, logOut: idpLogOut, loginInProgress } = useAuthContext();
+  const {
+    token: idpToken,
+    logIn: baseIdpLogIn,
+    logOut: idpLogOut,
+    loginInProgress,
+  } = useAuthContext();
+  const idpLogIn = useCallback<typeof baseIdpLogIn>(
+    // 네이티브는 인앱 브라우저로 로그인한다 (common/lib/platform.ts의 window.open 연결 참고)
+    (state, additionalParameters, method) =>
+      baseIdpLogIn(state, additionalParameters, method ?? (isNativeApp() ? 'popup' : undefined)),
+    [baseIdpLogIn],
+  );
   const { mutate: logInMutate, ...logInMutation } = useLogin({ showToast: true });
   const { mutate: logOut, ...logOutMutation } = useLogout({ showToast });
   const { token } = useToken();
