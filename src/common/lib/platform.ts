@@ -32,6 +32,24 @@ const LOGIN_IN_PROGRESS_STORAGE_KEY = 'ROCP_loginInProgress';
 /** 현재 로그인 시도에서 인증 콜백을 받았는지 여부 */
 let authCallbackReceived = false;
 
+/** 시작 URL을 이미 처리했는지 기록하는 sessionStorage 키 (WebView 리로드에는 유지되고 프로세스 재시작에는 사라진다) */
+const LAUNCH_URL_CLAIMED_KEY = 'native-launch-url-claimed';
+
+/**
+ * 이 프로세스에서 시작 URL을 처음 처리하는 경우에만 true를 반환한다.
+ * 이미 처리했거나, 이미 콜백 code가 URL에 있거나, 저장소를 쓸 수 없으면 false다.
+ */
+export function claimLaunchUrlOnce(): boolean {
+  try {
+    if (window.sessionStorage.getItem(LAUNCH_URL_CLAIMED_KEY)) return false;
+    window.sessionStorage.setItem(LAUNCH_URL_CLAIMED_KEY, '1');
+  } catch {
+    return false;
+  }
+
+  return !new URLSearchParams(window.location.search).has('code');
+}
+
 /** 콜백 URL이면 code/state 쿼리 문자열(`?code=...`)을, 아니면 null을 반환한다 */
 function parseAuthCallback(url: string | undefined): string | null {
   if (!url?.startsWith(NATIVE_AUTH_REDIRECT_URI)) return null;
@@ -98,7 +116,11 @@ export async function initNativeAuthCallback(): Promise<void> {
     }, CANCEL_GRACE_MS);
   });
 
-  // 콜드 스타트로 들어온 콜백: 렌더 전에 URL만 바꿔 두면 라이브러리가 마운트 시 code를 읽는다
+  // 콜드 스타트로 들어온 콜백: 렌더 전에 URL만 바꿔 두면 라이브러리가 마운트 시 code를 읽는다.
+  // getLaunchUrl()은 프로세스를 시작한 URL을 리로드 때마다 그대로 돌려주므로,
+  // 프로세스의 첫 로드에서만 적용해야 이후 로그인의 새 콜백 code를 덮어쓰지 않는다.
+  if (!claimLaunchUrlOnce()) return;
+
   const launchSearch = await App.getLaunchUrl()
     .then((launch) => parseAuthCallback(launch?.url))
     .catch(() => null);
