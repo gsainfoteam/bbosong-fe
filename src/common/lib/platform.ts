@@ -88,7 +88,11 @@ export async function initNativeAuthCallback(): Promise<void> {
     if (target !== AUTH_POPUP_NAME || !url) return originalOpen(url, target, features);
 
     authCallbackReceived = false;
-    void Browser.open({ url: url.toString() });
+    // 열기에 실패하면 콜백도 browserFinished도 오지 않아 로그인 진행 상태가 남으므로 바로 해제한다
+    Browser.open({ url: url.toString() }).catch((error: unknown) => {
+      console.error('Failed to open the in-app browser.', error);
+      cancelPendingLogin();
+    });
     // 라이브러리는 반환값의 truthy 여부만 확인한다 (null이면 일반 리다이렉트로 폴백)
     return {} as Window;
   };
