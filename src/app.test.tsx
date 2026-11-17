@@ -32,7 +32,10 @@ const mocks = vi.hoisted(() => {
 
 vi.mock('./router', () => ({ queryClient: new QueryClient(), router: {} }));
 vi.mock('@/common/lib', async () => await import('@/common/lib/api'));
-vi.mock('@/common/components', () => ({ Loading: () => <p>restoring</p> }));
+vi.mock('@/common/components', () => ({
+  Loading: () => <p>restoring</p>,
+  SplashScreen: () => <p>restoring</p>,
+}));
 vi.mock('@/common/pages', () => ({ ErrorPage: () => null, NotFoundPage: () => null }));
 vi.mock('sonner', () => ({ Toaster: () => null }));
 vi.mock('react-oauth2-code-pkce', () => ({

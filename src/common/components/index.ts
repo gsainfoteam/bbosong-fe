@@ -5,4 +5,5 @@ export * from './layout/index';
 export * from './modal/index';
 export * from './nav-bar/constants';
 export * from './nav-bar/index';
+export * from './splash-screen/index';
 export * from './ui/index';

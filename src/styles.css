@@ -3,6 +3,21 @@
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *, .dark, .dark *));
 
+/* 스플래시 로고 상하 움직임 */
+@theme {
+  --animate-splash-bob: splash-bob 1.6s ease-in-out infinite;
+}
+
+@keyframes splash-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-16px);
+  }
+}
+
 html {
   @apply m-0;
 
