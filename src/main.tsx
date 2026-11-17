@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client';
 import { I18nextProvider } from 'react-i18next';
 
 import { i18n } from '@/common/lib/i18n';
+import { installNativeStorage } from '@/common/lib/native-storage';
 import { initNativeAuthCallback } from '@/common/lib/platform';
 import { initInstallPromptCapture, registerServiceWorker } from '@/common/lib/service-worker';
 
@@ -29,6 +30,6 @@ function renderApp() {
   );
 }
 
-// 네이티브 앱: 인앱 브라우저 인증 후 커스텀 스킴 복귀를 받아 OIDC 콜백을 이어서 처리한다.
-// 콜드 스타트 콜백(getLaunchUrl)을 인증 공급자가 마운트되기 전에 복원해야 하므로 끝난 뒤 렌더한다.
-void initNativeAuthCallback().finally(renderApp);
+// 네이티브 앱: 저장소 미러링과 인앱 브라우저 인증 콜백 복원은 인증 공급자가 마운트되기 전에
+// 끝나야 하므로(라이브러리는 마운트 시 저장소와 URL을 읽는다) 끝난 뒤 렌더한다.
+void Promise.all([installNativeStorage(), initNativeAuthCallback()]).finally(renderApp);

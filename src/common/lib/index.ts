@@ -4,3 +4,4 @@ export * from './api';
 export * from './service-worker';
 export * from './amplitude';
 export * from './platform';
+export * from './native-storage';
