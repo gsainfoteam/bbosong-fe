@@ -13,6 +13,9 @@ export const NATIVE_URL_SCHEME = 'me.gistory.bbosong';
 /** 네이티브 앱의 OIDC 콜백 URI. IDP 클라이언트의 redirect URI에도 등록되어 있어야 한다 */
 export const NATIVE_AUTH_REDIRECT_URI = `${NATIVE_URL_SCHEME}://auth/callback`;
 
+/** 인앱 브라우저 닫힘을 기다리는 최대 시간 */
+const CLOSE_BROWSER_TIMEOUT_MS = 1000;
+
 /** react-oauth2-code-pkce가 로그인 팝업에 쓰는 window 이름 */
 const AUTH_POPUP_NAME = 'loginPopup';
 
@@ -38,8 +41,12 @@ export function initNativeAuthCallback(): void {
   void App.addListener('appUrlOpen', ({ url }) => {
     if (!url.startsWith(NATIVE_AUTH_REDIRECT_URI)) return;
 
-    void Browser.close().catch(() => {});
     const { search } = new URL(url);
-    window.location.replace(`/${search}`);
+    // 인앱 브라우저가 완전히 닫힌 뒤 리로드한다. 닫힘 전환과 페이지 전환이 겹치면
+    // 이전 문서에서 렌더가 이어져 `localStorage`가 null인 상태로 실행될 수 있다.
+    // close()가 끝나지 않는 경우를 대비해 대기 시간을 제한한다.
+    const closed = Browser.close().catch(() => {});
+    const timeout = new Promise((resolve) => setTimeout(resolve, CLOSE_BROWSER_TIMEOUT_MS));
+    void Promise.race([closed, timeout]).then(() => window.location.replace(`/${search}`));
   });
 }
