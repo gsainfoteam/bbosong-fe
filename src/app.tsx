@@ -7,6 +7,7 @@ import { AuthProvider, type TAuthConfig } from 'react-oauth2-code-pkce';
 import { Toaster } from 'sonner';
 
 import { Loading } from '@/common/components';
+import { subscribeToNativeNotificationTap } from '@/common/lib/native-push';
 import { hideSplashScreen, isNativeApp, NATIVE_AUTH_REDIRECT_URI } from '@/common/lib/platform';
 import { useRestoreSession, useToken } from '@/features/auth';
 
@@ -53,6 +54,14 @@ function SessionRouter() {
 
   useEffect(() => {
     if (!isRestoring) hideSplashScreen();
+  }, [isRestoring]);
+
+  // 알림 탭 이동은 세션 복원 뒤에 구독한다. 복원 전에 이동하면 인증 가드가 토큰 없이 /auth로 보낸다.
+  // 로그인 전에 탭하면 가드가 /auth?redirect=...로 보내 로그인 후 해당 경로로 돌아온다
+  useEffect(() => {
+    if (isRestoring) return;
+
+    return subscribeToNativeNotificationTap((href) => void router.navigate({ href }));
   }, [isRestoring]);
 
   if (isRestoring) return <Loading />;

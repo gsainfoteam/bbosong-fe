@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const plugin = vi.hoisted(() => ({
   checkPermissions: vi.fn(),
@@ -30,8 +30,12 @@ import {
   initNativePush,
   refreshNativeNotificationPermission,
   requestNativeNotificationPermission,
+  subscribeToNativeNotificationTap,
   subscribeToNativePermissionChange,
+  subscribeToNativePushReceived,
   subscribeToNativeResume,
+  toPushMessagePayload,
+  toSafeAppPath,
 } from './native-push';
 
 beforeEach(() => {
@@ -158,5 +162,127 @@ describe('resume handling', () => {
     resumeHandler()();
 
     await vi.waitFor(() => expect(listener).toHaveBeenCalledOnce());
+  });
+});
+
+describe('toSafeAppPath', () => {
+  it.each(['/', '/machines/1?tab=a#x', '/auth?redirect=%2F'])('allows %s', (url) => {
+    expect(toSafeAppPath(url)).toBe(url);
+  });
+
+  it.each([
+    'https://evil.example',
+    '//evil.example',
+    '/\\evil.example',
+    'javascript:alert(1)',
+    'me.gistory.bbosong://auth/callback',
+    'relative/path',
+    '/a\nb',
+    '',
+    undefined,
+    42,
+  ])('rejects %j', (url) => {
+    expect(toSafeAppPath(url)).toBeNull();
+  });
+});
+
+describe('toPushMessagePayload', () => {
+  it('flattens FCM data into the Web Push payload shape', () => {
+    expect(
+      toPushMessagePayload({
+        title: '빈 기기',
+        body: '세탁기가 비었어요',
+        data: { url: '/', icon: '/i.png', type: 'laundry-room-available', location: 'A' },
+      }),
+    ).toEqual({
+      title: '빈 기기',
+      body: '세탁기가 비었어요',
+      url: '/',
+      icon: '/i.png',
+      data: { type: 'laundry-room-available', location: 'A' },
+    });
+  });
+
+  it('tolerates missing data', () => {
+    expect(toPushMessagePayload({})).toEqual({
+      title: undefined,
+      body: undefined,
+      url: undefined,
+      icon: undefined,
+      data: {},
+    });
+  });
+});
+
+describe('subscribeToNativePushReceived', () => {
+  it('forwards foreground notifications as normalized payloads and removes the listener', async () => {
+    const remove = vi.fn().mockResolvedValue(undefined);
+    plugin.addListener.mockResolvedValue({ remove });
+    const listener = vi.fn();
+
+    const unsubscribe = subscribeToNativePushReceived(listener);
+    const [event, handler] = plugin.addListener.mock.calls[0];
+    expect(event).toBe('notificationReceived');
+
+    handler({ notification: { title: 't', data: { type: 'machine-completion' } } });
+    expect(listener).toHaveBeenCalledWith(
+      expect.objectContaining({ title: 't', data: { type: 'machine-completion' } }),
+    );
+
+    unsubscribe();
+    await vi.waitFor(() => expect(remove).toHaveBeenCalledOnce());
+  });
+});
+
+describe('notification tap', () => {
+  // 모듈 상태(보관된 탭 경로)가 테스트 사이로 새지 않도록 비운다
+  afterEach(() => subscribeToNativeNotificationTap(() => {})());
+
+  const tapHandler = async () => {
+    await initNativePush();
+    const call = plugin.addListener.mock.calls.find(
+      ([event]) => event === 'notificationActionPerformed',
+    );
+
+    return call?.[1] as (event: { notification: { data?: unknown } }) => void;
+  };
+
+  it('delivers the tapped path to subscribers', async () => {
+    const tap = await tapHandler();
+    const listener = vi.fn();
+    const unsubscribe = subscribeToNativeNotificationTap(listener);
+
+    tap({ notification: { data: { url: '/machines' } } });
+    expect(listener).toHaveBeenCalledExactlyOnceWith('/machines');
+
+    unsubscribe();
+    tap({ notification: { data: { url: '/later' } } });
+    expect(listener).toHaveBeenCalledOnce();
+  });
+
+  it('ignores unsafe or missing urls', async () => {
+    const tap = await tapHandler();
+    tap({ notification: { data: { url: 'https://evil.example' } } });
+    tap({ notification: { data: {} } });
+
+    const listener = vi.fn();
+    const unsubscribe = subscribeToNativeNotificationTap(listener);
+    expect(listener).not.toHaveBeenCalled();
+    unsubscribe();
+  });
+
+  it('replays a cold-start tap once to the first subscriber', async () => {
+    const tap = await tapHandler();
+    tap({ notification: { data: { url: '/old' } } });
+    tap({ notification: { data: { url: '/cold-start' } } });
+
+    const first = vi.fn();
+    const unsubscribe = subscribeToNativeNotificationTap(first);
+    expect(first).toHaveBeenCalledExactlyOnceWith('/cold-start');
+    unsubscribe();
+
+    const second = vi.fn();
+    subscribeToNativeNotificationTap(second)();
+    expect(second).not.toHaveBeenCalled();
   });
 });

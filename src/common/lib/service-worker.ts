@@ -4,6 +4,7 @@
  * 서버 통신은 포함하지 않는다. (푸시 구독 등록/해제 API는 push-notification feature의 models 담당)
  */
 
+import { subscribeToNativePushReceived } from './native-push';
 import { isNativeApp } from './platform';
 
 const SERVICE_WORKER_URL = '/sw.js';
@@ -358,10 +359,11 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
   return Notification.requestPermission();
 }
 
-/** SW의 푸시 수신 메시지를 구독한다. 반환되는 함수로 해제한다 */
+/** 앱이 열려 있을 때의 푸시 수신을 구독한다 (웹은 SW 메시지, 네이티브는 FCM 포그라운드 이벤트). 반환되는 함수로 해제한다 */
 export function subscribeToPushMessages(
   listener: (payload: PushMessagePayload | undefined) => void,
 ): () => void {
+  if (isNativeApp()) return subscribeToNativePushReceived(listener);
   if (!isPushSupported()) return () => {};
 
   const handleMessage = (event: MessageEvent<PushReceivedMessage>) => {
