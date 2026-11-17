@@ -5,3 +5,4 @@ export * from './service-worker';
 export * from './amplitude';
 export * from './platform';
 export * from './native-storage';
+export * from './native-push';

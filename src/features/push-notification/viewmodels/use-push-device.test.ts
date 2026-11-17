@@ -2,7 +2,14 @@
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { useInstallPrompt, usePostInstallPermission, usePushPermission } from './use-push-device';
+import {
+  syncPushDevice,
+  unregisterPushDeviceFromServer,
+  useInstallPrompt,
+  usePostInstallPermission,
+  usePushDeviceSync,
+  usePushPermission,
+} from './use-push-device';
 
 const browser = vi.hoisted(() => ({
   canPromptInstall: vi.fn(),
@@ -14,6 +21,25 @@ const browser = vi.hoisted(() => ({
   needsInstall: vi.fn(),
   showInstallPrompt: vi.fn(),
   installListeners: new Set<() => void>(),
+  isNativeApp: vi.fn(),
+  getNativeNotificationPermission: vi.fn(),
+  requestNativeNotificationPermission: vi.fn(),
+  getNativePushPlatform: vi.fn(),
+  getNativePushToken: vi.fn(),
+  deleteNativePushToken: vi.fn(),
+  subscribeToNativePermissionChange: vi.fn(),
+  subscribeToNativeTokenRefresh: vi.fn(),
+  subscribeToNativeResume: vi.fn(),
+  trackEvent: vi.fn(),
+  nativePermissionListeners: new Set<() => void>(),
+  resumeListeners: new Set<() => void>(),
+}));
+
+const auth = vi.hoisted(() => ({ token: null as string | null }));
+
+const models = vi.hoisted(() => ({
+  registerNativePushDevice: vi.fn(),
+  unregisterNativePushDevice: vi.fn(),
 }));
 
 vi.mock('@/common/lib', () => ({
@@ -23,8 +49,11 @@ vi.mock('@/common/lib', () => ({
     return () => browser.installListeners.delete(listener);
   },
 }));
-vi.mock('@/features/auth', () => ({ useToken: () => ({ token: null }) }));
-vi.mock('../models', () => ({}));
+vi.mock('@/features/auth', () => ({ useToken: () => ({ token: auth.token }) }));
+vi.mock('../models', () => ({
+  ...models,
+  NativePushPlatform: { IOS: 'IOS', ANDROID: 'ANDROID' },
+}));
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -35,6 +64,26 @@ beforeEach(() => {
   browser.needsInstall.mockReturnValue(true);
   browser.isAppInstalled.mockReturnValue(false);
   browser.getNotificationPermission.mockReturnValue('default');
+  browser.isNativeApp.mockReturnValue(false);
+  browser.getNativeNotificationPermission.mockReturnValue('default');
+  browser.getNativePushPlatform.mockReturnValue('android');
+  browser.getNativePushToken.mockResolvedValue('fcm-token');
+  browser.deleteNativePushToken.mockResolvedValue(undefined);
+  browser.requestNativeNotificationPermission.mockResolvedValue('granted');
+  browser.subscribeToNativePermissionChange.mockImplementation((listener: () => void) => {
+    browser.nativePermissionListeners.add(listener);
+    return () => browser.nativePermissionListeners.delete(listener);
+  });
+  browser.subscribeToNativeTokenRefresh.mockReturnValue(() => {});
+  browser.subscribeToNativeResume.mockImplementation((listener: () => void) => {
+    browser.resumeListeners.add(listener);
+    return () => browser.resumeListeners.delete(listener);
+  });
+  browser.resumeListeners.clear();
+  auth.token = null;
+  models.registerNativePushDevice.mockResolvedValue({ success: true });
+  models.unregisterNativePushDevice.mockResolvedValue({ success: true });
+  browser.nativePermissionListeners.clear();
 });
 
 describe('post-install notification guidance', () => {
@@ -148,5 +197,141 @@ describe('manual installation guidance', () => {
     browser.needsInstall.mockReturnValue(false);
     const { result } = renderHook(() => usePushPermission());
     expect(result.current.status).toBe('unsupported');
+  });
+});
+
+describe('native app (FCM)', () => {
+  beforeEach(() => {
+    browser.isNativeApp.mockReturnValue(true);
+    browser.isAppInstalled.mockReturnValue(true);
+    browser.needsInstall.mockReturnValue(false);
+    // 네이티브 WebView에는 Web Push API가 없다
+    browser.isPushSupported.mockReturnValue(false);
+  });
+
+  it.each([
+    ['default', 'default'],
+    ['granted', 'granted'],
+    ['denied', 'denied'],
+  ] as const)('maps the native %s permission to the %s status', (permission, status) => {
+    browser.getNativeNotificationPermission.mockReturnValue(permission);
+    const { result } = renderHook(() => usePushPermission());
+    expect(result.current.status).toBe(status);
+    expect(result.current.isNative).toBe(true);
+  });
+
+  it('follows native permission changes after returning from the OS settings', () => {
+    browser.getNativeNotificationPermission.mockReturnValue('denied');
+    const { result } = renderHook(() => usePushPermission());
+    expect(result.current.status).toBe('denied');
+
+    act(() => {
+      browser.getNativeNotificationPermission.mockReturnValue('granted');
+      browser.nativePermissionListeners.forEach((listener) => listener());
+    });
+
+    expect(result.current.status).toBe('granted');
+  });
+
+  it('requests the native permission and registers the token once granted', async () => {
+    browser.getNativeNotificationPermission.mockReturnValue('default');
+    browser.requestNativeNotificationPermission.mockImplementation(async () => {
+      browser.getNativeNotificationPermission.mockReturnValue('granted');
+      return 'granted';
+    });
+    const { result } = renderHook(() => usePushPermission());
+
+    await act(() => result.current.requestPermission());
+
+    expect(browser.requestNativeNotificationPermission).toHaveBeenCalledOnce();
+    expect(models.registerNativePushDevice).toHaveBeenCalledWith('ANDROID', 'fcm-token');
+    expect(result.current.status).toBe('granted');
+  });
+
+  it('does not register a token when the permission is denied', async () => {
+    browser.requestNativeNotificationPermission.mockImplementation(async () => {
+      browser.getNativeNotificationPermission.mockReturnValue('denied');
+      return 'denied';
+    });
+    const { result } = renderHook(() => usePushPermission());
+
+    await act(() => result.current.requestPermission());
+
+    expect(models.registerNativePushDevice).not.toHaveBeenCalled();
+    expect(result.current.status).toBe('denied');
+  });
+
+  it('registers with the iOS platform on iOS', async () => {
+    browser.getNativeNotificationPermission.mockReturnValue('granted');
+    browser.getNativePushPlatform.mockReturnValue('ios');
+
+    await syncPushDevice();
+
+    expect(models.registerNativePushDevice).toHaveBeenCalledWith('IOS', 'fcm-token');
+  });
+
+  it('skips registration without permission or without a token', async () => {
+    await syncPushDevice();
+    expect(models.registerNativePushDevice).not.toHaveBeenCalled();
+
+    browser.getNativeNotificationPermission.mockReturnValue('granted');
+    browser.getNativePushToken.mockResolvedValue(null);
+    await syncPushDevice();
+    expect(models.registerNativePushDevice).not.toHaveBeenCalled();
+  });
+
+  it('unregisters the token on the server before invalidating it', async () => {
+    const order: string[] = [];
+    models.unregisterNativePushDevice.mockImplementation(async () => order.push('server'));
+    browser.deleteNativePushToken.mockImplementation(async () => order.push('token'));
+
+    await unregisterPushDeviceFromServer();
+
+    expect(models.unregisterNativePushDevice).toHaveBeenCalledWith('fcm-token');
+    expect(order).toEqual(['server', 'token']);
+  });
+
+  it('still invalidates the token when the server call fails', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    models.unregisterNativePushDevice.mockRejectedValue(new Error('network'));
+
+    await expect(unregisterPushDeviceFromServer()).resolves.toBeUndefined();
+
+    expect(browser.deleteNativePushToken).toHaveBeenCalledOnce();
+  });
+
+  it('never asks the user to install the app', () => {
+    const { result } = renderHook(() => usePushPermission());
+    expect(result.current.status).not.toBe('needs-install');
+  });
+
+  describe('registration retry', () => {
+    beforeEach(() => {
+      auth.token = 'access-token';
+      browser.getNativeNotificationPermission.mockReturnValue('granted');
+      vi.spyOn(console, 'error').mockImplementation(() => {});
+    });
+
+    it('retries on app resume only after a failed registration', async () => {
+      models.registerNativePushDevice.mockRejectedValueOnce(new Error('offline'));
+      renderHook(() => usePushDeviceSync());
+      await vi.waitFor(() => expect(models.registerNativePushDevice).toHaveBeenCalledTimes(1));
+
+      await act(async () => browser.resumeListeners.forEach((listener) => listener()));
+      await vi.waitFor(() => expect(models.registerNativePushDevice).toHaveBeenCalledTimes(2));
+
+      // 성공한 뒤의 복귀에서는 다시 등록하지 않는다
+      await act(async () => browser.resumeListeners.forEach((listener) => listener()));
+      expect(models.registerNativePushDevice).toHaveBeenCalledTimes(2);
+    });
+
+    it('does not re-register on resume when the first registration succeeded', async () => {
+      renderHook(() => usePushDeviceSync());
+      await vi.waitFor(() => expect(models.registerNativePushDevice).toHaveBeenCalledTimes(1));
+
+      await act(async () => browser.resumeListeners.forEach((listener) => listener()));
+
+      expect(models.registerNativePushDevice).toHaveBeenCalledTimes(1);
+    });
   });
 });

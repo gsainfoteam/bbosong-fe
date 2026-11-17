@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "456772084501",
+    "project_id": "bbosong-gsainfoteam",
+    "storage_bucket": "bbosong-gsainfoteam.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:456772084501:android:d763bc628b749aaabdff1c",
+        "android_client_info": {
+          "package_name": "me.gistory.bbosong"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAc-Vx3Mpm-m6Eupj7-tOgOhaYgSTSz75Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

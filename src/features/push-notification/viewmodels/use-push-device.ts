@@ -4,29 +4,52 @@ import {
   AnalyticsEvent,
   canPromptInstall,
   canSubscribeOnThisPlatform,
+  deleteNativePushToken,
+  getNativeNotificationPermission,
+  getNativePushPlatform,
+  getNativePushToken,
   getNotificationPermission,
   getPushSubscription,
   isAndroid,
   isAppInstalled,
   isIOS,
+  isNativeApp,
   isPushSupported,
   needsInstall,
+  requestNativeNotificationPermission,
   requestNotificationPermission,
   showInstallPrompt,
   subscribeToInstallPromptChange,
+  subscribeToNativePermissionChange,
+  subscribeToNativeResume,
+  subscribeToNativeTokenRefresh,
   subscribeToPush,
   trackEvent,
   unsubscribeFromPush,
 } from '@/common/lib';
 import { useToken } from '@/features/auth';
 
-import { registerPushDevice, unregisterPushDevice } from '../models';
+import {
+  NativePushPlatform,
+  registerNativePushDevice,
+  registerPushDevice,
+  unregisterNativePushDevice,
+  unregisterPushDevice,
+} from '../models';
 
 /** 알림 권한 UI 상태 */
 export type PushPermissionStatus =
   'unsupported' | 'needs-install' | 'default' | 'granted' | 'denied';
 
+/** 네이티브 앱은 OS 권한, 웹은 브라우저 권한을 읽는다 */
+function readPermission(): NotificationPermission {
+  return isNativeApp() ? getNativeNotificationPermission() : getNotificationPermission();
+}
+
 function resolveStatus(permission: NotificationPermission): PushPermissionStatus {
+  // 네이티브 앱은 이미 설치된 상태이고 푸시도 항상 지원되므로 권한 값만 본다
+  if (isNativeApp()) return permission === 'default' ? 'default' : permission;
+
   if (!isPushSupported()) {
     // iOS 일반 탭에서는 푸시 API가 없어도 홈 화면에 추가하면 사용할 수 있다.
     return isIOS() && needsInstall() ? 'needs-install' : 'unsupported';
@@ -53,6 +76,11 @@ function resolveStatus(permission: NotificationPermission): PushPermissionStatus
  * 앱 실행 시점과 로그인 직후마다 호출해 endpoint 변경을 조용히 흡수한다.
  */
 export async function syncPushDevice(): Promise<void> {
+  if (isNativeApp()) {
+    await syncNativePushDevice();
+    return;
+  }
+
   // 재등록은 이미 허용된 구독을 갱신하는 동작이라 설치 강제(정책)의 적용 대상이 아니다.
   // 다만 iOS 일반 탭처럼 구독 자체가 불가능한 환경에서는 subscribe()가 실패하므로 건너뛴다
   if (!canSubscribeOnThisPlatform()) return;
@@ -64,6 +92,20 @@ export async function syncPushDevice(): Promise<void> {
   await registerPushDevice(subscription);
 }
 
+/** 현재 FCM 토큰을 서버에 등록/갱신한다. 토큰도 앱 재설치·복원 등으로 바뀔 수 있어 매번 다시 읽는다 */
+async function syncNativePushDevice(): Promise<void> {
+  if (getNativeNotificationPermission() !== 'granted') return;
+
+  const token = await getNativePushToken();
+  if (!token) return;
+
+  await registerNativePushDevice(toNativePushPlatform(), token);
+}
+
+function toNativePushPlatform(): NativePushPlatform {
+  return getNativePushPlatform() === 'ios' ? NativePushPlatform.IOS : NativePushPlatform.ANDROID;
+}
+
 /**
  * 서버 등록과 브라우저 구독을 모두 해제한다. (로그아웃 시 사용)
  *
@@ -72,6 +114,11 @@ export async function syncPushDevice(): Promise<void> {
  * 단, 해제 실패가 로그아웃 자체를 막아서는 안 되므로 예외는 삼킨다.
  */
 export async function unregisterPushDeviceFromServer(): Promise<void> {
+  if (isNativeApp()) {
+    await unregisterNativePushDeviceFromServer();
+    return;
+  }
+
   if (!isPushSupported()) return;
 
   try {
@@ -87,6 +134,23 @@ export async function unregisterPushDeviceFromServer(): Promise<void> {
 }
 
 /**
+ * 네이티브 앱의 토큰 해제. 웹과 같은 이유로 토큰이 살아 있는 동안 서버 해제를 먼저 await 하고,
+ * 실패해도 로그아웃을 막지 않는다. 마지막에 토큰을 무효화해 이전 계정의 알림이 이 기기로 오지 않게 한다.
+ */
+async function unregisterNativePushDeviceFromServer(): Promise<void> {
+  try {
+    const token = await getNativePushToken();
+    if (!token) return;
+
+    await unregisterNativePushDevice(token);
+  } catch (error) {
+    console.error('네이티브 푸시 토큰 해제에 실패했습니다.', error);
+  } finally {
+    await deleteNativePushToken().catch(() => {});
+  }
+}
+
+/**
  * 앱 전역에서 한 번만 마운트해 재등록을 담당하는 훅.
  *
  * 토큰을 의존성으로 두어 앱 실행 시점뿐 아니라 로그인 직후(계정 전환 포함)에도 다시 호출된다.
@@ -98,9 +162,37 @@ export function usePushDeviceSync(): void {
   useEffect(() => {
     if (!token) return;
 
-    syncPushDevice().catch((error) => {
-      console.error('푸시 디바이스 등록에 실패했습니다.', error);
+    // 직전 등록이 실패했는지 여부. 네이티브는 앱 복귀 시 실패한 등록만 다시 시도한다
+    let failed = false;
+
+    const sync = () => {
+      syncPushDevice()
+        .then(() => {
+          failed = false;
+        })
+        .catch((error) => {
+          failed = true;
+          console.error('푸시 디바이스 등록에 실패했습니다.', error);
+        });
+    };
+
+    sync();
+
+    if (!isNativeApp()) return;
+
+    // 네이티브: FCM이 토큰을 갱신하거나, OS 설정에서 권한을 허용하고 돌아오면 서버 등록을 다시 맞춘다
+    const unsubscribeRefresh = subscribeToNativeTokenRefresh(sync);
+    const unsubscribePermission = subscribeToNativePermissionChange(sync);
+    // 권한이 그대로면 권한 변경 알림이 없고 토큰 갱신도 오지 않으므로, 실패한 등록은 복귀 시점에 재시도한다
+    const unsubscribeResume = subscribeToNativeResume(() => {
+      if (failed) sync();
     });
+
+    return () => {
+      unsubscribeRefresh();
+      unsubscribePermission();
+      unsubscribeResume();
+    };
   }, [token]);
 }
 
@@ -118,6 +210,8 @@ function emitPermissionChange() {
 function subscribePermission(listener: () => void): () => void {
   permissionListeners.add(listener);
   const unsubscribeInstall = subscribeToInstallPromptChange(listener);
+  // 네이티브는 앱 복귀 시 OS 권한을 다시 읽어 캐시가 바뀌면 알려 준다
+  const unsubscribeNative = isNativeApp() ? subscribeToNativePermissionChange(listener) : undefined;
 
   // 브라우저 설정에서 권한을 되돌린 경우를 따라잡기 위해 포커스 복귀 시 재조회
   const handleFocus = () => listener();
@@ -136,14 +230,22 @@ function subscribePermission(listener: () => void): () => void {
   return () => {
     permissionListeners.delete(listener);
     unsubscribeInstall();
+    unsubscribeNative?.();
     window.removeEventListener('focus', handleFocus);
     permissionStatus?.removeEventListener('change', listener);
   };
 }
 
 // 문자열 원시값이라 매번 읽어도 참조가 안정적이다
-const getPermissionSnapshot = () => getNotificationPermission();
-const getStatusSnapshot = () => resolveStatus(getNotificationPermission());
+const getPermissionSnapshot = () => readPermission();
+const getStatusSnapshot = () => resolveStatus(readPermission());
+
+async function requestNativePermissionAndSync(): Promise<NotificationPermission> {
+  const result = await requestNativeNotificationPermission();
+  if (result === 'granted') await syncPushDevice();
+
+  return result;
+}
 
 /** 알림 권한 상태와 권한 요청 액션 */
 export function usePushPermission() {
@@ -154,6 +256,21 @@ export function usePushPermission() {
 
   /** 사용자가 명시적으로 버튼을 누른 시점에만 호출할 것 */
   const requestPermission = useCallback(async () => {
+    if (isNativeApp()) {
+      setIsRequesting(true);
+      try {
+        const result = await requestNativePermissionAndSync();
+        emitPermissionChange();
+        trackEvent(AnalyticsEvent.PUSH_PERMISSION_REQUESTED, { result });
+      } catch (error) {
+        console.error('알림 권한 요청에 실패했습니다.', error);
+      } finally {
+        setIsRequesting(false);
+      }
+
+      return;
+    }
+
     // 설치하지 않은 상태에서는 권한 요청 자체를 막는다 (UI에서도 버튼을 숨기지만 이중 방어)
     if (!isPushSupported() || needsInstall()) return;
 
@@ -174,7 +291,7 @@ export function usePushPermission() {
     }
   }, []);
 
-  return { status, permission, isRequesting, requestPermission };
+  return { status, permission, isRequesting, requestPermission, isNative: isNativeApp() };
 }
 
 /** 설치 직후 또는 설치된 앱 실행 시 알림 설정을 안내한다. 닫으면 이번 마운트에서는 재노출하지 않는다. */

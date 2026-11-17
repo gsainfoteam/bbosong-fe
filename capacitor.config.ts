@@ -10,6 +10,16 @@ const config: CapacitorConfig = {
     // safe area 바깥(상태바/홈 인디케이터 뒤)에 보이는 색. styles.css의 --color-bg와 맞춘다
     backgroundColor: '#f7f8fa',
   },
+  experimental: {
+    ios: {
+      spm: {
+        // @capacitor-firebase/messaging과 Firebase SDK의 SwiftPM 패키지 ID 충돌을 피한다
+        packageOptions: {
+          '@capacitor-firebase/messaging': { symlink: true },
+        },
+      },
+    },
+  },
   plugins: {
     // fetch/XHR을 네이티브 HTTP로 처리한다.
     // 앱 Origin(capacitor://localhost, https://localhost)은 서버 CORS 허용 목록에 없고,

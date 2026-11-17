@@ -3,6 +3,7 @@ import {
   PathsMachinePostParametersQueryLocation,
   PathsMachinePostParametersQueryType,
   PathsMachineSummaryGetParametersQueryGender,
+  RegisterNativePushReqDtoPlatform,
   type components,
 } from '@/@types/api-schema';
 import { api } from '@/common/lib';
@@ -20,6 +21,10 @@ export type AlertGender = PathsMachineSummaryGetParametersQueryGender;
 /** 기기 종류 (세탁기 / 건조기) */
 export const AlertMachineType = PathsMachinePostParametersQueryType;
 export type AlertMachineType = PathsMachinePostParametersQueryType;
+
+/** 네이티브 앱의 푸시 전달 플랫폼. iOS도 FCM → APNs로 전달된다 */
+export const NativePushPlatform = RegisterNativePushReqDtoPlatform;
+export type NativePushPlatform = RegisterNativePushReqDtoPlatform;
 
 /** 빈 기기 알림 구독 단위: (location, gender, type) 조합 1건 */
 export type LaundryRoomAlertTarget = components['schemas']['SubscribeLaundryRoomReqDto'];
@@ -74,6 +79,37 @@ export async function unregisterPushDevice(endpoint: string) {
   const { data, error } = await api.DELETE(ApiPaths.NotificationController_unregisterPush, {
     body: { endpoint },
   } as never);
+
+  if (error) throw error;
+
+  return data;
+}
+
+/**
+ * 네이티브 앱의 FCM 토큰을 등록/갱신한다.
+ *
+ * 토큰 기준 upsert라 멱등하고, 같은 토큰이 다른 계정에 묶여 있으면 소유자가 현재 계정으로 이전된다.
+ * 앱 실행/로그인/토큰 갱신마다 호출해도 안전하다.
+ */
+export async function registerNativePushDevice(platform: NativePushPlatform, token: string) {
+  const { data, error } = await api.POST(ApiPaths.NotificationController_registerNativePush, {
+    body: { platform, token },
+  });
+
+  if (error) throw error;
+
+  return data;
+}
+
+/**
+ * 네이티브 앱의 FCM 토큰 등록을 해제한다.
+ *
+ * 이미 다른 계정으로 이전된 토큰이나 모르는 토큰을 해제해도 서버는 성공으로 응답하고 아무것도 지우지 않는다.
+ */
+export async function unregisterNativePushDevice(token: string) {
+  const { data, error } = await api.DELETE(ApiPaths.NotificationController_unregisterNativePush, {
+    body: { token },
+  });
 
   if (error) throw error;
 
