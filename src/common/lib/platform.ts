@@ -1,10 +1,17 @@
 import { App } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
+import { SplashScreen } from '@capacitor/splash-screen';
 
 /** Capacitor 네이티브 셸(iOS/Android 앱)에서 실행 중인지 여부 */
 export function isNativeApp(): boolean {
   return Capacitor.isNativePlatform();
+}
+
+/** 네이티브 스플래시를 숨긴다. 웹에서는 아무 일도 하지 않는다 */
+export function hideSplashScreen(): void {
+  if (!isNativeApp()) return;
+  void SplashScreen.hide().catch(() => {});
 }
 
 /** 네이티브 앱의 커스텀 URL 스킴 (ios/Info.plist, AndroidManifest.xml과 동일 문자열 유지) */

@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from '@tanstack/react-router';
 
@@ -5,7 +7,7 @@ import { AuthProvider, type TAuthConfig } from 'react-oauth2-code-pkce';
 import { Toaster } from 'sonner';
 
 import { Loading } from '@/common/components';
-import { isNativeApp, NATIVE_AUTH_REDIRECT_URI } from '@/common/lib/platform';
+import { hideSplashScreen, isNativeApp, NATIVE_AUTH_REDIRECT_URI } from '@/common/lib/platform';
 import { useRestoreSession, useToken } from '@/features/auth';
 
 import { queryClient, router } from './router';
@@ -48,6 +50,11 @@ export function App() {
 
 function SessionRouter() {
   const { isRestoring } = useRestoreSession();
+
+  useEffect(() => {
+    if (!isRestoring) hideSplashScreen();
+  }, [isRestoring]);
+
   if (isRestoring) return <Loading />;
 
   return (

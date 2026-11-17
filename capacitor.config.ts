@@ -15,6 +15,8 @@ const config: CapacitorConfig = {
     // 앱 Origin(capacitor://localhost, https://localhost)은 서버 CORS 허용 목록에 없고,
     // refresh 쿠키가 크로스 사이트 쿠키로 차단되는 문제를 함께 피한다.
     CapacitorHttp: { enabled: true },
+    // 웹 앱이 준비될 때까지 스플래시를 유지한다. 숨기는 시점은 app.tsx의 SessionRouter에서 제어한다
+    SplashScreen: { launchAutoHide: false, backgroundColor: '#ffffff' },
   },
 };
 
