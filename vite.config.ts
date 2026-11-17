@@ -44,7 +44,6 @@ export default defineConfig(({ mode }) => {
         registerType: 'autoUpdate',
         manifest: false,
         includeAssets: [
-          'favicon.svg',
           '*.png',
           'icons/*.png',
           'manifest.json',

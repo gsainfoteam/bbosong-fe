@@ -27,7 +27,7 @@ export function ConsentScreen({
       </div>
       <div className="mx-auto flex h-full w-full max-w-md flex-col">
         <div className="flex flex-1 flex-col items-center justify-center gap-4">
-          <img src="/favicon.svg" alt="logo" className="size-40" />
+          <img src="/icon-512.png" alt="logo" className="size-40" />
           <h1 className="text-display text-center leading-tight font-bold whitespace-pre-line">
             {t('consent.title')}
           </h1>
