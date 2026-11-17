@@ -24,6 +24,10 @@ const authConfig: TAuthConfig = {
   tokenEndpoint: getRequiredEnv('VITE_IDP_TOKEN_URL'),
   redirectUri: isNativeApp() ? NATIVE_AUTH_REDIRECT_URI : getRequiredEnv('VITE_IDP_REDIRECT_URI'),
   scope: ['email', 'student_id', 'profile'].join(' '),
+  // 네이티브는 인앱 브라우저로 로그인한다 (platform.ts의 window.open 연결 참고).
+  // 수동 logIn()은 이 값을 무시하므로 useAuth/onRefreshTokenExpire에서도 'popup'을 지정한다.
+  // 초기 토큰 갱신 실패 시 라이브러리 내부가 이 값으로 logIn을 호출한다.
+  loginMethod: isNativeApp() ? 'popup' : 'redirect',
   autoLogin: false,
   decodeToken: false,
   onRefreshTokenExpire: ({ logIn }) => {

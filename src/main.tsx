@@ -19,13 +19,16 @@ void registerServiceWorker();
 // beforeinstallprompt는 로드 직후 한 번만 발화하므로 React 마운트 전에 가로채 둔다
 initInstallPromptCapture();
 
-// 네이티브 앱: 시스템 브라우저 인증 후 커스텀 스킴 복귀를 받아 OIDC 콜백을 이어서 처리한다
-initNativeAuthCallback();
+function renderApp() {
+  ReactDOM.createRoot(document.getElementById('app')!).render(
+    <StrictMode>
+      <I18nextProvider i18n={i18n}>
+        <App />
+      </I18nextProvider>
+    </StrictMode>,
+  );
+}
 
-ReactDOM.createRoot(document.getElementById('app')!).render(
-  <StrictMode>
-    <I18nextProvider i18n={i18n}>
-      <App />
-    </I18nextProvider>
-  </StrictMode>,
-);
+// 네이티브 앱: 인앱 브라우저 인증 후 커스텀 스킴 복귀를 받아 OIDC 콜백을 이어서 처리한다.
+// 콜드 스타트 콜백(getLaunchUrl)을 인증 공급자가 마운트되기 전에 복원해야 하므로 끝난 뒤 렌더한다.
+void initNativeAuthCallback().finally(renderApp);
