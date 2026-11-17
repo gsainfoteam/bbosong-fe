@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "me.gistory.bbosong",
+      "sha256_cert_fingerprints": ["DF:49:DB:4F:7F:43:0D:99:A1:D9:5C:95:B8:BC:5E:E9:07:BF:AA:5E:63:A3:D1:B0:BB:3C:E2:F2:AE:96:28:B8"]
+    }
+  }
+]

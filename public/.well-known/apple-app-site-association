@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["4AGKPD6C4A.me.gistory.bbosong"],
+        "components": [
+          { "/": "/auth*", "exclude": true },
+          { "/": "/*" }
+        ]
+      }
+    ]
+  }
+}

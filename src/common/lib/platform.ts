@@ -20,6 +20,9 @@ export const NATIVE_URL_SCHEME = 'me.gistory.bbosong';
 /** 네이티브 앱의 OIDC 콜백 URI. IDP 클라이언트의 redirect URI에도 등록되어 있어야 한다 */
 export const NATIVE_AUTH_REDIRECT_URI = `${NATIVE_URL_SCHEME}://auth/callback`;
 
+/** 유니버설 링크 / 앱 링크로 앱을 여는 웹 호스트 (entitlements, AndroidManifest.xml, .well-known과 동일 값 유지) */
+export const APP_LINK_HOST = 'bbosong.gistory.me';
+
 /** 인앱 브라우저 닫힘을 기다리는 최대 시간 */
 const CLOSE_BROWSER_TIMEOUT_MS = 1000;
 
@@ -64,6 +67,24 @@ function parseAuthCallback(url: string | undefined): string | null {
   return new URL(url).search;
 }
 
+/**
+ * 유니버설 링크 / 앱 링크이면 앱 내부 경로(`/path?query#hash`)를, 아니면 null을 반환한다.
+ * 인증 콜백(/auth)은 별도 흐름이 처리하므로 제외한다.
+ */
+function parseAppLink(url: string | undefined): string | null {
+  if (!url) return null;
+
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'https:' || parsed.hostname !== APP_LINK_HOST) return null;
+    if (parsed.pathname === '/auth' || parsed.pathname.startsWith('/auth/')) return null;
+
+    return `${parsed.pathname}${parsed.search}${parsed.hash}`;
+  } catch {
+    return null;
+  }
+}
+
 /** 콜백 없이 인앱 브라우저가 닫혔을 때 라이브러리의 로그인 진행 상태를 해제한다 */
 function cancelPendingLogin(): void {
   try {
@@ -105,6 +126,12 @@ export async function initNativeAuthCallback(): Promise<void> {
   };
 
   void App.addListener('appUrlOpen', ({ url }) => {
+    const appLinkPath = parseAppLink(url);
+    if (appLinkPath !== null) {
+      window.location.assign(appLinkPath);
+      return;
+    }
+
     const search = parseAuthCallback(url);
     if (search === null) return;
 
@@ -132,11 +159,18 @@ export async function initNativeAuthCallback(): Promise<void> {
   // 프로세스의 첫 로드에서만 적용해야 이후 로그인의 새 콜백 code를 덮어쓰지 않는다.
   if (!claimLaunchUrlOnce()) return;
 
-  const launchSearch = await App.getLaunchUrl()
-    .then((launch) => parseAuthCallback(launch?.url))
-    .catch(() => null);
+  const launchUrl = await App.getLaunchUrl()
+    .then((launch) => launch?.url)
+    .catch(() => undefined);
+
+  const launchSearch = parseAuthCallback(launchUrl);
   if (launchSearch !== null) {
     authCallbackReceived = true;
     window.history.replaceState(null, '', `/${launchSearch}`);
+    return;
   }
+
+  // 콜드 스타트로 들어온 유니버설 링크: 렌더 전에 URL을 바꿔 라우터가 해당 경로로 시작하게 한다
+  const launchAppLinkPath = parseAppLink(launchUrl);
+  if (launchAppLinkPath !== null) window.history.replaceState(null, '', launchAppLinkPath);
 }
