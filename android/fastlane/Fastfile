@@ -1,0 +1,79 @@
+default_platform(:android)
+
+# 웹 빌드(`bun run build`)와 `cap sync android`는 fastlane 실행 전에 끝나 있어야 한다.
+platform :android do
+  def package_version
+    JSON.parse(File.read("../../package.json"))["version"]
+  end
+
+  def aab_path(build_type)
+    "app/build/outputs/bundle/#{build_type}/app-#{build_type}.aab"
+  end
+
+  desc "Test build"
+  lane :test do
+    UI.message("Building for testing")
+    gradle(
+      task: "bundle",
+      build_type: "Debug",
+      properties: { "versionName" => package_version },
+    )
+    UI.user_error!("Build failed") unless File.exist?(File.expand_path("../#{aab_path('debug')}"))
+  end
+
+  desc "Build a signed release aab without uploading (for the first manual upload to Google Play)"
+  lane :build_release do |options|
+    build_number = (options[:build_number] || 1).to_i
+    gradle(
+      task: "bundle",
+      build_type: "Release",
+      properties: { "versionName" => package_version, "versionCode" => build_number },
+    )
+    UI.success("aab: #{File.expand_path("../#{aab_path('release')}")}")
+  end
+
+  desc "Deploy a new version to the Google Play internal track"
+  lane :internal do
+    version_codes = google_play_track_version_codes(track: "internal")
+    build_version = package_version
+    build_number = (version_codes.max || 0) + 1
+    UI.message("Building bbosong #{build_version} (#{build_number})")
+
+    gradle(
+      task: "bundle",
+      build_type: "Release",
+      properties: { "versionName" => build_version, "versionCode" => build_number },
+    )
+
+    upload_to_play_store(
+      aab: aab_path("release"),
+      track: "internal",
+      version_name: "#{build_version} (#{build_number})",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
+
+    slack(
+      payload: {
+        "Build Date" => Time.now.to_s,
+        "Build Number" => build_number,
+        "Build Version" => build_version,
+      }
+    ) if ENV['CI']
+  end
+
+  desc "Promote the internal track to production"
+  lane :production do
+    upload_to_play_store(
+      track: "internal",
+      track_promote_to: "production",
+      skip_upload_changelogs: true,
+    )
+    slack(
+      payload: {
+        "Promoted At" => Time.now.to_s,
+      }
+    ) if ENV['CI']
+  end
+end
