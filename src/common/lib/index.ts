@@ -6,3 +6,4 @@ export * from './amplitude';
 export * from './platform';
 export * from './native-storage';
 export * from './native-push';
+export * from './native-update';

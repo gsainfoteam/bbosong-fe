@@ -25,6 +25,9 @@ const config: CapacitorConfig = {
     // 앱 Origin(capacitor://localhost, https://localhost)은 서버 CORS 허용 목록에 없고,
     // refresh 쿠키가 크로스 사이트 쿠키로 차단되는 문제를 함께 피한다.
     CapacitorHttp: { enabled: true },
+    // OTA는 웹 호스트의 latest.json을 직접 조회한다(native-update.ts). Capgo 클라우드 통신은 모두 끈다.
+    // 새 번들이 시작 후 notifyAppReady()를 호출하지 못하면 플러그인이 이전 번들로 자동 롤백한다
+    CapacitorUpdater: { autoUpdate: false, statsUrl: '' },
     // iOS: 앱이 포그라운드여도 시스템 배너(head-up)와 소리를 띄운다. 서버가 badge를 보내지 않으므로 badge는 뺀다.
     // Android는 FCM이 포그라운드 알림을 만들지 않아 native-push.ts가 로컬 알림으로 대신 띄운다.
     // 앱 화면 갱신은 두 플랫폼 모두 notificationReceived로 처리한다
