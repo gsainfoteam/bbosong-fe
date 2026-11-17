@@ -174,3 +174,22 @@ export async function initNativeAuthCallback(): Promise<void> {
   const launchAppLinkPath = parseAppLink(launchUrl);
   if (launchAppLinkPath !== null) window.history.replaceState(null, '', launchAppLinkPath);
 }
+
+/**
+ * Android 하드웨어 백버튼 처리.
+ * 리스너가 없으면 WebView 히스토리(로그인 리다이렉트 등으로 쌓인 항목)를 계속 거슬러 올라가
+ * 홈에서도 앱이 종료되지 않으므로, 홈이거나 되돌아갈 기록이 없으면 앱을 종료한다.
+ */
+export function initNativeBackButton(): void {
+  if (!isNativeApp()) return;
+
+  void App.addListener('backButton', ({ canGoBack }) => {
+    const isHome = window.location.pathname === '/';
+    if (canGoBack && !isHome) {
+      window.history.back();
+      return;
+    }
+
+    void App.exitApp();
+  });
+}
