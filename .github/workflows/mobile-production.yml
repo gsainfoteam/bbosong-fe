@@ -5,6 +5,9 @@ on:
     types:
       - released
 
+permissions:
+  contents: read
+
 jobs:
   promote:
     strategy:
@@ -20,7 +23,7 @@ jobs:
     name: Promote ${{ matrix.os }} App to Production
     runs-on: ${{ matrix.build-os }}
     concurrency:
-      group: mobile-upload-${{ matrix.os }}
+      group: mobile-production-${{ matrix.os }}
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v6
@@ -32,6 +35,7 @@ jobs:
       - name: Run fastlane
         run: bundle exec fastlane production
         env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
           APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_KEY_CONTENT }}

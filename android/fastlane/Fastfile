@@ -6,8 +6,52 @@ platform :android do
     JSON.parse(File.read("../../package.json"))["version"]
   end
 
+  # Play는 모든 트랙에서 versionCode 재사용을 거부하므로 전 트랙의 최댓값을 기준으로 한다.
+  # 비어 있거나 존재하지 않는 트랙은 건너뛴다.
+  def max_version_code
+    %w[internal alpha beta production].flat_map do |track|
+      google_play_track_version_codes(track: track)
+    rescue => e
+      UI.important("Skipping track #{track}: #{e.message}")
+      []
+    end.max || 0
+  end
+
+  # release 서명 정보(key.properties, 키스토어)가 없으면 서명되지 않은 aab가 만들어지므로 중단한다
+  def ensure_release_signing!
+    properties_path = File.expand_path("../key.properties", __dir__)
+    UI.user_error!("android/key.properties not found: release signing is required") unless File.exist?(properties_path)
+
+    properties = File.readlines(properties_path).map(&:strip).reject { |l| l.empty? || l.start_with?("#") }
+      .to_h { |l| l.split("=", 2) }
+    missing = %w[storeFile storePassword keyAlias keyPassword].select { |k| properties[k].to_s.empty? }
+    UI.user_error!("key.properties is missing: #{missing.join(', ')}") unless missing.empty?
+
+    store_file = File.expand_path(properties["storeFile"], File.expand_path("..", __dir__))
+    UI.user_error!("Keystore not found: #{store_file}") unless File.exist?(store_file)
+  end
+
   def aab_path(build_type)
     "app/build/outputs/bundle/#{build_type}/app-#{build_type}.aab"
+  end
+
+  # internal 트랙에서 versionCode가 가장 큰 릴리스의 앱 버전("0.3.9 (12)" 형식의 이름에서 추출)
+  def internal_track_version
+    latest = google_play_track_release_names(track: "internal")
+      .filter_map { |name| name.match(/\A(.+) \((\d+)\)\z/) }
+      .max_by { |m| m[2].to_i }
+    UI.user_error!("No release with a version name found in the internal track") unless latest
+    latest[1]
+  end
+
+  # 릴리스 태그(RELEASE_TAG, 예: v0.3.9)와 승격 대상 버전이 다르면 중단한다
+  def verify_release_tag!(version)
+    tag = ENV["RELEASE_TAG"].to_s
+    if tag.empty?
+      UI.user_error!("RELEASE_TAG is required in CI") if ENV["CI"]
+      return
+    end
+    UI.user_error!("Release tag #{tag} does not match internal track version #{version}") unless tag.delete_prefix("v") == version
   end
 
   desc "Test build"
@@ -23,6 +67,7 @@ platform :android do
 
   desc "Build a signed release aab without uploading (for the first manual upload to Google Play)"
   lane :build_release do |options|
+    ensure_release_signing!
     build_number = (options[:build_number] || 1).to_i
     gradle(
       task: "bundle",
@@ -34,9 +79,9 @@ platform :android do
 
   desc "Deploy a new version to the Google Play internal track"
   lane :internal do
-    version_codes = google_play_track_version_codes(track: "internal")
+    ensure_release_signing!
     build_version = package_version
-    build_number = (version_codes.max || 0) + 1
+    build_number = max_version_code + 1
     UI.message("Building bbosong #{build_version} (#{build_number})")
 
     gradle(
@@ -65,6 +110,7 @@ platform :android do
 
   desc "Promote the internal track to production"
   lane :production do
+    verify_release_tag!(internal_track_version)
     upload_to_play_store(
       track: "internal",
       track_promote_to: "production",

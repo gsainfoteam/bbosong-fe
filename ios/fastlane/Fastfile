@@ -11,6 +11,16 @@ platform :ios do
     JSON.parse(File.read("../../package.json"))["version"]
   end
 
+  # 릴리스 태그(RELEASE_TAG, 예: v0.3.9)와 심사에 제출할 버전이 다르면 중단한다
+  def verify_release_tag!(version)
+    tag = ENV["RELEASE_TAG"].to_s
+    if tag.empty?
+      UI.user_error!("RELEASE_TAG is required in CI") if ENV["CI"]
+      return
+    end
+    UI.user_error!("Release tag #{tag} does not match the latest TestFlight version #{version}") unless tag.delete_prefix("v") == version
+  end
+
   desc "Test build"
   lane :test do
     UI.message("Building for testing")
@@ -87,6 +97,7 @@ platform :ios do
   lane :production do
     app_store_connect_api_key(duration: 1200) if ENV['CI']
     latest_testflight_build_number
+    verify_release_tag!(lane_context[SharedValues::LATEST_TESTFLIGHT_VERSION])
     deliver(
       app_version: lane_context[SharedValues::LATEST_TESTFLIGHT_VERSION],
       submit_for_review: true,

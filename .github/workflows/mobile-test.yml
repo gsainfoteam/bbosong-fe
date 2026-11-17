@@ -12,6 +12,9 @@ on:
       - capacitor.config.ts
       - .github/workflows/mobile-*.yml
 
+permissions:
+  contents: read
+
 jobs:
   test:
     strategy:
