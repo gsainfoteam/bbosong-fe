@@ -1,6 +1,6 @@
 {
   "name": "bbosong-fe",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,6 +8,9 @@
     "build": "bun run gen:api && bun run gen:i18n && tsr generate && tsc && vite build",
     "preview": "bun run build && vite preview",
     "test": "vitest run",
+    "cap:sync": "bun run build && cap sync",
+    "cap:ios": "bun run cap:sync && cap open ios",
+    "cap:android": "bun run cap:sync && cap open android",
     "lint": "eslint",
     "format": "prettier --check .",
     "check": "prettier --write . && eslint --fix",
@@ -20,6 +23,8 @@
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^2.45.6",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.6.2",
     "@hookform/resolvers": "^5.9.1",
     "@storybook/react-vite": "10.3.1",
     "@tailwindcss/vite": "^4.3.3",
@@ -53,6 +58,9 @@
     "zxing-wasm": "^3.1.6"
   },
   "devDependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/cli": "^8.6.2",
+    "@capacitor/ios": "^8.6.2",
     "@eslint/js": "^10.0.1",
     "@storybook/addon-themes": "10.3.1",
     "@tailwindcss/language-server": "^0.16.0",

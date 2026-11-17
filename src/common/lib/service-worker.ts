@@ -4,6 +4,8 @@
  * 서버 통신은 포함하지 않는다. (푸시 구독 등록/해제 API는 push-notification feature의 models 담당)
  */
 
+import { isNativeApp } from './platform';
+
 const SERVICE_WORKER_URL = '/sw.js';
 const SERVICE_WORKER_SCOPE = '/';
 
@@ -255,6 +257,9 @@ export function setupServiceWorkerAutoUpdate(
 /** SW 등록. 미지원 환경에서는 null을 반환한다 */
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
   if (!('serviceWorker' in navigator)) return null;
+
+  // 네이티브 셸은 번들을 앱에 내장하므로 SW 캐싱/웹 푸시가 필요 없다
+  if (isNativeApp()) return null;
 
   try {
     const registration = await navigator.serviceWorker.register(

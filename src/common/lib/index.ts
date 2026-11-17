@@ -3,3 +3,4 @@ export * from './languages';
 export * from './api';
 export * from './service-worker';
 export * from './amplitude';
+export * from './platform';
