@@ -18,7 +18,7 @@ jobs:
             build-os: ubuntu-latest
             directory: android
           - os: iOS
-            build-os: macos-26
+            build-os: xcode-27
             directory: ios
     name: Build ${{ matrix.os }} App and Upload
     runs-on: ${{ matrix.build-os }}
