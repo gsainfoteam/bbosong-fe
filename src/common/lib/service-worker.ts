@@ -93,7 +93,8 @@ const installPromptListeners = new Set<() => void>();
 
 /** 설치 완료 이벤트는 일반 탭에서도 발생하며 display-mode는 그대로일 수 있다. */
 export function isAppInstalled(): boolean {
-  return installedInThisSession || isStandalone();
+  // 스토어에서 설치한 네이티브 앱은 항상 설치된 상태다
+  return isNativeApp() || installedInThisSession || isStandalone();
 }
 
 function emitInstallPromptChange() {

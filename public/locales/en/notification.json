@@ -26,6 +26,7 @@
     "completionDescription": "Your machine is registered. Turn on notifications to know when it finishes.",
     "completionTitle": "Want to know when your laundry is done?",
     "denied": "Notifications are blocked. Please allow notifications for this site in your browser settings.",
+    "deniedNative": "Notifications are turned off. Please allow notifications for this app in your device settings.",
     "description": "We'll let you know when your machine finishes or a machine frees up.",
     "enable": "Turn on notifications",
     "install": "Install app",

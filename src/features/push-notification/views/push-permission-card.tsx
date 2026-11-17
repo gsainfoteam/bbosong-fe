@@ -14,7 +14,7 @@ export function PushPermissionCard({
   ...props
 }: PushPermissionCard.Props) {
   const { t } = useTranslation('notification');
-  const { status, isRequesting, requestPermission } = usePushPermission();
+  const { status, isRequesting, requestPermission, isNative } = usePushPermission();
   const { canPrompt, isPrompting, promptInstall, showManualGuide, isIOS, isAndroid } =
     useInstallPrompt();
 
@@ -36,7 +36,9 @@ export function PushPermissionCard({
       {status === 'unsupported' && <p className="text-sm">{t('permission.unsupported')}</p>}
 
       {/* 한 번 denied가 되면 코드로 되돌릴 수 없고 브라우저 설정에서 직접 풀어야 한다 */}
-      {status === 'denied' && <p className="text-sm">{t('permission.denied')}</p>}
+      {status === 'denied' && (
+        <p className="text-sm">{t(isNative ? 'permission.deniedNative' : 'permission.denied')}</p>
+      )}
 
       {/* 모든 플랫폼에서 앱 설치를 알림 활성화의 선행 조건으로 요구한다 */}
       {status === 'needs-install' && (
