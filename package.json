@@ -24,6 +24,7 @@
   "dependencies": {
     "@amplitude/analytics-browser": "^2.45.6",
     "@capacitor/app": "^8.1.2",
+    "@capacitor/browser": "^8.0.5",
     "@capacitor/core": "^8.6.2",
     "@hookform/resolvers": "^5.9.1",
     "@storybook/react-vite": "10.3.1",

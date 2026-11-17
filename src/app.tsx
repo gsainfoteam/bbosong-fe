@@ -5,6 +5,7 @@ import { AuthProvider, type TAuthConfig } from 'react-oauth2-code-pkce';
 import { Toaster } from 'sonner';
 
 import { Loading } from '@/common/components';
+import { isNativeApp, NATIVE_AUTH_REDIRECT_URI } from '@/common/lib/platform';
 import { useRestoreSession, useToken } from '@/features/auth';
 
 import { queryClient, router } from './router';
@@ -21,13 +22,14 @@ const authConfig: TAuthConfig = {
   clientId: getRequiredEnv('VITE_IDP_CLIENT_ID'),
   authorizationEndpoint: getRequiredEnv('VITE_IDP_AUTHORIZE_URL'),
   tokenEndpoint: getRequiredEnv('VITE_IDP_TOKEN_URL'),
-  redirectUri: getRequiredEnv('VITE_IDP_REDIRECT_URI'),
+  redirectUri: isNativeApp() ? NATIVE_AUTH_REDIRECT_URI : getRequiredEnv('VITE_IDP_REDIRECT_URI'),
   scope: ['email', 'student_id', 'profile'].join(' '),
   autoLogin: false,
   decodeToken: false,
   onRefreshTokenExpire: ({ logIn }) => {
     // 백엔드 세션이 유효하면 만료된 IDP 세션 때문에 다시 로그인하지 않는다.
-    if (!useToken.getState().token) logIn();
+    if (!useToken.getState().token)
+      logIn(undefined, undefined, isNativeApp() ? 'popup' : undefined);
   },
 };
 
