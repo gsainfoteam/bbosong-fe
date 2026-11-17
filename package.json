@@ -1,6 +1,6 @@
 {
   "name": "bbosong-fe",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "private": true,
   "type": "module",
   "scripts": {
@@ -27,6 +27,7 @@
     "@capacitor/browser": "^8.0.5",
     "@capacitor/core": "^8.6.2",
     "@capacitor/preferences": "^8.0.1",
+    "@capacitor/splash-screen": "^8.0.2",
     "@hookform/resolvers": "^5.9.1",
     "@storybook/react-vite": "10.3.1",
     "@tailwindcss/vite": "^4.3.3",
