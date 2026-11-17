@@ -1,3 +1,4 @@
+import { execSync } from 'node:child_process';
 import { copyFileSync, existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
@@ -8,6 +9,8 @@ import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv } from 'vite';
 import { VitePWA as vitePWA } from 'vite-plugin-pwa';
 import tsconfigPaths from 'vite-tsconfig-paths';
+
+import { otaBundle } from './scripts/vite-plugin-ota-bundle';
 
 function syncZxingReaderWasm() {
   const source = fileURLToPath(
@@ -22,7 +25,26 @@ syncZxingReaderWasm();
 
 const packageJson = JSON.parse(
   readFileSync(fileURLToPath(new URL('./package.json', import.meta.url)), 'utf-8'),
-) as { version: string };
+) as { version: string; ota: { minNativeVersion: string } };
+
+/** 웹 빌드(= OTA 번들) 식별자. 같은 커밋이면 웹/스토어 빌드가 같은 값을 갖는다 */
+function resolveBuildVersion(): string {
+  const sha =
+    process.env.GITHUB_SHA?.slice(0, 7) ??
+    (() => {
+      try {
+        return execSync('git rev-parse --short=7 HEAD', { stdio: ['ignore', 'pipe', 'ignore'] })
+          .toString()
+          .trim();
+      } catch {
+        return 'local';
+      }
+    })();
+
+  return `${packageJson.version}-${sha}`;
+}
+
+const buildVersion = resolveBuildVersion();
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -30,6 +52,7 @@ export default defineConfig(({ mode }) => {
   return {
     define: {
       __APP_VERSION__: JSON.stringify(packageJson.version),
+      __BUILD_VERSION__: JSON.stringify(buildVersion),
     },
     plugins: [
       tanstackRouter({
@@ -43,12 +66,7 @@ export default defineConfig(({ mode }) => {
         injectRegister: false,
         registerType: 'autoUpdate',
         manifest: false,
-        includeAssets: [
-          '*.png',
-          'icons/*.png',
-          'manifest.json',
-          'locales/**/*.json',
-        ],
+        includeAssets: ['*.png', 'icons/*.png', 'manifest.json', 'locales/**/*.json'],
         workbox: {
           // injectRegister:false 이면 플러그인이 autoUpdate여도 skipWaiting/clientsClaim을 넣지 않는다.
           skipWaiting: true,
@@ -85,6 +103,15 @@ export default defineConfig(({ mode }) => {
           ],
         },
       }),
+      // 웹 배포에만 OTA 번들(zip)과 latest.json을 만든다. 스토어 빌드에 zip이 내장되지 않게 환경 변수로 제한한다
+      ...(process.env.OTA_BUNDLE === 'true'
+        ? [
+            otaBundle({
+              version: buildVersion,
+              minNativeVersion: packageJson.ota.minNativeVersion,
+            }),
+          ]
+        : []),
     ],
     resolve: {
       alias: {
