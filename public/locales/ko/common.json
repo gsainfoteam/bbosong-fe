@@ -11,6 +11,12 @@
   },
   "myPage": "마이 페이지",
   "refresh": "새로고침",
+  "storeDownload": {
+    "description": "앱에서 세탁실 현황 알림을 받을 수 있어요.",
+    "install": "앱 설치하기",
+    "later": "다음에",
+    "title": "뽀송 앱을 설치해 보세요"
+  },
   "switchToEnglish": "영어로 전환",
   "switchToKorean": "한국어로 전환",
   "yes": "예"

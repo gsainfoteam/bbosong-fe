@@ -11,6 +11,12 @@
   },
   "myPage": "My Page",
   "refresh": "Refresh",
+  "storeDownload": {
+    "description": "Get laundry room status alerts in the app.",
+    "install": "Install app",
+    "later": "Later",
+    "title": "Get the Bbosong app"
+  },
   "switchToEnglish": "Switch to English",
   "switchToKorean": "Switch to Korean",
   "yes": "Yes"
