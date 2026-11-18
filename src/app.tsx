@@ -6,7 +6,7 @@ import { RouterProvider } from '@tanstack/react-router';
 import { AuthProvider, type TAuthConfig } from 'react-oauth2-code-pkce';
 import { Toaster } from 'sonner';
 
-import { SplashScreen } from '@/common/components';
+import { SplashScreen, StoreDownloadModal } from '@/common/components';
 import { subscribeToNativeNotificationTap } from '@/common/lib/native-push';
 import { hideSplashScreen, isNativeApp, NATIVE_AUTH_REDIRECT_URI } from '@/common/lib/platform';
 import { useRestoreSession, useToken } from '@/features/auth';
@@ -44,6 +44,7 @@ export function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Toaster />
+      <StoreDownloadModal />
       <SessionRouter />
     </QueryClientProvider>
   );
