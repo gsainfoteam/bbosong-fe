@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import { useLogout } from '@/features/auth';
+import { useLogout, useWithdraw } from '@/features/auth';
 
 import { useFindUserProfile } from '../../viewmodels';
 import { MypageScreen } from '../screens';
@@ -10,6 +10,7 @@ export function MypageFrame() {
   const { t } = useTranslation('error');
 
   const { mutate: logout, isPending: isLoggingOut } = useLogout({ showToast: true });
+  const { mutate: withdraw, isPending: isWithdrawing } = useWithdraw();
 
   if (isLoading) {
     return (
@@ -31,6 +32,12 @@ export function MypageFrame() {
   }
 
   return (
-    <MypageScreen user={user} onLogout={() => logout(undefined)} isLoggingOut={isLoggingOut} />
+    <MypageScreen
+      user={user}
+      onLogout={() => logout(undefined)}
+      isLoggingOut={isLoggingOut}
+      onWithdraw={() => withdraw(undefined)}
+      isWithdrawing={isWithdrawing}
+    />
   );
 }
