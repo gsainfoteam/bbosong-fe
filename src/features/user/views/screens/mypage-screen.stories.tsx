@@ -21,6 +21,7 @@ export const User: Story = {
       role: 'user',
     },
     onLogout: () => console.log('로그아웃 실행'),
+    onWithdraw: () => console.log('회원 탈퇴 실행'),
   },
 };
 
@@ -34,5 +35,6 @@ export const Admin: Story = {
       role: 'admin',
     },
     onLogout: () => console.log('로그아웃 실행'),
+    onWithdraw: () => console.log('회원 탈퇴 실행'),
   },
 };

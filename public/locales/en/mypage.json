@@ -12,5 +12,10 @@
   "name": "Name",
   "studentNumber": "Student Number",
   "toAdmin": "Admin Console",
-  "version": "Version {{version}}"
+  "version": "Version {{version}}",
+  "withdraw": "Delete account",
+  "withdrawConfirm": "Delete account",
+  "withdrawConfirmDescription": "After deleting your account, you will not be able to log in with it, and you will no longer receive push notifications.",
+  "withdrawConfirmTitle": "Are you sure you want to delete your account?",
+  "withdrawing": "Deleting account..."
 }

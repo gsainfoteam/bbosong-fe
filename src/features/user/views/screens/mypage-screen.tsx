@@ -1,8 +1,10 @@
+import { useState } from 'react';
+
 import { Link } from '@tanstack/react-router';
 
 import { useTranslation } from 'react-i18next';
 
-import { LanguageToggle, MyPageHeader } from '@/common/components';
+import { LanguageToggle, Modal, MyPageHeader } from '@/common/components';
 import { cn } from '@/common/utils';
 import { PushPermissionCard } from '@/features/push-notification';
 
@@ -12,10 +14,13 @@ export function MypageScreen({
   user,
   onLogout,
   isLoggingOut,
+  onWithdraw,
+  isWithdrawing = false,
   className,
   ...props
 }: MyPageScreen.Props) {
   const { t } = useTranslation('mypage');
+  const [withdrawModalOpen, setWithdrawModalOpen] = useState(false);
   //t('male');
   //t('female');
 
@@ -73,12 +78,31 @@ export function MypageScreen({
           >
             {isLoggingOut ? t('loggingOut') : t('logout')}
           </button>
+          <button
+            type="button"
+            onClick={() => setWithdrawModalOpen(true)}
+            disabled={isWithdrawing}
+            className="text-text-secondary mx-auto text-sm underline underline-offset-4 disabled:opacity-50"
+          >
+            {t('withdraw')}
+          </button>
         </div>
 
         <p className="text-text-secondary mt-4 text-center text-sm">
           {t('version', { version: __APP_VERSION__ })}
         </p>
       </div>
+
+      {withdrawModalOpen && (
+        <Modal
+          title={t('withdrawConfirmTitle')}
+          description={t('withdrawConfirmDescription')}
+          confirmText={isWithdrawing ? t('withdrawing') : t('withdrawConfirm')}
+          isPending={isWithdrawing}
+          onConfirm={onWithdraw}
+          onClose={() => setWithdrawModalOpen(false)}
+        />
+      )}
     </div>
   );
 }
@@ -88,6 +112,8 @@ export namespace MyPageScreen {
     user: UserProfile;
     onLogout: () => void;
     isLoggingOut?: boolean;
+    onWithdraw: () => void;
+    isWithdrawing?: boolean;
     className?: string;
   };
 }

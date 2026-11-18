@@ -12,5 +12,10 @@
   "name": "이름",
   "studentNumber": "학번",
   "toAdmin": "관리자 콘솔",
-  "version": "버전 {{version}}"
+  "version": "버전 {{version}}",
+  "withdraw": "회원 탈퇴",
+  "withdrawConfirm": "탈퇴하기",
+  "withdrawConfirmDescription": "탈퇴하면 이 계정으로 로그인할 수 없고 푸시 알림도 더 이상 받을 수 없습니다.",
+  "withdrawConfirmTitle": "정말 탈퇴하시겠어요?",
+  "withdrawing": "탈퇴 처리 중..."
 }

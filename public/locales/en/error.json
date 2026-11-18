@@ -9,5 +9,6 @@
   "noIdpToken": "Login error",
   "notFound": "Not found.",
   "refetch": "Retry",
-  "unauthorized": "Login required."
+  "unauthorized": "Login required.",
+  "withdrawFailed": "Failed to delete account."
 }
