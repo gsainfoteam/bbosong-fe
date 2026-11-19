@@ -13,10 +13,18 @@ import {
   useAdminMachines,
   useDailyRoomSubscriptionStats,
   useDailySessionStats,
+  useUsageStats,
   type DailySessionStatsFilter,
   type DailySessionStatsRange,
+  type UsageStatsDimension,
+  type UsageStatsFilter,
 } from '../../viewmodels';
-import { AdminPage, DailyRoomSubscriptionStatsPanel, DailySessionStatsPanel } from '../components';
+import {
+  AdminPage,
+  DailyRoomSubscriptionStatsPanel,
+  DailySessionStatsPanel,
+  UsageStatsPanel,
+} from '../components';
 import { panelClass } from '../styles';
 
 function RoomTypeStats({
@@ -75,6 +83,10 @@ export function AdminOverviewScreen() {
   const sessionStats = useDailySessionStats(statsDays, statsFilter);
   const [subscriptionDays, setSubscriptionDays] = useState<DailySessionStatsRange>(7);
   const subscriptionStats = useDailyRoomSubscriptionStats(subscriptionDays);
+  const [usageDimension, setUsageDimension] = useState<UsageStatsDimension>('hour');
+  const [usageDays, setUsageDays] = useState<DailySessionStatsRange>(30);
+  const [usageFilter, setUsageFilter] = useState<UsageStatsFilter>({});
+  const usageStats = useUsageStats(usageDimension, usageDays, usageFilter);
   const stats = getMachineStats(query.machines);
   const cards = [
     { label: t('totalMachines'), value: stats.total, icon: WashingMachine, color: 'text-primary' },
@@ -103,11 +115,17 @@ export function AdminOverviewScreen() {
       description={t('overviewDescription')}
       isLoading={query.isLoading}
       isError={query.isError}
-      isRefreshing={query.isFetching || sessionStats.isFetching || subscriptionStats.isFetching}
+      isRefreshing={
+        query.isFetching ||
+        sessionStats.isFetching ||
+        subscriptionStats.isFetching ||
+        usageStats.isFetching
+      }
       onRefresh={() => {
         void query.refetch();
         void sessionStats.refetch();
         void subscriptionStats.refetch();
+        void usageStats.refetch();
       }}
     >
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
@@ -134,6 +152,17 @@ export function AdminOverviewScreen() {
         data={sessionStats.data ?? []}
         isLoading={sessionStats.isLoading}
         isError={sessionStats.isError}
+      />
+      <UsageStatsPanel
+        dimension={usageDimension}
+        onDimensionChange={setUsageDimension}
+        days={usageDays}
+        onDaysChange={setUsageDays}
+        filter={usageFilter}
+        onFilterChange={setUsageFilter}
+        data={usageStats.data ?? []}
+        isLoading={usageStats.isLoading}
+        isError={usageStats.isError}
       />
       <DailyRoomSubscriptionStatsPanel
         days={subscriptionDays}
