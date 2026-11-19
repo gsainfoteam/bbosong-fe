@@ -13,6 +13,7 @@ import {
   useAdminMachines,
   useDailyRoomSubscriptionStats,
   useDailySessionStats,
+  type DailySessionStatsFilter,
   type DailySessionStatsRange,
 } from '../../viewmodels';
 import { AdminPage, DailyRoomSubscriptionStatsPanel, DailySessionStatsPanel } from '../components';
@@ -70,7 +71,8 @@ export function AdminOverviewScreen() {
   const { t } = useTranslation('admin');
   const query = useAdminMachines();
   const [statsDays, setStatsDays] = useState<DailySessionStatsRange>(7);
-  const sessionStats = useDailySessionStats(statsDays);
+  const [statsFilter, setStatsFilter] = useState<DailySessionStatsFilter>({});
+  const sessionStats = useDailySessionStats(statsDays, statsFilter);
   const [subscriptionDays, setSubscriptionDays] = useState<DailySessionStatsRange>(7);
   const subscriptionStats = useDailyRoomSubscriptionStats(subscriptionDays);
   const stats = getMachineStats(query.machines);
@@ -127,6 +129,8 @@ export function AdminOverviewScreen() {
       <DailySessionStatsPanel
         days={statsDays}
         onDaysChange={setStatsDays}
+        filter={statsFilter}
+        onFilterChange={setStatsFilter}
         data={sessionStats.data ?? []}
         isLoading={sessionStats.isLoading}
         isError={sessionStats.isError}

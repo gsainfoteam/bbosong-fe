@@ -10,8 +10,14 @@ import {
   YAxis,
 } from 'recharts';
 
-import { type DailySessionStat, type DailySessionStatsRange } from '../../../viewmodels';
-import { buttonClass, panelClass, secondaryButtonClass } from '../../styles';
+import {
+  Gender,
+  Location,
+  type DailySessionStat,
+  type DailySessionStatsFilter,
+  type DailySessionStatsRange,
+} from '../../../viewmodels';
+import { buttonClass, inputClass, panelClass, secondaryButtonClass } from '../../styles';
 
 const RANGES = [7, 14, 30, 90] as const satisfies readonly DailySessionStatsRange[];
 
@@ -20,8 +26,7 @@ function toChartData(data: DailySessionStat[]) {
     const total = row.registeredCount + row.unregisteredCount;
     return {
       ...row,
-      registeredRatio:
-        total === 0 ? null : Math.round((row.registeredCount / total) * 1000) / 10,
+      registeredRatio: total === 0 ? null : Math.round((row.registeredCount / total) * 1000) / 10,
     };
   });
 }
@@ -33,6 +38,8 @@ function formatRegisteredRatio(value: number) {
 export function DailySessionStatsPanel({
   days,
   onDaysChange,
+  filter,
+  onFilterChange,
   data,
   isLoading,
   isError,
@@ -66,6 +73,47 @@ export function DailySessionStatsPanel({
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:max-w-md">
+        <select
+          className={inputClass}
+          aria-label={t('location')}
+          value={filter.location ?? ''}
+          disabled={isLoading}
+          onChange={(event) =>
+            onFilterChange({
+              ...filter,
+              location: event.target.value === '' ? undefined : (event.target.value as Location),
+            })
+          }
+        >
+          <option value="">{t('allLocations')}</option>
+          {Object.values(Location).map((value) => (
+            <option key={value} value={value}>
+              {t('building', { location: value })}
+            </option>
+          ))}
+        </select>
+        <select
+          className={inputClass}
+          aria-label={t('gender')}
+          value={filter.gender ?? ''}
+          disabled={isLoading}
+          onChange={(event) =>
+            onFilterChange({
+              ...filter,
+              gender: event.target.value === '' ? undefined : (event.target.value as Gender),
+            })
+          }
+        >
+          <option value="">{t('allGenders')}</option>
+          {Object.values(Gender).map((value) => (
+            <option key={value} value={value}>
+              {t(value)}
+            </option>
+          ))}
+        </select>
       </div>
 
       {isLoading ? (
@@ -148,6 +196,8 @@ export namespace DailySessionStatsPanel {
   export type Props = {
     days: DailySessionStatsRange;
     onDaysChange: (days: DailySessionStatsRange) => void;
+    filter: DailySessionStatsFilter;
+    onFilterChange: (filter: DailySessionStatsFilter) => void;
     data: DailySessionStat[];
     isLoading?: boolean;
     isError?: boolean;

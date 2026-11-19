@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { type DailySessionStatsRange } from '../../../viewmodels';
+import { type DailySessionStatsFilter, type DailySessionStatsRange } from '../../../viewmodels';
 
 import { DailySessionStatsPanel } from '.';
 
@@ -25,13 +25,24 @@ const series = [
 
 function Interactive(args: DailySessionStatsPanel.Props) {
   const [days, setDays] = useState<DailySessionStatsRange>(args.days);
-  return <DailySessionStatsPanel {...args} days={days} onDaysChange={setDays} />;
+  const [filter, setFilter] = useState<DailySessionStatsFilter>(args.filter);
+  return (
+    <DailySessionStatsPanel
+      {...args}
+      days={days}
+      onDaysChange={setDays}
+      filter={filter}
+      onFilterChange={setFilter}
+    />
+  );
 }
 
 export const Default: Story = {
   args: {
     days: 7,
     onDaysChange: () => undefined,
+    filter: {},
+    onFilterChange: () => undefined,
     data: series,
     isLoading: false,
     isError: false,
@@ -43,6 +54,8 @@ export const Loading: Story = {
   args: {
     days: 7,
     onDaysChange: () => undefined,
+    filter: {},
+    onFilterChange: () => undefined,
     data: [],
     isLoading: true,
     isError: false,
@@ -53,6 +66,8 @@ export const ErrorState: Story = {
   args: {
     days: 7,
     onDaysChange: () => undefined,
+    filter: {},
+    onFilterChange: () => undefined,
     data: [],
     isLoading: false,
     isError: true,
