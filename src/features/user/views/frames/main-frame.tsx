@@ -4,6 +4,7 @@ import { AnimatePresence, motion, type PanInfo } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
+import { SplashScreen } from '@/common/components';
 import { type Gender } from '@/features/auth';
 import {
   AlertGender,
@@ -247,11 +248,7 @@ export function MainFrame() {
   };
 
   if (isLoading) {
-    return (
-      <div className="bg-bg flex w-full flex-1 items-center justify-center">
-        <p>Loading...</p>
-      </div>
-    );
+    return <SplashScreen />;
   }
 
   const onRetry = () => {

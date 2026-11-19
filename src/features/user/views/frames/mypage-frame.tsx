@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
+import { SplashScreen } from '@/common/components';
 import { useLogout, useWithdraw } from '@/features/auth';
 
 import { useFindUserProfile } from '../../viewmodels';
@@ -13,11 +14,7 @@ export function MypageFrame() {
   const { mutate: withdraw, isPending: isWithdrawing } = useWithdraw();
 
   if (isLoading) {
-    return (
-      <div className="bg-bg flex w-full flex-1 items-center justify-center">
-        <p>Loading...</p>
-      </div>
-    );
+    return <SplashScreen />;
   }
 
   if (isError || !user) {
