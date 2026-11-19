@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { createFileRoute, Navigate, Outlet, useRouter } from '@tanstack/react-router';
 
-import { Loading } from '@/common/components';
+import { SplashScreen } from '@/common/components';
 import { useAnalyticsIdentity, useAuth, useToken } from '@/features/auth';
 import { usePushDeviceSync } from '@/features/push-notification';
 
@@ -40,7 +40,8 @@ function AuthRequiredLayout() {
       return <Navigate to="/auth" search={{ redirect }} replace />;
     }
 
-    return <Loading />;
+    // 부팅 중 사용자 확인 구간도 스플래시를 유지한다 (스피너가 노출되지 않도록)
+    return <SplashScreen />;
   }
 
   // 정상적으로 인증이 통과된 사용자만 Outlet 렌더링을 허용
@@ -54,5 +55,5 @@ function AuthRequiredLayout() {
   }
 
   // 싱크 갭 등의 대기 찰나에는 Outlet 노출 가드 후 대기
-  return <Loading />;
+  return <SplashScreen />;
 }
