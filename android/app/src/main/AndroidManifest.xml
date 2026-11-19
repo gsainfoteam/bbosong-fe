@@ -66,4 +66,5 @@
     <!-- Android 13+ 알림 권한 (FCM 푸시) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.screen.portrait" android:required="false" />
 </manifest>
