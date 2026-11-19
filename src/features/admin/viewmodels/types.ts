@@ -11,4 +11,5 @@ export {
   type DailySessionStat,
   type ThinqDevice,
   type UpdateMachineInput,
+  type UsageStat,
 } from '../models';

@@ -7,6 +7,7 @@ export {
   PathsMachineSummaryGetParametersQueryGender as Gender,
   PathsMachineStatsSessionsDailyGetParametersQueryLocation as Location,
   PathsMachineStatsSessionsDailyGetParametersQueryType as MachineType,
+  PathsMachineStatsUsageGetParametersQueryGroupBy as UsageStatsGroupBy,
   GetMachineResDtoStatus as MachineStatus,
   GetUsersResDtoRole as UserRole,
 } from '@/@types/api-schema';
@@ -78,6 +79,7 @@ export type ThinqDevice = {
 };
 export type AdminUser = components['schemas']['UserResDto'];
 export type DailySessionStat = components['schemas']['GetDailySessionStatsResDto'];
+export type UsageStat = components['schemas']['GetUsageStatsResDto'];
 export type DailyRoomSubscriptionStat =
   components['schemas']['DailyLaundryRoomNotificationStatResDto'];
 export type CreateMachineInput =
