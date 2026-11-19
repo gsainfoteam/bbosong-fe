@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 상태바/알림 작은 아이콘(status bar icon).
+  흰색 픽셀 + 투명 배경만 쓴다. 색은 시스템이 알림 색(iconColor)으로 입힌다.
+  원본 모양: 640x493 SVG 실루엣. 24dp 캔버스 가운데에 22dp 너비로 맞춘다.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <group
+        android:scaleX="0.034375"
+        android:scaleY="0.034375"
+        android:translateX="1"
+        android:translateY="3.52">
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M319.5 80.5C358.263 76.6679 387.81 65.763 400.5 0C400.5 0 461.418 13.2946 497 30.5C563.876 62.8377 639.5 156.5 639.5 156.5L560.5 251.5L482.5 177.5L537.5 492.5H319.5H102L157 177.5L79 251.5L0 156.5C0 156.5 76.1641 63.9316 142.5 30.5C173.829 14.7108 227 0 227 0C239.69 65.763 280.737 76.6679 319.5 80.5Z" />
+    </group>
+</vector>
