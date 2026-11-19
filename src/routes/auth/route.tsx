@@ -4,7 +4,7 @@ import { createFileRoute, Navigate, Outlet, useRouterState } from '@tanstack/rea
 
 import { z } from 'zod';
 
-import { Loading } from '@/common/components';
+import { SplashScreen } from '@/common/components';
 import { useAuth, useAuthPrompt, useAuthRedirect, useToken } from '@/features/auth';
 
 const redirectSearchSchema = z
@@ -76,7 +76,7 @@ function AuthLayout() {
 
   if (user === undefined) {
     if (canResumeConsentFlow) return <Outlet />;
-    return <Loading />;
+    return <SplashScreen />;
   }
   if (user !== null) return <Redirect />;
   return <Outlet />;
