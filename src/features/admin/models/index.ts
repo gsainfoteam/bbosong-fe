@@ -1,10 +1,12 @@
+// openapi-typescript dedupes identical enums under the first path that declares them.
+// `/machine/stats/sessions/daily` precedes `POST /machine`, so Location/Type are emitted under the stats names.
 import { type components, type operations } from '@/@types/api-schema';
 
 export {
   ApiPaths,
   PathsMachineSummaryGetParametersQueryGender as Gender,
-  PathsMachinePostParametersQueryLocation as Location,
-  PathsMachinePostParametersQueryType as MachineType,
+  PathsMachineStatsSessionsDailyGetParametersQueryLocation as Location,
+  PathsMachineStatsSessionsDailyGetParametersQueryType as MachineType,
   GetMachineResDtoStatus as MachineStatus,
   GetUsersResDtoRole as UserRole,
 } from '@/@types/api-schema';

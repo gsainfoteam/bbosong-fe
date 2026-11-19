@@ -1,7 +1,9 @@
+// openapi-typescript dedupes identical enums under the first path that declares them.
+// `/machine/stats/sessions/daily` precedes `POST /machine`, so Location/Type are emitted under the stats names.
 import {
   ApiPaths,
-  PathsMachinePostParametersQueryLocation,
-  PathsMachinePostParametersQueryType,
+  PathsMachineStatsSessionsDailyGetParametersQueryLocation,
+  PathsMachineStatsSessionsDailyGetParametersQueryType,
   PathsMachineSummaryGetParametersQueryGender,
   RegisterNativePushReqDtoPlatform,
   type components,
@@ -11,16 +13,16 @@ import { api } from '@/common/lib';
 export { ApiPaths };
 
 /** 세탁실 위치 (A동 / B동) */
-export const AlertLocation = PathsMachinePostParametersQueryLocation;
-export type AlertLocation = PathsMachinePostParametersQueryLocation;
+export const AlertLocation = PathsMachineStatsSessionsDailyGetParametersQueryLocation;
+export type AlertLocation = PathsMachineStatsSessionsDailyGetParametersQueryLocation;
 
 /** 세탁실 성별 구역 */
 export const AlertGender = PathsMachineSummaryGetParametersQueryGender;
 export type AlertGender = PathsMachineSummaryGetParametersQueryGender;
 
 /** 기기 종류 (세탁기 / 건조기) */
-export const AlertMachineType = PathsMachinePostParametersQueryType;
-export type AlertMachineType = PathsMachinePostParametersQueryType;
+export const AlertMachineType = PathsMachineStatsSessionsDailyGetParametersQueryType;
+export type AlertMachineType = PathsMachineStatsSessionsDailyGetParametersQueryType;
 
 /** 네이티브 앱의 푸시 전달 플랫폼. iOS도 FCM → APNs로 전달된다 */
 export const NativePushPlatform = RegisterNativePushReqDtoPlatform;
