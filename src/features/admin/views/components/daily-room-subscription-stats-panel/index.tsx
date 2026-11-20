@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import {
   CartesianGrid,
-  Legend,
   Line,
   LineChart,
   ResponsiveContainer,
@@ -9,6 +8,8 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+
+import { InfoTooltip } from '@/common/components/ui/info-tooltip';
 
 import { type DailyRoomSubscriptionStat, type DailySessionStatsRange } from '../../../viewmodels';
 import { buttonClass, panelClass, secondaryButtonClass } from '../../styles';
@@ -25,6 +26,36 @@ export function DailyRoomSubscriptionStatsPanel({
   const { t } = useTranslation('admin');
   const chartData = data;
   const showDots = chartData.length <= 14;
+  const series = [
+    {
+      dataKey: 'subscriptionCount',
+      name: t('subscriptionRequests'),
+      help: t('subscriptionRequestsHelp'),
+      color: '#4f7df3',
+      dashed: false,
+    },
+    {
+      dataKey: 'subscriptionUserCount',
+      name: t('subscriptionRequestUsers'),
+      help: t('subscriptionRequestUsersHelp'),
+      color: '#4f7df3',
+      dashed: true,
+    },
+    {
+      dataKey: 'notificationCount',
+      name: t('notificationsSent'),
+      help: t('notificationsSentHelp'),
+      color: '#10b981',
+      dashed: false,
+    },
+    {
+      dataKey: 'notificationUserCount',
+      name: t('notificationUsers'),
+      help: t('notificationUsersHelp'),
+      color: '#10b981',
+      dashed: true,
+    },
+  ];
 
   return (
     <div className={panelClass}>
@@ -65,55 +96,48 @@ export function DailyRoomSubscriptionStatsPanel({
           {t('requestFailed')}
         </div>
       ) : (
-        <div className="h-72 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" vertical={false} />
-              <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-              <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
-              <Tooltip />
-              <Legend />
-              <Line
-                name={t('subscriptionRequests')}
-                type="monotone"
-                dataKey="subscriptionCount"
-                stroke="#4f7df3"
-                strokeWidth={2}
-                dot={showDots}
-                isAnimationActive={false}
-              />
-              <Line
-                name={t('subscriptionRequestUsers')}
-                type="monotone"
-                dataKey="subscriptionUserCount"
-                stroke="#4f7df3"
-                strokeWidth={2}
-                strokeDasharray="4 4"
-                dot={showDots}
-                isAnimationActive={false}
-              />
-              <Line
-                name={t('notificationsSent')}
-                type="monotone"
-                dataKey="notificationCount"
-                stroke="#10b981"
-                strokeWidth={2}
-                dot={showDots}
-                isAnimationActive={false}
-              />
-              <Line
-                name={t('notificationUsers')}
-                type="monotone"
-                dataKey="notificationUserCount"
-                stroke="#10b981"
-                strokeWidth={2}
-                strokeDasharray="4 4"
-                dot={showDots}
-                isAnimationActive={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+        <>
+          <div className="h-72 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" vertical={false} />
+                <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
+                <Tooltip />
+                {series.map((item) => (
+                  <Line
+                    key={item.dataKey}
+                    name={item.name}
+                    type="monotone"
+                    dataKey={item.dataKey}
+                    stroke={item.color}
+                    strokeWidth={2}
+                    strokeDasharray={item.dashed ? '4 4' : undefined}
+                    dot={showDots}
+                    isAnimationActive={false}
+                  />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          <ul className="mt-4 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+            {series.map((item) => (
+              <li key={item.dataKey} className="flex items-center gap-2">
+                <span
+                  aria-hidden="true"
+                  className="inline-block w-6 border-t-2"
+                  style={{
+                    borderColor: item.color,
+                    borderStyle: item.dashed ? 'dashed' : 'solid',
+                  }}
+                />
+                <span>{item.name}</span>
+                <InfoTooltip label={item.name} content={item.help} />
+              </li>
+            ))}
+          </ul>
+        </>
       )}
     </div>
   );
