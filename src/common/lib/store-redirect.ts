@@ -44,3 +44,23 @@ export function dismissStorePrompt(): void {
     // 저장할 수 없으면 다음 방문에 다시 보일 뿐이므로 무시한다
   }
 }
+
+/** 웹에서 앱으로 넘겨 열 수 있는 경로인지 여부 (QR 단축 링크가 도착하는 기기 등록 화면) */
+export function isOpenInAppPath(pathname: string): boolean {
+  return /^\/machine-register\/[^/]+\/?$/.test(pathname);
+}
+
+/** 커스텀 URL 스킴 링크. 앱은 `me.gistory.bbosong://<첫 경로 조각>/<나머지>`를 `/<첫 경로 조각>/<나머지>`로 해석한다 */
+export function buildAppSchemeUrl(pathname: string, search = ''): string {
+  return `me.gistory.bbosong:/${pathname}${search}`;
+}
+
+/**
+ * Android Chrome의 intent 링크. 앱이 있으면 앱 링크 호스트로 앱을 열고, 없으면 Play 스토어로 보낸다.
+ * (AndroidManifest.xml의 https 인텐트 필터 호스트와 동일해야 한다)
+ */
+export function buildAndroidIntentUrl(host: string, pathname: string, search = ''): string {
+  const fallback = encodeURIComponent(STORE_URLS.android);
+
+  return `intent://${host}${pathname}${search}#Intent;scheme=https;package=${PLAY_PACKAGE_ID};S.browser_fallback_url=${fallback};end`;
+}
