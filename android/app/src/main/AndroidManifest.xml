@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <application
         android:allowBackup="true"
@@ -16,6 +17,20 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/notification_color" />
+
+
+        <!-- 서버의 LIVE_UPDATE data 메시지를 앱이 종료된 상태에서도 처리하기 위해 플러그인의 서비스를 대체한다.
+             LiveUpdateMessagingService는 그 서비스를 상속하므로 그 밖의 메시지는 기존과 같이 동작한다 -->
+        <service
+            android:name="io.capawesome.capacitorjs.plugins.firebase.messaging.MessagingService"
+            tools:node="remove" />
+        <service
+            android:name=".liveupdate.LiveUpdateMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
         <activity
             android:screenOrientation="portrait"
@@ -65,6 +80,8 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <!-- Android 13+ 알림 권한 (FCM 푸시) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Android 16 Live Update(승격된 진행 알림). 일반 권한이라 설치 시 부여되고 사용자가 설정에서 끌 수 있다 -->
+    <uses-permission android:name="android.permission.POST_PROMOTED_NOTIFICATIONS" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.screen.portrait" android:required="false" />
 </manifest>

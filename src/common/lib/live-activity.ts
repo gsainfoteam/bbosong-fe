@@ -3,13 +3,17 @@ import { Capacitor, registerPlugin } from '@capacitor/core';
 import { isNativeApp } from './platform';
 
 /**
- * iOS Live Activity(잠금화면/Dynamic Island) 네이티브 레이어.
+ * Live Activity(iOS 잠금화면/Dynamic Island)와 Live Update(Android 16 승격 알림) 네이티브 레이어.
  *
- * 구현은 `ios/App/App/LiveActivityPlugin.swift`(앱 내 플러그인)이고, 서버 통신은 포함하지 않는다.
- * (토큰 등록/해제 API는 user feature의 viewmodel 담당)
+ * 두 플랫폼이 같은 이름(`LiveActivity`)·같은 인터페이스의 플러그인을 구현한다.
+ * - iOS: `ios/App/App/LiveActivityPlugin.swift`. 서버가 activity별 push token으로 APNs 갱신을 보낸다.
+ * - Android: `android/.../liveupdate/LiveActivityPlugin.java`. activity token이 없으므로 `pushToken`/`activityEnded`
+ *   이벤트는 발생하지 않고, 서버의 FCM data 메시지를 `LiveUpdateMessagingService`가 직접 알림으로 만든다.
+ *
+ * 서버 통신은 포함하지 않는다. (토큰 등록/해제 API는 user feature의 viewmodel 담당)
  */
 
-/** 서버(bbosong-be `LIVE_ACTIVITY_STATES`)가 보내는 상태와 같아야 한다 */
+/** 서버(bbosong-be `LIVE_ACTIVITY_STATES`)가 보내는 상태와 같아야 한다(Android FCM data의 `state`도 같다) */
 export type LiveActivityPhase = 'RUNNING' | 'COOLING' | 'PAUSE' | 'DETECTING' | 'END' | 'ERROR';
 
 /**
@@ -66,18 +70,17 @@ interface LiveActivityPlugin {
 const LiveActivity = registerPlugin<LiveActivityPlugin>('LiveActivity');
 
 /**
- * 플러그인이 들어 있는 iOS 앱에서만 true. 플러그인이 없는 이전 네이티브 빌드와 웹/Android에서는 false라
+ * 플러그인이 들어 있는 네이티브 앱에서만 true. 플러그인이 없는 이전 네이티브 빌드와 웹에서는 false라
  * 호출하는 쪽이 따로 분기하지 않아도 된다.
  */
 function isAvailable(): boolean {
-  return (
-    isNativeApp() &&
-    Capacitor.getPlatform() === 'ios' &&
-    Capacitor.isPluginAvailable('LiveActivity')
-  );
+  return isNativeApp() && Capacitor.isPluginAvailable('LiveActivity');
 }
 
-/** Live Activity를 쓸 수 있는지(iOS 16.1+이고 사용자가 설정에서 끄지 않았는지) */
+/**
+ * Live Activity/Live Update를 쓸 수 있는지.
+ * iOS는 16.1+이고 사용자가 설정에서 끄지 않았을 때, Android는 16(API 36)+이고 알림이 켜져 있을 때 true다.
+ */
 export async function isLiveActivitySupported(): Promise<boolean> {
   if (!isAvailable()) return false;
 

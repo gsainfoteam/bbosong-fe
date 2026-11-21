@@ -92,11 +92,18 @@ export async function unregisterPushDevice(endpoint: string) {
  *
  * 토큰 기준 upsert라 멱등하고, 같은 토큰이 다른 계정에 묶여 있으면 소유자가 현재 계정으로 이전된다.
  * 앱 실행/로그인/토큰 갱신마다 호출해도 안전하다.
+ *
+ * `supportsLiveUpdate`는 이 기기가 서버의 Live Update data 메시지를 알림으로 그릴 수 있다는 뜻이다(Android 16+ 앱).
+ * true이면 서버가 이 기기에는 일반 완료/오류 푸시를 보내지 않으므로, 등록할 때마다 현재 값을 함께 보내야 한다
+ * (생략하면 서버는 false로 되돌린다).
  */
-export async function registerNativePushDevice(platform: NativePushPlatform, token: string) {
+export async function registerNativePushDevice(
+  platform: NativePushPlatform,
+  token: string,
+  supportsLiveUpdate = false,
+) {
   const { data, error } = await api.POST(ApiPaths.NotificationController_registerNativePush, {
-    // Android 16 Live Update 알림은 아직 렌더링하지 않으므로 서버가 일반 완료/오류 푸시를 계속 보내도록 false로 등록한다
-    body: { platform, token, supportsLiveUpdate: false },
+    body: { platform, token, supportsLiveUpdate },
   });
 
   if (error) throw error;
