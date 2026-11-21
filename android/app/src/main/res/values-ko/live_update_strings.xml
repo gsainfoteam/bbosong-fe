@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="live_update_channel_name">세탁·건조 진행 상황</string>
+    <string name="live_update_washing">세탁 중</string>
+    <string name="live_update_drying">건조 중</string>
+    <string name="live_update_cooling">냉각 중</string>
+    <string name="live_update_paused">일시정지</string>
+    <string name="live_update_calculating">남은 시간 계산 중</string>
+    <string name="live_update_almost_done">곧 끝나요</string>
+    <string name="live_update_washer_done">세탁이 끝났어요</string>
+    <string name="live_update_dryer_done">건조가 끝났어요</string>
+    <string name="live_update_error">기기에 문제가 생겼어요</string>
+</resources>

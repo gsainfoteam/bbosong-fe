@@ -13,6 +13,7 @@ import {
   isAndroid,
   isAppInstalled,
   isIOS,
+  isLiveActivitySupported,
   isNativeApp,
   isPushSupported,
   needsInstall,
@@ -99,7 +100,12 @@ async function syncNativePushDevice(): Promise<void> {
   const token = await getNativePushToken();
   if (!token) return;
 
-  await registerNativePushDevice(toNativePushPlatform(), token);
+  const platform = toNativePushPlatform();
+  // Live Update는 Android 앱(API 36+)에서만 그릴 수 있다. 서버는 iOS가 보내도 무시하지만 의미가 없어 보내지 않는다
+  const supportsLiveUpdate =
+    platform === NativePushPlatform.ANDROID && (await isLiveActivitySupported());
+
+  await registerNativePushDevice(platform, token, supportsLiveUpdate);
 }
 
 function toNativePushPlatform(): NativePushPlatform {

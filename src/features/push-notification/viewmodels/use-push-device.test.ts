@@ -15,6 +15,7 @@ const browser = vi.hoisted(() => ({
   canPromptInstall: vi.fn(),
   isIOS: vi.fn(),
   isAndroid: vi.fn(),
+  isLiveActivitySupported: vi.fn(),
   isAppInstalled: vi.fn(),
   getNotificationPermission: vi.fn(),
   isPushSupported: vi.fn(),
@@ -67,6 +68,7 @@ beforeEach(() => {
   browser.isNativeApp.mockReturnValue(false);
   browser.getNativeNotificationPermission.mockReturnValue('default');
   browser.getNativePushPlatform.mockReturnValue('android');
+  browser.isLiveActivitySupported.mockResolvedValue(false);
   browser.getNativePushToken.mockResolvedValue('fcm-token');
   browser.deleteNativePushToken.mockResolvedValue(undefined);
   browser.requestNativeNotificationPermission.mockResolvedValue('granted');
@@ -244,7 +246,7 @@ describe('native app (FCM)', () => {
     await act(() => result.current.requestPermission());
 
     expect(browser.requestNativeNotificationPermission).toHaveBeenCalledOnce();
-    expect(models.registerNativePushDevice).toHaveBeenCalledWith('ANDROID', 'fcm-token');
+    expect(models.registerNativePushDevice).toHaveBeenCalledWith('ANDROID', 'fcm-token', false);
     expect(result.current.status).toBe('granted');
   });
 
@@ -267,7 +269,26 @@ describe('native app (FCM)', () => {
 
     await syncPushDevice();
 
-    expect(models.registerNativePushDevice).toHaveBeenCalledWith('IOS', 'fcm-token');
+    expect(models.registerNativePushDevice).toHaveBeenCalledWith('IOS', 'fcm-token', false);
+  });
+
+  it('registers an Android app that can draw Live Updates as supporting them', async () => {
+    browser.getNativeNotificationPermission.mockReturnValue('granted');
+    browser.isLiveActivitySupported.mockResolvedValue(true);
+
+    await syncPushDevice();
+
+    expect(models.registerNativePushDevice).toHaveBeenCalledWith('ANDROID', 'fcm-token', true);
+  });
+
+  it('never claims Live Update support on iOS', async () => {
+    browser.getNativeNotificationPermission.mockReturnValue('granted');
+    browser.getNativePushPlatform.mockReturnValue('ios');
+    browser.isLiveActivitySupported.mockResolvedValue(true);
+
+    await syncPushDevice();
+
+    expect(models.registerNativePushDevice).toHaveBeenCalledWith('IOS', 'fcm-token', false);
   });
 
   it('skips registration without permission or without a token', async () => {

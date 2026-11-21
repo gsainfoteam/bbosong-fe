@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <!-- 디버그 빌드 전용. adb로 FCM 없이 LIVE_UPDATE 메시지를 흉내 낸다 -->
+        <receiver
+            android:name=".liveupdate.LiveUpdateDebugReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="me.gistory.bbosong.DEBUG_LIVE_UPDATE" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>
