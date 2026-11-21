@@ -9,4 +9,4 @@ export type Machine = {
 
 export type MachineListItem = components['schemas']['GetMachineResDto'];
 
-export { ApiPaths } from '@/@types/api-schema';
+export { ApiPaths, LiveActivityEnvironment } from '@/@types/api-schema';

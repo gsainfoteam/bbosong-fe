@@ -1,8 +1,8 @@
 {
   "name": "bbosong-fe",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "ota": {
-    "minNativeVersion": "0.4.1"
+    "minNativeVersion": "0.4.8"
   },
   "private": true,
   "type": "module",

@@ -21,6 +21,7 @@ import {
   useFindMachines,
   useFindMyMachine,
   useFindUserProfile,
+  useLiveActivitySync,
   useNowTick,
   useRefreshMainData,
 } from '@/features/user/viewmodels';
@@ -86,10 +87,13 @@ export function MainFrame() {
 
   const {
     data: usingMachines,
+    liveActivityTargets,
     isError: isUsingMachinesError,
     isLoading: isUsingMachinesLoading,
     refetch: refetchUsingMachines,
   } = useFindMyMachine();
+
+  useLiveActivitySync(liveActivityTargets);
 
   const { status: pushPermissionStatus } = usePushPermission();
 

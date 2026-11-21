@@ -4,12 +4,15 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { $api } from '@/common/lib';
+import { resolveRemainingMinutes } from '@/common/utils';
 
 import { ApiPaths } from '../models';
+import { type LiveActivityTarget } from './live-activity-state';
 import { useUnregisterMachine } from './use-unregister-machine';
 
 export function useFindMyMachine() {
   const { t } = useTranslation('error');
+  const { t: tTitle } = useTranslation(['location', 'machine']);
 
   const {
     data: usingMachines,
@@ -77,6 +80,42 @@ export function useFindMyMachine() {
     });
   }, [usingMachines, allMachines, unregisterMachine, isUnregistering]);
 
+  // 건조기는 기계 목록의 ThinQ 값으로 남은 시간을 보여주고, 세탁기는 남은 시간이 없어 경과 시간을 보여준다
+  const liveActivityTargets = useMemo<LiveActivityTarget[]>(() => {
+    if (!usingMachines || !allMachines) return [];
+
+    const machineByUuid = new Map(allMachines.map((m) => [m.uuid, m]));
+
+    return usingMachines.flatMap((usage) => {
+      const machine = machineByUuid.get(usage.machineUuid);
+      if (!machine) return [];
+
+      // t('location:a')
+      // t('location:b')
+      // t('machine:dryer')
+      // t('machine:washer')
+      // t('machine:count')
+      const location = machine.location === 'B' ? 'b' : 'a';
+      const kind = machine.type === 'DRYER' ? 'DRYER' : 'WASHER';
+      const title = `${tTitle(`location:${location}`)} ${tTitle(kind === 'DRYER' ? 'machine:dryer' : 'machine:washer')} ${tTitle('machine:count', { id: String(machine.index) })}`;
+      const remainingMinutes = resolveRemainingMinutes(machine);
+
+      return [
+        {
+          machineUuid: machine.uuid,
+          kind,
+          title,
+          startedAt: usage.startedAt,
+          status: machine.status,
+          thinqCurrentState:
+            typeof machine.thinqCurrentState === 'string' ? machine.thinqCurrentState : null,
+          remainingMinutes,
+          thinqUpdatedAt: machine.thinqUpdatedAt,
+        },
+      ];
+    });
+  }, [usingMachines, allMachines, tTitle]);
+
   const refetchMachines = useCallback(
     () => Promise.all([refetchUsingMachines(), refetchAllMachines()]),
     [refetchUsingMachines, refetchAllMachines],
@@ -84,6 +123,7 @@ export function useFindMyMachine() {
 
   return {
     data: mappedMachineList,
+    liveActivityTargets,
     isLoading: isUsingLoading || isAllLoading,
     isError,
     refetch: refetchMachines,

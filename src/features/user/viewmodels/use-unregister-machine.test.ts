@@ -13,6 +13,7 @@ const mocks = vi.hoisted(() => ({
   track: vi.fn(),
   error: vi.fn(),
   success: vi.fn(),
+  endLiveActivity: vi.fn(),
 }));
 vi.mock('@/common/lib', async () => {
   const { useMutation } = await import('@tanstack/react-query');
@@ -22,6 +23,7 @@ vi.mock('@/common/lib', async () => {
       MACHINE_UNREGISTERED: 'Machine Unregistered',
     },
     trackEvent: mocks.track,
+    endLiveActivity: mocks.endLiveActivity,
     $api: {
       useMutation: (method: string, path: string, options: object) =>
         useMutation({
@@ -45,7 +47,10 @@ function setup(onUnregistered?: () => void) {
     createElement(QueryClientProvider, { client }, children);
   return { ...renderHook(() => useUnregisterMachine(onUnregistered), { wrapper }), invalidate };
 }
-beforeEach(() => vi.resetAllMocks());
+beforeEach(() => {
+  vi.resetAllMocks();
+  mocks.endLiveActivity.mockResolvedValue(undefined);
+});
 afterEach(cleanup);
 
 describe('machine unregistration', () => {
@@ -61,6 +66,7 @@ describe('machine unregistration', () => {
     act(() => result.current.mutate(variables));
     await waitFor(() => expect(mocks.error).toHaveBeenCalledExactlyOnceWith(message));
     expect(mocks.success).not.toHaveBeenCalled();
+    expect(mocks.endLiveActivity).not.toHaveBeenCalled();
   });
 
   it('refreshes machine queries when the usage is no longer mine', async () => {
@@ -95,6 +101,7 @@ describe('machine unregistration', () => {
     expect(mocks.track).toHaveBeenCalledExactlyOnceWith('Machine Unregistered', {
       machineUuid: 'machine-uuid',
     });
+    expect(mocks.endLiveActivity).toHaveBeenCalledExactlyOnceWith('machine-uuid');
     const predicate = invalidate.mock.calls[0][0]?.predicate;
     expect(predicate?.({ queryKey: ['get', '/machine/me'] } as never)).toBe(true);
     expect(predicate?.({ queryKey: ['get', '/user/me'] } as never)).toBe(false);

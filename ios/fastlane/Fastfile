@@ -3,6 +3,9 @@ default_platform(:ios)
 # 웹 빌드(`bun run build`)와 `cap sync ios`는 fastlane 실행 전에 끝나 있어야 한다.
 platform :ios do
   APP_IDENTIFIER = "me.gistory.bbosong"
+  # Live Activity 위젯 익스텐션. 앱과 별개의 App ID/provisioning profile이 필요하다
+  WIDGET_IDENTIFIER = "me.gistory.bbosong.LiveActivityWidget"
+  WIDGET_TARGET = "LiveActivityWidget"
   APP_NAME = "뽀송"
   PROJECT_PATH = "App/App.xcodeproj"
   SCHEME = "App"
@@ -45,6 +48,12 @@ platform :ios do
       app_version: package_version,
       sku: APP_IDENTIFIER,
     )
+    # 위젯 익스텐션은 App Store Connect 앱을 따로 만들지 않고 App ID만 등록한다
+    produce(
+      app_identifier: WIDGET_IDENTIFIER,
+      app_name: "#{APP_NAME} Live Activity",
+      skip_itc: true,
+    )
     # 인증서와 provisioning profile을 만들어 match 저장소에 올린다 (readonly: false)
     sync_code_signing(type: "appstore", readonly: false)
   end
@@ -69,6 +78,16 @@ platform :ios do
       targets: ["App"],
       code_sign_identity: "Apple Distribution",
       profile_name: profile_name,
+    )
+
+    widget_profile_name = ENV["sigh_#{WIDGET_IDENTIFIER}_appstore_profile-name"]
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: PROJECT_PATH,
+      team_id: team_id,
+      targets: [WIDGET_TARGET],
+      code_sign_identity: "Apple Distribution",
+      profile_name: widget_profile_name,
     )
 
     build_app(
