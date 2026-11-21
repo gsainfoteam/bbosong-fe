@@ -1,13 +1,27 @@
 {
+  "aria": {
+    "detecting": "남은 시간 계산 중",
+    "elapsed": "{{time}}째 사용 중",
+    "mine": "내 빨래",
+    "remaining": "{{time}} 남음"
+  },
   "count": "{{id}}번",
-  "disabled": "비활성화됨",
+  "detecting": "계산 중",
   "dryer": "건조기",
   "elapsedHourMinute": "{{hours}}시간 {{minutes}}분째",
   "elapsedMinute": "{{minutes}}분째",
-  "idle": "사용 가능",
-  "remainingDetecting": "시간 계산 중",
-  "remainingHourMinute": "{{hours}}시간 {{minutes}}분 남음",
-  "remainingMinute": "{{minutes}}분 남음",
-  "using": "사용 중",
+  "endsAt": "{{time}} 종료",
+  "free": "빈 자리 {{n}}",
+  "hourMinute": "{{hours}}시간 {{minutes}}분",
+  "idle": "비어 있음",
+  "minute": "{{minutes}}분",
+  "noFree": "빈 자리 없음",
+  "off": "사용 불가",
+  "paused": "일시정지",
+  "phase": {
+    "cooling": "냉각 중",
+    "drying": "건조 중",
+    "washing": "세탁 중"
+  },
   "washer": "세탁기"
 }

@@ -1,8 +1,15 @@
 import { useState } from 'react';
 
+import { Bell, BellRing } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Modal } from '@/common/components';
+import { Modal } from '@/common/components';
+import { cn } from '@/common/utils';
+
+const TONE = {
+  washer: 'bg-sky-tint text-sky-ink',
+  dryer: 'bg-orange-tint text-orange-ink',
+} as const;
 
 /**
  * 빈 기기 알림 신청/취소 버튼.
@@ -84,17 +91,21 @@ export function GetRoomNotificationButton({
 
   return (
     <>
-      <Button
+      {/* 빈 자리가 없는 섹션 머리 오른쪽에만 놓여서, 배너 대신 기기 색 알약 하나로 접는다. */}
+      <button
         type="button"
-        variant="secondary"
-        size="s"
         disabled={isPending}
         aria-pressed={active}
         onClick={onModalOpen}
-        className={className}
+        className={cn(
+          'inline-flex h-7 items-center gap-1 rounded-full px-2.5 text-[12.5px] font-bold transition-transform active:scale-[0.97] disabled:opacity-50',
+          TONE[machineType],
+          className,
+        )}
       >
-        {active ? t('laundryRoom.cancelShort') : t('laundryRoom.requestShort')}
-      </Button>
+        {active ? <BellRing size={14} aria-hidden /> : <Bell size={14} aria-hidden />}
+        {active ? t('laundryRoom.notifyOn') : t('laundryRoom.notifyShort')}
+      </button>
       {modalOpen && renderModal()}
     </>
   );

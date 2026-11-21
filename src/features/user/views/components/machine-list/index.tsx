@@ -1,11 +1,19 @@
 import { cn } from '@/common/utils';
-import { MachineBox } from '@/features/user';
+import { type MachineView } from '@/features/user/viewmodels';
 
+import { MachineCell } from '../machine-cell';
+
+const CELL_SIZE = 66;
+
+// 양 끝 칸을 제목·빈 자리 글자 끝선에 맞추려고 칸 폭을 고정하고 남는 폭을 칸 사이로 나눈다.
 export function MachineList({ machines, className, ...props }: MachineList.Props) {
   return (
-    <div className={cn(className, 'grid w-full grid-cols-4 items-start gap-2')} {...props}>
+    <div
+      className={cn('grid grid-cols-[repeat(4,66px)] justify-between gap-y-[18px]', className)}
+      {...props}
+    >
       {machines.map((machine) => (
-        <MachineBox key={`machine-list-${machine.type}-${machine.id}`} machine={machine} />
+        <MachineCell key={machine.uuid} machine={machine} size={CELL_SIZE} />
       ))}
     </div>
   );
@@ -13,7 +21,7 @@ export function MachineList({ machines, className, ...props }: MachineList.Props
 
 export namespace MachineList {
   export type Props = {
-    machines: MachineBox.Props['machine'][];
+    machines: MachineView[];
     className?: string;
   };
 }

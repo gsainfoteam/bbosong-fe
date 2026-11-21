@@ -67,6 +67,7 @@ export function useFindMyMachine() {
 
       return [
         {
+          machineUuid: usage.machineUuid,
           location: mappedLocation,
           machine: {
             type: mappedType,

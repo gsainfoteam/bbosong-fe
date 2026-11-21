@@ -11,6 +11,8 @@
   },
   "myPage": "마이 페이지",
   "refresh": "새로고침",
+  "register": "등록",
+  "registerLabel": "QR 찍고 내 빨래 등록",
   "storeDownload": {
     "description": "앱에서 세탁실 현황 알림을 받을 수 있어요.",
     "install": "앱 설치하기",

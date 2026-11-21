@@ -15,6 +15,8 @@
     "locationB": "Building B",
     "male": "men's",
     "needsPermission": "Please allow notifications first.",
+    "notifyOn": "Alert on",
+    "notifyShort": "Notify me",
     "request": "Request alert",
     "requestDescription": "We'll let you know once when a {{type}} becomes available in the laundry room you're viewing.",
     "requested": "We'll let you know when a {{type}} frees up.",
