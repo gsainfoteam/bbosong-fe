@@ -1,5 +1,6 @@
 export * from './live-activity-state';
 export * from './machine-list-timing';
+export * from './machine-view';
 export * from './use-find-machine-by-uuid';
 export * from './use-find-machines';
 export * from './use-find-map';
