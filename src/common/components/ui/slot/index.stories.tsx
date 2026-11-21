@@ -4,7 +4,7 @@ import { Slot } from '.';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 const meta: Meta<typeof Slot> = {
-  title: 'Common/UI/Slot',
+  title: 'Common/Slot',
   component: Slot,
   parameters: {
     layout: 'centered',

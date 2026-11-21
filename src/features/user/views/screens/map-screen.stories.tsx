@@ -3,7 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type Machine, MapScreen } from '@/features/user';
 
 const meta = {
-  title: 'Map/MapScreen',
+  title: 'User/MapScreen',
   component: MapScreen,
 } satisfies Meta<typeof MapScreen>;
 

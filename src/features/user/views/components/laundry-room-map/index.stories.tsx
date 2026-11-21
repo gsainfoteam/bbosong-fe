@@ -5,7 +5,7 @@ import { type Machine } from '@/features/user';
 import { LaundryRoomMap } from '.';
 
 const meta = {
-  title: 'Map/LaundryRoomMap',
+  title: 'User/LaundryRoomMap',
   component: LaundryRoomMap,
 } satisfies Meta<typeof LaundryRoomMap>;
 

@@ -3,7 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { Indicator } from './';
 
 const meta: Meta<typeof Indicator> = {
-  title: 'Map/Indicator',
+  title: 'User/Indicator',
   component: Indicator,
   parameters: {
     layout: 'centered',
