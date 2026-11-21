@@ -41,6 +41,7 @@ vi.mock('../models', () => ({
 
 const target: LiveActivityTarget = {
   machineUuid: 'machine-1',
+  kind: 'DRYER',
   title: 'A동 건조기 3번',
   startedAt: new Date().toISOString(),
   status: 'RUNNING',
@@ -75,6 +76,7 @@ describe('useLiveActivitySync', () => {
     expect(mocks.start).toHaveBeenCalledWith(
       expect.objectContaining({
         machineUuid: 'machine-1',
+        kind: 'DRYER',
         title: 'A동 건조기 3번',
         startedAt: expect.any(Number),
         state: 'RUNNING',

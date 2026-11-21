@@ -1,8 +1,13 @@
-import { type LiveActivityContentState, type LiveActivityPhase } from '@/common/lib';
+import {
+  type LiveActivityContentState,
+  type LiveActivityKind,
+  type LiveActivityPhase,
+} from '@/common/lib';
 
-/** Live Activity로 추적할 건조기. 화면 표시용 가공은 하지 않은 값이다 */
+/** Live Activity로 추적할 세탁기/건조기. 화면 표시용 가공은 하지 않은 값이다 */
 export type LiveActivityTarget = {
   machineUuid: string;
+  kind: LiveActivityKind;
   /** "A동 건조기 3번"처럼 화면에 그대로 보여줄 이름 */
   title: string;
   /** 사용 시작 시각(ISO) */
@@ -49,6 +54,10 @@ export function toLiveActivityContentState(
   if (phase === 'END') {
     return { state: 'END', endsAt: nowSeconds, remainingMinutes: 0, updatedAt: nowSeconds };
   }
+  // 세탁기는 ThinQ가 아니라 남은 시간을 모른다. 위젯이 경과 시간을 보여주므로 시간 없는 가동 중으로 둔다
+  if (target.kind === 'WASHER') {
+    return { state: 'RUNNING', endsAt: null, remainingMinutes: null, updatedAt: nowSeconds };
+  }
 
   const updatedAtMs = target.thinqUpdatedAt ? Date.parse(target.thinqUpdatedAt) : Number.NaN;
   const { remainingMinutes } = target;
@@ -78,6 +87,7 @@ export function toLiveActivityContentState(
 export function liveActivityTargetKey(target: LiveActivityTarget): string {
   return [
     target.machineUuid,
+    target.kind,
     target.title,
     target.status ?? '',
     target.thinqCurrentState ?? '',

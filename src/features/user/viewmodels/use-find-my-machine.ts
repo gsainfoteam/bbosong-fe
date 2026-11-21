@@ -80,7 +80,7 @@ export function useFindMyMachine() {
     });
   }, [usingMachines, allMachines, unregisterMachine, isUnregistering]);
 
-  // Live Activity는 건조기만 추적한다. 시간은 기계 목록의 ThinQ 값을 쓴다
+  // 건조기는 기계 목록의 ThinQ 값으로 남은 시간을 보여주고, 세탁기는 남은 시간이 없어 경과 시간을 보여준다
   const liveActivityTargets = useMemo<LiveActivityTarget[]>(() => {
     if (!usingMachines || !allMachines) return [];
 
@@ -88,19 +88,22 @@ export function useFindMyMachine() {
 
     return usingMachines.flatMap((usage) => {
       const machine = machineByUuid.get(usage.machineUuid);
-      if (machine?.type !== 'DRYER') return [];
+      if (!machine) return [];
 
       // t('location:a')
       // t('location:b')
       // t('machine:dryer')
+      // t('machine:washer')
       // t('machine:count')
       const location = machine.location === 'B' ? 'b' : 'a';
-      const title = `${tTitle(`location:${location}`)} ${tTitle('machine:dryer')} ${tTitle('machine:count', { id: String(machine.index) })}`;
+      const kind = machine.type === 'DRYER' ? 'DRYER' : 'WASHER';
+      const title = `${tTitle(`location:${location}`)} ${tTitle(kind === 'DRYER' ? 'machine:dryer' : 'machine:washer')} ${tTitle('machine:count', { id: String(machine.index) })}`;
       const remainingMinutes = resolveRemainingMinutes(machine);
 
       return [
         {
           machineUuid: machine.uuid,
+          kind,
           title,
           startedAt: usage.startedAt,
           status: machine.status,

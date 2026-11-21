@@ -2,7 +2,7 @@ import ActivityKit
 import Capacitor
 import Foundation
 
-/// 건조기 Live Activity를 시작/갱신/종료하는 앱 내 Capacitor 플러그인(JS 이름 `LiveActivity`).
+/// 세탁기/건조기 Live Activity를 시작/갱신/종료하는 앱 내 Capacitor 플러그인(JS 이름 `LiveActivity`).
 ///
 /// - 앱 타깃은 iOS 15를 지원하므로 ActivityKit 호출은 모두 `#available(iOS 16.1, *)` 안에서만 한다.
 /// - activity는 서버 푸시(`pushType: .token`)로 갱신되며, activity별 push token은 `pushToken` 이벤트로 JS에 전달한다.
@@ -50,9 +50,9 @@ public class LiveActivityPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
         guard let machineUuid = call.getString("machineUuid"), let title = call.getString("title"),
-              let state = contentState(from: call)
+              let kind = call.getString("kind"), let state = contentState(from: call)
         else {
-            call.reject("machineUuid, title and state are required.", "INVALID_ARGUMENT")
+            call.reject("machineUuid, title, kind and state are required.", "INVALID_ARGUMENT")
             return
         }
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
@@ -69,8 +69,9 @@ public class LiveActivityPlugin: CAPPlugin, CAPBridgedPlugin {
                     self.emitCurrentPushToken(of: existing)
                 } else {
                     let activity = try Self.request(
-                        attributes: DryerActivityAttributes(
+                        attributes: LaundryActivityAttributes(
                             machineUuid: machineUuid,
+                            kind: kind,
                             title: title,
                             startedAt: call.getDouble("startedAt") ?? Date().timeIntervalSince1970
                         ),
@@ -118,7 +119,7 @@ public class LiveActivityPlugin: CAPPlugin, CAPBridgedPlugin {
 
         Task {
             self.stopObserving(machineUuid)
-            for activity in Activity<DryerActivityAttributes>.activities
+            for activity in Activity<LaundryActivityAttributes>.activities
             where activity.attributes.machineUuid == machineUuid {
                 await Self.end(activity)
             }
@@ -129,12 +130,12 @@ public class LiveActivityPlugin: CAPPlugin, CAPBridgedPlugin {
     // MARK: - ActivityKit (iOS 16.1+)
 
     @available(iOS 16.1, *)
-    private func contentState(from call: CAPPluginCall) -> DryerActivityAttributes.ContentState? {
+    private func contentState(from call: CAPPluginCall) -> LaundryActivityAttributes.ContentState? {
         guard let state = call.getString("state"), let updatedAt = call.getDouble("updatedAt") else {
             return nil
         }
 
-        return DryerActivityAttributes.ContentState(
+        return LaundryActivityAttributes.ContentState(
             state: state,
             endsAt: call.getDouble("endsAt"),
             remainingMinutes: call.getInt("remainingMinutes"),
@@ -143,8 +144,8 @@ public class LiveActivityPlugin: CAPPlugin, CAPBridgedPlugin {
     }
 
     @available(iOS 16.1, *)
-    private static func activity(for machineUuid: String) -> Activity<DryerActivityAttributes>? {
-        Activity<DryerActivityAttributes>.activities.first {
+    private static func activity(for machineUuid: String) -> Activity<LaundryActivityAttributes>? {
+        Activity<LaundryActivityAttributes>.activities.first {
             $0.attributes.machineUuid == machineUuid
                 && $0.activityState != .ended && $0.activityState != .dismissed
         }
@@ -152,9 +153,9 @@ public class LiveActivityPlugin: CAPPlugin, CAPBridgedPlugin {
 
     @available(iOS 16.1, *)
     private static func request(
-        attributes: DryerActivityAttributes,
-        state: DryerActivityAttributes.ContentState
-    ) throws -> Activity<DryerActivityAttributes> {
+        attributes: LaundryActivityAttributes,
+        state: LaundryActivityAttributes.ContentState
+    ) throws -> Activity<LaundryActivityAttributes> {
         if #available(iOS 16.2, *) {
             return try Activity.request(
                 attributes: attributes,
@@ -168,8 +169,8 @@ public class LiveActivityPlugin: CAPPlugin, CAPBridgedPlugin {
 
     @available(iOS 16.1, *)
     private static func update(
-        _ activity: Activity<DryerActivityAttributes>,
-        with state: DryerActivityAttributes.ContentState
+        _ activity: Activity<LaundryActivityAttributes>,
+        with state: LaundryActivityAttributes.ContentState
     ) async {
         if #available(iOS 16.2, *) {
             await activity.update(ActivityContent(state: state, staleDate: nil))
@@ -179,7 +180,7 @@ public class LiveActivityPlugin: CAPPlugin, CAPBridgedPlugin {
     }
 
     @available(iOS 16.1, *)
-    private static func end(_ activity: Activity<DryerActivityAttributes>) async {
+    private static func end(_ activity: Activity<LaundryActivityAttributes>) async {
         if #available(iOS 16.2, *) {
             await activity.end(nil, dismissalPolicy: .immediate)
         } else {
@@ -188,7 +189,7 @@ public class LiveActivityPlugin: CAPPlugin, CAPBridgedPlugin {
     }
 
     @available(iOS 16.1, *)
-    private func emitCurrentPushToken(of activity: Activity<DryerActivityAttributes>) {
+    private func emitCurrentPushToken(of activity: Activity<LaundryActivityAttributes>) {
         // `pushToken` 프로퍼티는 iOS 16.2부터. 16.1은 `pushTokenUpdates`가 처음 구독될 때만 받을 수 있다
         guard #available(iOS 16.2, *), let data = activity.pushToken else { return }
 
@@ -205,7 +206,7 @@ public class LiveActivityPlugin: CAPPlugin, CAPBridgedPlugin {
 
     /// push token 변경과 종료를 JS로 전달한다. `pushTokenUpdates`는 구독 즉시 현재 토큰부터 내보낸다
     @available(iOS 16.1, *)
-    private func observe(_ activity: Activity<DryerActivityAttributes>) {
+    private func observe(_ activity: Activity<LaundryActivityAttributes>) {
         let machineUuid = activity.attributes.machineUuid
         guard observers[machineUuid] == nil else { return }
 

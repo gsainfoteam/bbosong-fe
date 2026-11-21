@@ -17,7 +17,7 @@ import {
 } from './live-activity-state';
 
 /**
- * 사용 중인 건조기를 iOS Live Activity(잠금화면/Dynamic Island)로 보여준다.
+ * 사용 중인 세탁기/건조기를 iOS Live Activity(잠금화면/Dynamic Island)로 보여준다.
  *
  * - 대상이 생기거나 내용이 바뀌면 activity를 시작/보정한다. 이후 남은 시간은 OS가 카운트다운하고, 상태 변화는
  *   서버가 APNs로 보낸다. 이를 위해 activity의 push token을 서버에 등록한다(토큰이 바뀌면 다시 등록).
@@ -88,6 +88,7 @@ export function useLiveActivitySync(targets: readonly LiveActivityTarget[]) {
     targets.forEach((target) => {
       startLiveActivity({
         machineUuid: target.machineUuid,
+        kind: target.kind,
         title: target.title,
         startedAt: toStartedAtSeconds(target.startedAt, now),
         ...toLiveActivityContentState(target, now),

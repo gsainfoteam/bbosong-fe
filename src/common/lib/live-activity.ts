@@ -26,11 +26,15 @@ export type LiveActivityContentState = {
 /** APNs 환경. Debug 빌드는 SANDBOX, TestFlight/App Store 빌드는 PRODUCTION이다 */
 export type LiveActivityEnvironment = 'SANDBOX' | 'PRODUCTION';
 
+/** 기계 종류. 건조기만 남은 시간을 알고, 세탁기는 경과 시간을 보여준다 */
+export type LiveActivityKind = 'WASHER' | 'DRYER';
+
 export type LiveActivityStartOptions = {
   machineUuid: string;
+  kind: LiveActivityKind;
   /** "A동 건조기 3번"처럼 화면에 그대로 보여줄 이름 */
   title: string;
-  /** 사용 시작 시각(epoch 초). 진행 막대의 시작점이며 activity를 처음 만들 때만 쓰인다 */
+  /** 사용 시작 시각(epoch 초). 건조기는 진행 막대의 시작점, 세탁기는 경과 시간의 기준이며 activity를 처음 만들 때만 쓰인다 */
   startedAt: number;
 } & LiveActivityContentState;
 

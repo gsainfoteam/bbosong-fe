@@ -12,6 +12,7 @@ const nowSeconds = Math.floor(NOW / 1000);
 
 const target = (overrides: Partial<LiveActivityTarget> = {}): LiveActivityTarget => ({
   machineUuid: 'machine-1',
+  kind: 'DRYER',
   title: 'A동 건조기 3번',
   startedAt: '2026-11-21T11:30:00.000Z',
   status: 'RUNNING',
@@ -86,6 +87,32 @@ describe('liveActivityTargetKey', () => {
       liveActivityTargetKey(target()),
     );
     expect(liveActivityTargetKey(target({ title: 'B동 건조기 1번' }))).not.toBe(
+      liveActivityTargetKey(target()),
+    );
+  });
+});
+
+describe('washer', () => {
+  it('has no time while running, since only the elapsed time is known', () => {
+    expect(
+      toLiveActivityContentState(
+        target({ kind: 'WASHER', remainingMinutes: null, thinqCurrentState: null }),
+        NOW,
+      ),
+    ).toEqual({ state: 'RUNNING', endsAt: null, remainingMinutes: null, updatedAt: nowSeconds });
+  });
+
+  it('is finished once the machine is idle', () => {
+    expect(
+      toLiveActivityContentState(
+        target({ kind: 'WASHER', status: 'IDLE', remainingMinutes: null }),
+        NOW,
+      ).state,
+    ).toBe('END');
+  });
+
+  it('does not share a key with a dryer of the same machine', () => {
+    expect(liveActivityTargetKey(target({ kind: 'WASHER' }))).not.toBe(
       liveActivityTargetKey(target()),
     );
   });

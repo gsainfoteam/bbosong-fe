@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		0549523B99C6364FE439C58A /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E749C8B8F7B3318AE82B4CD /* SwiftUI.framework */; };
 		1BD7B86BA5F2E19C82F49F0F /* AppViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E398A6C551AEC6F6B27E2C9 /* AppViewController.swift */; };
-		27053E58BEA20F2D35858CAC /* DryerActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0C0D234DA816ADEDACB151 /* DryerActivityAttributes.swift */; };
-		2F2176C7491A1DFEDC8E94A8 /* DryerActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0C0D234DA816ADEDACB151 /* DryerActivityAttributes.swift */; };
+		27053E58BEA20F2D35858CAC /* LaundryActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0C0D234DA816ADEDACB151 /* LaundryActivityAttributes.swift */; };
+		2F2176C7491A1DFEDC8E94A8 /* LaundryActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0C0D234DA816ADEDACB151 /* LaundryActivityAttributes.swift */; };
 		2FAD9763203C412B000D30F8 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD9762203C412B000D30F8 /* config.xml */; };
 		43A2D3FA5620C6B852275321 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72A27005FAFBF11D9EED3E1A /* Foundation.framework */; };
 		4D22ABE92AF431CB00220026 /* CapApp-SPM in Frameworks */ = {isa = PBXBuildFile; productRef = 4D22ABE82AF431CB00220026 /* CapApp-SPM */; };
@@ -28,7 +28,7 @@
 		BAD7049E2451FF2EE64C19D2 /* LiveActivityWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B526962BA55A24F96D59E2D6 /* LiveActivityWidgetBundle.swift */; };
 		C035F8ABE2605C12A3300F08 /* LiveActivityWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 9B2C6F343FE6086E8CC2271E /* LiveActivityWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D132CB1E30AD06F500AE914A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D132CB1D30AD06F500AE914A /* GoogleService-Info.plist */; };
-		D9C3573B00C0A73DBDE362C1 /* DryerLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DFFBF3B9B0CC2B9C5D4F4B1 /* DryerLiveActivity.swift */; };
+		D9C3573B00C0A73DBDE362C1 /* LaundryLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DFFBF3B9B0CC2B9C5D4F4B1 /* LaundryLiveActivity.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,7 +69,7 @@
 		50B271D01FEDC1A000F3C39B /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
 		54EA652CB092402564D5C65A /* LiveActivityPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LiveActivityPlugin.swift; sourceTree = "<group>"; };
 		72A27005FAFBF11D9EED3E1A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		7DFFBF3B9B0CC2B9C5D4F4B1 /* DryerLiveActivity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DryerLiveActivity.swift; sourceTree = "<group>"; };
+		7DFFBF3B9B0CC2B9C5D4F4B1 /* LaundryLiveActivity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LaundryLiveActivity.swift; sourceTree = "<group>"; };
 		8E398A6C551AEC6F6B27E2C9 /* AppViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppViewController.swift; sourceTree = "<group>"; };
 		9582B6822FE993A50072D4E8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		958DCC722DB07C7200EA8C5F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = ../debug.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -80,7 +80,7 @@
 		D132CB1C30AD06F500AE914A /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
 		D132CB1D30AD06F500AE914A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E05CCF771B815415C4795CC3 /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		FD0C0D234DA816ADEDACB151 /* DryerActivityAttributes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DryerActivityAttributes.swift; sourceTree = "<group>"; };
+		FD0C0D234DA816ADEDACB151 /* LaundryActivityAttributes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LaundryActivityAttributes.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,7 +111,7 @@
 			children = (
 				BEB1B424A171EFF8462CC054 /* Info.plist */,
 				B526962BA55A24F96D59E2D6 /* LiveActivityWidgetBundle.swift */,
-				7DFFBF3B9B0CC2B9C5D4F4B1 /* DryerLiveActivity.swift */,
+				7DFFBF3B9B0CC2B9C5D4F4B1 /* LaundryLiveActivity.swift */,
 				E05CCF771B815415C4795CC3 /* Assets.xcassets */,
 			);
 			name = LiveActivityWidget;
@@ -170,7 +170,7 @@
 		B3A65C7240BA48B223164551 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				FD0C0D234DA816ADEDACB151 /* DryerActivityAttributes.swift */,
+				FD0C0D234DA816ADEDACB151 /* LaundryActivityAttributes.swift */,
 			);
 			name = Shared;
 			path = Shared;
@@ -298,8 +298,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				BAD7049E2451FF2EE64C19D2 /* LiveActivityWidgetBundle.swift in Sources */,
-				D9C3573B00C0A73DBDE362C1 /* DryerLiveActivity.swift in Sources */,
-				27053E58BEA20F2D35858CAC /* DryerActivityAttributes.swift in Sources */,
+				D9C3573B00C0A73DBDE362C1 /* LaundryLiveActivity.swift in Sources */,
+				27053E58BEA20F2D35858CAC /* LaundryActivityAttributes.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -311,7 +311,7 @@
 				9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */,
 				75A4AD1E080A07B4CDC4C1F5 /* LiveActivityPlugin.swift in Sources */,
 				1BD7B86BA5F2E19C82F49F0F /* AppViewController.swift in Sources */,
-				2F2176C7491A1DFEDC8E94A8 /* DryerActivityAttributes.swift in Sources */,
+				2F2176C7491A1DFEDC8E94A8 /* LaundryActivityAttributes.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
