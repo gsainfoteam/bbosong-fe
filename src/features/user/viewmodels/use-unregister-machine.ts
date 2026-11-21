@@ -5,7 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
-import { $api, AnalyticsEvent, trackEvent } from '@/common/lib';
+import { $api, AnalyticsEvent, endLiveActivity, trackEvent } from '@/common/lib';
 
 import { ApiPaths } from '../models';
 
@@ -27,6 +27,8 @@ export function useUnregisterMachine(onUnregistered?: () => void) {
       return;
     }
     trackEvent(AnalyticsEvent.MACHINE_UNREGISTERED, { machineUuid });
+    // 서버도 해제 시 activity에 end를 보내지만, 앱이 꺼져 있는 등 전달이 안 될 때를 대비해 바로 지운다
+    void endLiveActivity(machineUuid).catch(() => {});
     await refreshMachines();
     toast.success(t('unregister.success'));
     onUnregistered?.();
