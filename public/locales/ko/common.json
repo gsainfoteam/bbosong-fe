@@ -15,6 +15,9 @@
     "description": "앱에서 세탁실 현황 알림을 받을 수 있어요.",
     "install": "앱 설치하기",
     "later": "다음에",
+    "open": "앱에서 열기",
+    "openDescription": "앱에서 바로 기기를 등록할 수 있어요.",
+    "openTitle": "뽀송 앱에서 열까요?",
     "title": "뽀송 앱을 설치해 보세요"
   },
   "switchToEnglish": "영어로 전환",

@@ -15,6 +15,9 @@
     "description": "Get laundry room status alerts in the app.",
     "install": "Install app",
     "later": "Later",
+    "open": "Open in app",
+    "openDescription": "You can register the machine right in the app.",
+    "openTitle": "Open in the Bbosong app?",
     "title": "Get the Bbosong app"
   },
   "switchToEnglish": "Switch to English",

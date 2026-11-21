@@ -74,6 +74,13 @@ function parseAuthCallback(url: string | undefined): string | null {
 function parseAppLink(url: string | undefined): string | null {
   if (!url) return null;
 
+  // 웹 페이지에서 커스텀 스킴으로 넘긴 링크: me.gistory.bbosong://machine-register/<uuid>
+  if (url.startsWith(`${NATIVE_URL_SCHEME}://`) && !url.startsWith(NATIVE_AUTH_REDIRECT_URI)) {
+    const rest = url.slice(`${NATIVE_URL_SCHEME}:/`.length);
+
+    return rest.startsWith('/') ? rest : null;
+  }
+
   try {
     const parsed = new URL(url);
     if (parsed.protocol !== 'https:' || parsed.hostname !== APP_LINK_HOST) return null;
