@@ -1,4 +1,5 @@
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard-gov/dist/web/variable/pretendardvariable-gov-dynamic-subset.min.css');
+@import url('https://cdn.jsdelivr.net/npm/allo-font@1.0.3/allo.css');
 @import 'tailwindcss';
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *, .dark, .dark *));
@@ -21,22 +22,8 @@
 html {
   @apply m-0;
 
-  font-family:
-    'Pretendard Variable',
-    Pretendard,
-    -apple-system,
-    BlinkMacSystemFont,
-    system-ui,
-    Roboto,
-    'Helvetica Neue',
-    'Segoe UI',
-    'Apple SD Gothic Neo',
-    'Noto Sans KR',
-    'Malgun Gothic',
-    'Apple Color Emoji',
-    'Segoe UI Emoji',
-    'Segoe UI Symbol',
-    sans-serif;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -53,87 +40,144 @@ html {
     scrollbar-width: none; /* Firefox */
   }
 }
-/* 24, 16, 12 */
 @theme {
-  /* Typography — 6-step scale */
-  --text-display: 24px;
-  --text-display--font-weight: 500;
-  --text-display--line-height: 29px;
+  --font-sans:
+    'Pretendard GOV Variable', -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo',
+    'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
+  /* 그릇 번호, 남은 시간처럼 혼자 서거나 강조되는 숫자에만 쓴다. 문장 속 숫자는 Pretendard 그대로 둔다. */
+  --font-num: 'Allo', 'Pretendard GOV Variable', sans-serif;
+  /* allo.css의 가변 글꼴은 둥근 정도(ROND) 축을 갖고 있고 기본값은 50이라, 100을 명시해야 확정한 둥근 숫자가 나온다. */
+  --font-num--font-variation-settings: 'ROND' 100;
 
-  --text-heading: 20px;
-  --text-heading--font-weight: 500;
-  --text-heading--line-height: 26px;
+  --text-display: 28px;
+  --text-display--font-weight: 800;
+  --text-display--line-height: 1.25;
+  --text-display--letter-spacing: -0.03em;
 
-  --text-body-lg: 16px;
-  --text-body-lg--font-weight: 300;
-  --text-body-lg--line-height: 18px;
+  --text-heading: 18px;
+  --text-heading--font-weight: 800;
+  --text-heading--line-height: 1.35;
+  --text-heading--letter-spacing: -0.025em;
+
+  --text-body-lg: 15px;
+  --text-body-lg--line-height: 1.5;
 
   --text-body: 14px;
-  --text-body--font-weight: 400;
-  --text-body--line-height: 20px;
+  --text-body--line-height: 1.6;
 
   --text-label: 13px;
-  --text-label--font-weight: 500;
-  --text-label--line-height: 18px;
+  --text-label--font-weight: 700;
+  --text-label--line-height: 1.3;
 
-  --text-caption: 12px;
-  --text-caption--font-weight: 400;
-  /*--text-caption--line-height: 15px;*/
+  --text-caption: 12.5px;
+  --text-caption--line-height: 1.4;
 
-  /* Primary */
-  --color-primary: #4f7df3;
-  --color-primary-light: #e9efff;
-  --color-available: #78c6e8;
-  --color-washer: #9fe7fb;
-  --color-dryer: #fdb576;
-  --color-unavailable: #e45b5b;
-  --color-disabled: #e6e6e6;
+  --text-badge: 11.5px;
+  --text-badge--font-weight: 700;
+  --text-badge--line-height: 1.3;
 
-  /* Text */
-  --color-text-primary: #202938;
-  --color-text-secondary: #667085;
-  --color-text-error: #c93c3c;
+  /* 세탁기 · 하늘색. water가 브랜드 원색이고, 글자에는 ink 단계만 쓴다. */
+  --color-sky-water: #9fe7fb;
+  --color-sky-back: #cdf4fd;
+  --color-sky-deep: #3cc3ec;
+  --color-sky-deep-back: #8eddf5;
+  --color-sky-ring: #0e9ccb;
+  --color-sky-ink: #0b6f93;
+  --color-sky-tint: #ebfafe;
 
-  /* Background */
-  --color-bg: #f7f8fa;
-  --color-bg-surface: #d3d3d3;
-  --color-bg-subtle: #090909;
+  /* 건조기 · 주황 */
+  --color-orange-water: #fdb576;
+  --color-orange-back: #fed9b7;
+  --color-orange-deep: #f7953e;
+  --color-orange-deep-back: #fbc08a;
+  --color-orange-ring: #d9731a;
+  --color-orange-ink: #a8560f;
+  --color-orange-tint: #fff3e8;
 
-  /* Border */
-  --color-border: #e2e6ec;
-  /*--color-border-strong: #d1d1d1;*/
+  /* 기기와 상관없는 글자 · 주 버튼 · 스위치는 모두 먹색 중립 */
+  --color-ink: #1b1d21;
+  --color-ink-2: #62656c;
+  --color-ink-3: #9a9da4;
+  --color-track: #dcdde1;
+  --color-line: #e8e9ec;
+  --color-soft: #f4f5f7;
+  --color-surface: #ffffff;
+  --color-live: #2fbf71;
+  --color-danger: #d2382f;
+  --color-danger-tint: #fdeeec;
 
-  /* Icon */
-  /*--color-icon: #b4b4b4;*/
-  /*--color-icon-muted: #e5e5e5;*/
+  /* 기기 그릇 전용 회색. 돌고 있는 그릇은 회색 유리, 빈 그릇은 흰 유리로 구분한다. */
+  --color-glass: #f3f4f6;
+  --color-glass-rim: #dfe1e5;
+  --color-idle-rim: #cfd1d6;
+  --color-off-rim: #c4c6cb;
+  --color-skeleton: #eeeff2;
 
-  /* Status */
-  /*--color-status-pass: #22c55e;*/
-  /*--color-status-fail: #ef4444;*/
-  /*--color-status-pending: #f97316;*/
-  /*--color-status-progress: #3b82f6;*/
-  /*--color-status-inactive: #9ca3af;*/
-  /*--color-status-pass-light: #f0fdf4;*/
-  /*--color-status-fail-light: #fef2f2;*/
+  /* 어드민 화면을 새 시스템으로 옮기기 전까지 남겨 두는 옛 이름. 새 코드에서는 쓰지 않는다. */
+  --color-primary: var(--color-ink);
+  --color-primary-light: var(--color-soft);
+  --color-available: var(--color-sky-ring);
+  --color-washer: var(--color-sky-water);
+  --color-dryer: var(--color-orange-water);
+  --color-unavailable: var(--color-danger);
+  --color-disabled: var(--color-soft);
+  --color-text-primary: var(--color-ink);
+  --color-text-secondary: var(--color-ink-2);
+  --color-text-error: var(--color-danger);
+  --color-bg: var(--color-surface);
+  --color-bg-surface: var(--color-soft);
+  --color-border: var(--color-line);
+
+  --radius-tile: 14px;
+  --radius-cta: 18px;
+  --radius-banner: 20px;
+  --radius-card: 22px;
+  --radius-sheet: 28px;
+
+  /* 그림자는 화면 위에 떠 있는 것(고정 버튼 · 토스트 · 시트 · 다이얼로그)에만 준다. */
+  --shadow-float: 0 14px 26px -14px rgb(27 29 33 / 0.7);
+  --shadow-overlay: 0 24px 60px -20px rgb(27 29 33 / 0.45);
+  --shadow-knob: 0 1px 3px rgb(27 29 33 / 0.25);
+
+  --animate-wave: wave 3.2s linear infinite;
+  --animate-wave-back: wave 5.6s linear infinite reverse;
+  --animate-shine: shine 2.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+/* 물결 한 주기(22)만큼 옮겨야 반복이 이어 붙는다. 기기 그릇의 물결 파장과 같아야 한다. */
+@keyframes wave {
+  to {
+    transform: translateX(-22px);
+  }
+}
+
+@keyframes shine {
+  from {
+    transform: translateX(-90px);
+  }
+  to {
+    transform: translateX(90px);
+  }
 }
 
 h1 {
   font-size: var(--text-display);
   font-weight: var(--text-display--font-weight);
   line-height: var(--text-display--line-height);
+  letter-spacing: var(--text-display--letter-spacing);
 }
 
 h2 {
   font-size: var(--text-heading);
   font-weight: var(--text-heading--font-weight);
   line-height: var(--text-heading--line-height);
+  letter-spacing: var(--text-heading--letter-spacing);
 }
 
-body,
-p {
+body {
   font-size: var(--text-body-lg);
-  font-weight: var(--text-body-lg--font-weight);
   line-height: var(--text-body-lg--line-height);
+  background: var(--color-surface);
 }
 
 code {
