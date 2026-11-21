@@ -23,14 +23,23 @@ export const Route = createFileRoute('/auth')({
   }),
 });
 
+/** 로그인 후 돌아갈 수 있는 경로인지 확인한다. /auth 자신으로 돌아가면 화면이 그대로 남는다 */
+function isReturnPath(path: string | undefined): path is string {
+  if (!path || !redirectSearchSchema.safeParse(path).success) return false;
+
+  return !/^\/auth(?:[/?#]|$)/.test(path);
+}
+
+/** 후보 중 홈('/')이 아닌 첫 유효 경로를 고른다. 홈은 경로를 모를 때의 기본값이라 가장 낮은 우선순위다 */
+function pickReturnPath(...candidates: (string | undefined)[]): string {
+  return candidates.filter(isReturnPath).find((path) => path !== '/') ?? '/';
+}
+
 function Redirect() {
   const { redirect: redirectSearch, redirectUr } = Route.useSearch();
   const router = useRouter();
   const redirectCache = useAuthRedirect((state) => state.redirect);
-  const [redirect] = useState(() => {
-    const candidate = redirectSearch ?? redirectUr ?? redirectCache;
-    return candidate && redirectSearchSchema.safeParse(candidate).success ? candidate : '/';
-  });
+  const [redirect] = useState(() => pickReturnPath(redirectSearch, redirectUr, redirectCache));
 
   useEffect(() => {
     void router.navigate({ href: redirect, replace: true });
@@ -55,9 +64,12 @@ function AuthLayout() {
   const canResumeConsentFlow = isConsentFlowRoute && !token && !!idpToken && !!requiredConsents;
 
   useEffect(() => {
-    if (redirectTarget) {
-      useAuthRedirect.getState().setRedirect(redirectTarget);
-    }
+    if (!isReturnPath(redirectTarget)) return;
+
+    // 앱 재시작(네이티브 콜백 리로드 등)으로 `/`에서 다시 시작해 생긴 기본값이 저장해 둔 원래 경로를 덮지 않게 한다
+    const { redirect: cached, setRedirect } = useAuthRedirect.getState();
+    if (redirectTarget === '/' && isReturnPath(cached)) return;
+    setRedirect(redirectTarget);
   }, [redirectTarget]);
 
   // 최초 로그인은 auth 레이아웃에서 한 번만 시도한다. useAuth를 쓰는 하위 화면의

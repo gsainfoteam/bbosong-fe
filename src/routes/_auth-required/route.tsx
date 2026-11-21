@@ -20,7 +20,9 @@ function AuthRequiredLayout() {
   const router = useRouter();
   const [shouldRedirect, setShouldRedirect] = useState(false);
 
-  const redirect = router.state.location.pathname + router.state.location.searchStr;
+  // 이미 /auth로 넘어가는 중에 다시 렌더되면 /auth 자신이 복귀 경로로 저장되므로 홈으로 대체한다
+  const { pathname, searchStr } = router.state.location;
+  const redirect = pathname.startsWith('/auth') ? '/' : pathname + searchStr;
 
   // 렌더링 프레임 간의 마운트 동기화 딜레이 완충용 이펙트 가드
   useEffect(() => {
