@@ -1,5 +1,6 @@
-import { type ReactNode, useCallback, useEffect, useId, useLayoutEffect, useRef } from 'react';
+import { type ReactNode, useCallback, useLayoutEffect, useRef } from 'react';
 
+import { AlertDialog } from '@base-ui/react/alert-dialog';
 import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/common/utils';
@@ -20,17 +21,6 @@ export function Modal({
   className,
 }: Modal.Props) {
   const { t } = useTranslation('common');
-  const ref = useRef<HTMLDialogElement>(null);
-  const titleId = useId();
-  const descriptionId = useId();
-
-  // 마운트 시 모달로 열고, 언마운트 시 닫는다.
-  useEffect(() => {
-    const dialog = ref.current;
-    dialog?.showModal();
-    return () => dialog?.close();
-  }, []);
-
   const confirmRef = useRef<HTMLButtonElement>(null);
   const cancelHadFocusRef = useRef(false);
 
@@ -52,51 +42,53 @@ export function Modal({
   }, [hideCancel]);
 
   return (
-    <dialog
-      ref={ref}
-      aria-labelledby={titleId}
-      aria-describedby={description ? descriptionId : undefined}
-      aria-busy={isPending}
-      onCancel={(event) => {
-        event.preventDefault();
-        if (!isPending) onClose();
+    // 부모가 열 때 마운트하고 닫을 때 지우므로 늘 열린 채로 그린다. 닫기는 onClose로 부모에게 맡긴다.
+    <AlertDialog.Root
+      open
+      onOpenChange={(open) => {
+        if (!open && !isPending) onClose();
       }}
-      className={cn(
-        'text-ink rounded-sheet shadow-overlay fixed inset-0 m-auto w-[calc(100%-2.5rem)] max-w-[340px] bg-white px-5 pt-6 pb-5 backdrop:bg-[rgb(27_29_33/0.44)]',
-        className,
-      )}
     >
-      <h2
-        id={titleId}
-        className="text-[19px] leading-[1.35] font-extrabold tracking-[-0.025em] text-balance"
-      >
-        {title}
-      </h2>
-      {description && (
-        <p id={descriptionId} className="text-ink-2 mt-2 text-sm leading-[1.6]">
-          {description}
-        </p>
-      )}
-      {children && <div className="mt-3 text-sm leading-[1.6]">{children}</div>}
-      <div className="mt-[22px] flex gap-2 *:flex-1">
-        {/* 처리 중에는 닫을 수 없으므로 취소 버튼을 숨기고 진행 상태만 보여준다. */}
-        {!isPending && !hideCancel && (
-          <Button ref={cancelRef} type="button" variant="secondary" autoFocus onClick={onClose}>
-            {cancelText ?? t('modal.cancel')}
-          </Button>
-        )}
-        <Button
-          ref={confirmRef}
-          type="button"
-          variant={destructive ? 'danger' : 'primary'}
-          autoFocus={hideCancel}
-          disabled={isPending}
-          onClick={onConfirm}
+      <AlertDialog.Portal>
+        <AlertDialog.Backdrop className="bg-ink/44 ease-sheet fixed inset-0 z-50 transition-opacity duration-300 data-starting-style:opacity-0" />
+        <AlertDialog.Popup
+          aria-busy={isPending}
+          className={cn(
+            'text-ink rounded-sheet shadow-overlay ease-sheet fixed top-1/2 left-1/2 z-50 w-[calc(100%-2.5rem)] max-w-[340px] -translate-1/2 bg-white px-5 pt-6 pb-5 outline-none',
+            'transition-[opacity,scale] duration-300 data-starting-style:scale-95 data-starting-style:opacity-0',
+            className,
+          )}
         >
-          {confirmText ?? t('modal.confirm')}
-        </Button>
-      </div>
-    </dialog>
+          <AlertDialog.Title className="text-[19px] leading-[1.35] font-extrabold tracking-[-0.025em] text-balance">
+            {title}
+          </AlertDialog.Title>
+          {description && (
+            <AlertDialog.Description className="text-ink-2 mt-2 text-sm leading-[1.6]">
+              {description}
+            </AlertDialog.Description>
+          )}
+          {children && <div className="mt-3 text-sm leading-[1.6]">{children}</div>}
+          <div className="mt-[22px] flex gap-2 *:flex-1">
+            {/* 처리 중에는 닫을 수 없으므로 취소 버튼을 숨기고 진행 상태만 보여준다. */}
+            {!isPending && !hideCancel && (
+              <Button ref={cancelRef} type="button" variant="secondary" autoFocus onClick={onClose}>
+                {cancelText ?? t('modal.cancel')}
+              </Button>
+            )}
+            <Button
+              ref={confirmRef}
+              type="button"
+              variant={destructive ? 'danger' : 'primary'}
+              autoFocus={hideCancel}
+              disabled={isPending}
+              onClick={onConfirm}
+            >
+              {confirmText ?? t('modal.confirm')}
+            </Button>
+          </div>
+        </AlertDialog.Popup>
+      </AlertDialog.Portal>
+    </AlertDialog.Root>
   );
 }
 
