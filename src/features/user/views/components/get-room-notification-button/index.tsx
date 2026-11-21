@@ -86,8 +86,8 @@ export function GetRoomNotificationButton({
     <>
       <Button
         type="button"
-        variant="minimum"
-        size="minimum"
+        variant="secondary"
+        size="s"
         disabled={isPending}
         aria-pressed={active}
         onClick={onModalOpen}

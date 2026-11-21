@@ -35,11 +35,11 @@ export const Active: Story = {
   },
 };
 
-export const Small: Story = {
+export const OrangeTone: Story = {
   args: {
-    state: false,
+    state: true,
     available: true,
-    size: 'sm',
+    tone: 'orange',
   },
   render: (args) => {
     const [state, setState] = useState(args.state);

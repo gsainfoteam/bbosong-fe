@@ -5,33 +5,24 @@ export function ToggleSelect({
   stateList,
   state,
   onChange,
+  getLabel = (item) => item,
   className,
-}: ToggleSelect.Props) {
-  // stateList 및 state의 정합성 가드 검사
+  ...props
+}: ToggleSelect.Props & Omit<React.ComponentProps<'div'>, 'onChange'>) {
   if (!stateList || stateList.length === 0 || !stateList.includes(state)) {
     return null;
   }
 
-  // 현재 활성화된 탭의 인덱스 탐색
-  const activeIndex = stateList.indexOf(state);
-
   return (
     <div
+      role="radiogroup"
       className={cn(
-        'bg-bg-surface relative inline-flex w-full max-w-sm rounded-full p-1 select-none',
+        'bg-soft grid w-full auto-cols-fr grid-flow-col rounded-[14px] p-1 select-none',
         !available && 'opacity-50',
         className,
       )}
+      {...props}
     >
-      {/* 슬라이딩 백그라운드 스위치 인디케이터 */}
-      <div
-        className="absolute top-1 bottom-1 left-1 rounded-full bg-white shadow-sm transition-all duration-300 ease-out"
-        style={{
-          width: `calc((100% - 8px) / ${stateList.length})`,
-          transform: `translateX(${activeIndex * 100}%)`,
-        }}
-      />
-
       {stateList.map((item) => {
         const isActive = item === state;
 
@@ -39,15 +30,17 @@ export function ToggleSelect({
           <button
             key={item}
             type="button"
+            role="radio"
+            aria-checked={isActive}
             disabled={!available}
-            aria-pressed={isActive}
             onClick={() => available && onChange(item)}
             className={cn(
-              'relative z-10 flex-1 rounded-full px-4 py-1.5 text-center text-sm font-medium transition-colors duration-300',
-              isActive ? 'text-black' : 'text-gray-500',
+              'h-10 rounded-[11px] text-sm font-bold transition-[background-color,color,box-shadow] duration-200',
+              'focus-visible:outline-ink focus-visible:outline-2 focus-visible:-outline-offset-2',
+              isActive ? 'text-ink bg-white shadow-[0_1px_3px_rgb(27_29_33/0.12)]' : 'text-ink-2',
             )}
           >
-            {item}
+            {getLabel(item)}
           </button>
         );
       })}
@@ -61,6 +54,7 @@ export namespace ToggleSelect {
     stateList: string[];
     state: string;
     onChange: (state: string) => void;
+    getLabel?: (state: string) => React.ReactNode;
     className?: string;
   };
 }

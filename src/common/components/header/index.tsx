@@ -1,20 +1,26 @@
 import { Link } from '@tanstack/react-router';
 
-import { Menu, RefreshCw, X } from 'lucide-react';
+import { ChevronLeft, RefreshCw, UserRound } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/common/utils';
+
+const iconButton =
+  'text-ink active:bg-soft grid size-11 place-items-center rounded-tile transition-colors disabled:cursor-not-allowed';
 
 export const Header = ({ onRefresh, isRefreshing = false, className, ...props }: Header.Props) => {
   const { t } = useTranslation('common');
 
   return (
     <header
-      className={cn(className, 'text-text-primary flex w-full justify-between px-4 py-2')}
+      className={cn('flex h-14 w-full items-center justify-between pr-2.5 pl-5', className)}
       {...props}
     >
-      <h1>{t('bbosong')}</h1>
-      <div className="flex items-center gap-3">
+      <span className="flex items-center gap-[7px] text-[19px] font-extrabold tracking-[-0.03em]">
+        <BrandMark />
+        {t('bbosong')}
+      </span>
+      <div className="flex items-center">
         {onRefresh && (
           <button
             type="button"
@@ -22,13 +28,13 @@ export const Header = ({ onRefresh, isRefreshing = false, className, ...props }:
             aria-busy={isRefreshing}
             disabled={isRefreshing}
             onClick={onRefresh}
-            className="disabled:cursor-not-allowed"
+            className={iconButton}
           >
-            <RefreshCw className={cn(isRefreshing && 'animate-spin')} />
+            <RefreshCw size={20} className={cn(isRefreshing && 'animate-spin')} aria-hidden />
           </button>
         )}
-        <Link to="/mypage" aria-label={t('myPage')}>
-          <Menu />
+        <Link to="/mypage" aria-label={t('myPage')} className={iconButton}>
+          <UserRound size={20} aria-hidden />
         </Link>
       </div>
     </header>
@@ -38,17 +44,34 @@ export const Header = ({ onRefresh, isRefreshing = false, className, ...props }:
 export const MyPageHeader = () => {
   const { t } = useTranslation('common');
   return (
-    <header className="text-text-primary flex w-full flex-row-reverse px-4 py-2">
-      <Link to="/" aria-label={t('index')}>
-        <X />
+    <header className="flex h-14 w-full items-center px-2">
+      <Link to="/" aria-label={t('index')} className={iconButton}>
+        <ChevronLeft size={24} aria-hidden />
       </Link>
     </header>
   );
 };
 
+// 세탁기(원)와 건조기(둥근 사각)를 겹친 임시 마크. 로고가 정해지면 바꾼다.
+function BrandMark() {
+  return (
+    <svg width="24" height="18" viewBox="0 0 24 18" aria-hidden className="block">
+      <circle cx="8" cy="9" r="7.5" className="fill-sky-water" />
+      <rect
+        x="11"
+        y="2.5"
+        width="12.5"
+        height="12.5"
+        rx="3.6"
+        strokeWidth="1.6"
+        className="fill-orange-water stroke-white"
+      />
+    </svg>
+  );
+}
+
 export namespace Header {
   export type Props = {
-    /** 없으면 새로고침 버튼을 숨긴다 */
     onRefresh?: () => void;
     isRefreshing?: boolean;
     className?: string;

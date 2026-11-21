@@ -1,43 +1,34 @@
 import { useTranslation } from 'react-i18next';
 
-import { cn } from '@/common/utils';
+import { SUPPORTED_LANGUAGES, type Language } from '@/common/lib/languages';
 import { useLanguage } from '@/common/viewmodels';
 
-export function LanguageToggle() {
-  const { toggleLanguage, currentLanguage } = useLanguage();
-  const { t } = useTranslation('common');
+import { ToggleSelect } from '../ui';
 
-  const isKorean = currentLanguage === 'ko';
+// 언어 이름은 그 언어로 적어야 지금 언어를 못 읽는 사람도 찾을 수 있다.
+const LANGUAGE_NAME: Record<Language, string> = {
+  ko: '한국어',
+  en: 'English',
+};
+
+export function LanguageToggle({ className }: LanguageToggle.Props) {
+  const { currentLanguage, changeLanguage } = useLanguage();
+  const { t } = useTranslation('mypage');
 
   return (
-    <div className="flex items-center justify-center gap-1.5 rounded-lg">
-      <button
-        type="button"
-        onClick={toggleLanguage}
-        disabled={isKorean}
-        aria-pressed={isKorean}
-        className={cn(
-          'text-body-lg uppercase transition-colors',
-          isKorean ? 'text-primary font-bold' : 'text-text-secondary',
-        )}
-        aria-label={isKorean ? undefined : t('switchToKorean')}
-      >
-        KOR
-      </button>
-      <div className="bg-primary h-4 w-0.5" />
-      <button
-        type="button"
-        onClick={toggleLanguage}
-        disabled={!isKorean}
-        aria-pressed={!isKorean}
-        className={cn(
-          'text-body-lg uppercase transition-colors',
-          !isKorean ? 'text-primary font-bold' : 'text-text-secondary',
-        )}
-        aria-label={isKorean ? t('switchToEnglish') : undefined}
-      >
-        ENG
-      </button>
-    </div>
+    <ToggleSelect
+      aria-label={t('language')}
+      stateList={[...SUPPORTED_LANGUAGES]}
+      state={SUPPORTED_LANGUAGES.includes(currentLanguage) ? currentLanguage : 'ko'}
+      onChange={(lng) => void changeLanguage(lng as Language)}
+      getLabel={(lng) => LANGUAGE_NAME[lng as Language]}
+      className={className}
+    />
   );
+}
+
+export namespace LanguageToggle {
+  export type Props = {
+    className?: string;
+  };
 }

@@ -14,6 +14,7 @@ export function Modal({
   cancelText,
   isPending = false,
   hideCancel = false,
+  destructive = false,
   onConfirm,
   onClose,
   className,
@@ -61,29 +62,33 @@ export function Modal({
         if (!isPending) onClose();
       }}
       className={cn(
-        'bg-bg border-border text-text-primary fixed inset-0 m-auto w-[calc(100%-2rem)] max-w-120 rounded-2xl border p-6 shadow-xl backdrop:bg-black/40',
+        'text-ink rounded-sheet shadow-overlay fixed inset-0 m-auto w-[calc(100%-2.5rem)] max-w-[340px] bg-white px-5 pt-6 pb-5 backdrop:bg-[rgb(27_29_33/0.44)]',
         className,
       )}
     >
-      <h2 id={titleId} className="text-lg font-semibold">
+      <h2
+        id={titleId}
+        className="text-[19px] leading-[1.35] font-extrabold tracking-[-0.025em] text-balance"
+      >
         {title}
       </h2>
       {description && (
-        <p id={descriptionId} className="text-text-secondary mt-3 text-sm">
+        <p id={descriptionId} className="text-ink-2 mt-2 text-sm leading-[1.6]">
           {description}
         </p>
       )}
-      {children && <div className="mt-3">{children}</div>}
-      <div className="mt-6 flex gap-3">
+      {children && <div className="mt-3 text-sm leading-[1.6]">{children}</div>}
+      <div className="mt-[22px] flex gap-2 *:flex-1">
         {/* 처리 중에는 닫을 수 없으므로 취소 버튼을 숨기고 진행 상태만 보여준다. */}
         {!isPending && !hideCancel && (
-          <Button ref={cancelRef} type="button" autoFocus onClick={onClose}>
+          <Button ref={cancelRef} type="button" variant="secondary" autoFocus onClick={onClose}>
             {cancelText ?? t('modal.cancel')}
           </Button>
         )}
         <Button
           ref={confirmRef}
           type="button"
+          variant={destructive ? 'danger' : 'primary'}
           autoFocus={hideCancel}
           disabled={isPending}
           onClick={onConfirm}
@@ -108,6 +113,7 @@ export namespace Modal {
     isPending?: boolean;
     /** true면 취소 버튼 없이 확인 버튼만 보여준다. 안내만 하는 모달에 쓴다. */
     hideCancel?: boolean;
+    destructive?: boolean;
     onConfirm: () => void;
     onClose: () => void;
     className?: string;
