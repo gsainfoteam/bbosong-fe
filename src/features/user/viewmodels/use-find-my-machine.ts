@@ -102,6 +102,7 @@ export function useFindMyMachine() {
         {
           machineUuid: machine.uuid,
           title,
+          startedAt: usage.startedAt,
           status: machine.status,
           thinqCurrentState:
             typeof machine.thinqCurrentState === 'string' ? machine.thinqCurrentState : null,

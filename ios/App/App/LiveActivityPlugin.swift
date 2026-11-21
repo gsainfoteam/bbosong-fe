@@ -69,7 +69,11 @@ public class LiveActivityPlugin: CAPPlugin, CAPBridgedPlugin {
                     self.emitCurrentPushToken(of: existing)
                 } else {
                     let activity = try Self.request(
-                        attributes: DryerActivityAttributes(machineUuid: machineUuid, title: title),
+                        attributes: DryerActivityAttributes(
+                            machineUuid: machineUuid,
+                            title: title,
+                            startedAt: call.getDouble("startedAt") ?? Date().timeIntervalSince1970
+                        ),
                         state: state
                     )
                     self.observe(activity)

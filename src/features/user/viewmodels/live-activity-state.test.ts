@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   liveActivityTargetKey,
   toLiveActivityContentState,
+  toStartedAtSeconds,
   type LiveActivityTarget,
 } from './live-activity-state';
 
@@ -12,6 +13,7 @@ const nowSeconds = Math.floor(NOW / 1000);
 const target = (overrides: Partial<LiveActivityTarget> = {}): LiveActivityTarget => ({
   machineUuid: 'machine-1',
   title: 'A동 건조기 3번',
+  startedAt: '2026-11-21T11:30:00.000Z',
   status: 'RUNNING',
   thinqCurrentState: 'RUNNING',
   remainingMinutes: 20,
@@ -86,5 +88,17 @@ describe('liveActivityTargetKey', () => {
     expect(liveActivityTargetKey(target({ title: 'B동 건조기 1번' }))).not.toBe(
       liveActivityTargetKey(target()),
     );
+  });
+});
+
+describe('toStartedAtSeconds', () => {
+  it('converts the start time to epoch seconds', () => {
+    expect(toStartedAtSeconds('2026-11-21T11:30:00.000Z', NOW)).toBe(
+      Math.floor(Date.parse('2026-11-21T11:30:00.000Z') / 1000),
+    );
+  });
+
+  it.each([null, 'nope', '2026-11-21T13:00:00.000Z'])('falls back to now for %s', (value) => {
+    expect(toStartedAtSeconds(value, NOW)).toBe(nowSeconds);
   });
 });

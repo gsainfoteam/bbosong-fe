@@ -20,6 +20,7 @@
 		504EC30F1FED79650016851F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30E1FED79650016851F /* Assets.xcassets */; };
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
+		5FCE00CB5478B1AF827F87B4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E05CCF771B815415C4795CC3 /* Assets.xcassets */; };
 		75A4AD1E080A07B4CDC4C1F5 /* LiveActivityPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EA652CB092402564D5C65A /* LiveActivityPlugin.swift */; };
 		9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582B6822FE993A50072D4E8 /* SceneDelegate.swift */; };
 		9772058DBA4CE962A9BC6CED /* ActivityKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 966CDA4685BFE7DCD26D9F1D /* ActivityKit.framework */; };
@@ -78,6 +79,7 @@
 		BEB1B424A171EFF8462CC054 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D132CB1C30AD06F500AE914A /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
 		D132CB1D30AD06F500AE914A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		E05CCF771B815415C4795CC3 /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FD0C0D234DA816ADEDACB151 /* DryerActivityAttributes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DryerActivityAttributes.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -110,6 +112,7 @@
 				BEB1B424A171EFF8462CC054 /* Info.plist */,
 				B526962BA55A24F96D59E2D6 /* LiveActivityWidgetBundle.swift */,
 				7DFFBF3B9B0CC2B9C5D4F4B1 /* DryerLiveActivity.swift */,
+				E05CCF771B815415C4795CC3 /* Assets.xcassets */,
 			);
 			name = LiveActivityWidget;
 			path = LiveActivityWidget;
@@ -283,6 +286,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5FCE00CB5478B1AF827F87B4 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

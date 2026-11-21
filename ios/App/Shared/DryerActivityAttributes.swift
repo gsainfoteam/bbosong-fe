@@ -31,4 +31,8 @@ struct DryerActivityAttributes: ActivityAttributes {
     var machineUuid: String
     /// "A동 건조기 3번"처럼 앱이 언어에 맞게 만들어 넘기는 표시 이름
     var title: String
+    /// 사용 시작 시각(epoch 초). 진행 막대의 시작점이다
+    var startedAt: Double
+
+    var startDate: Date { Date(timeIntervalSince1970: startedAt) }
 }

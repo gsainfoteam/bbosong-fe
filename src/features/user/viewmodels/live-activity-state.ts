@@ -5,6 +5,8 @@ export type LiveActivityTarget = {
   machineUuid: string;
   /** "A동 건조기 3번"처럼 화면에 그대로 보여줄 이름 */
   title: string;
+  /** 사용 시작 시각(ISO) */
+  startedAt: string | null;
   /** 기계 상태(`IDLE`이면 사용이 끝난 것) */
   status?: string;
   /** ThinQ `runState.currentState` */
@@ -82,4 +84,11 @@ export function liveActivityTargetKey(target: LiveActivityTarget): string {
     target.remainingMinutes ?? '',
     target.thinqUpdatedAt ?? '',
   ].join(':');
+}
+
+/** 사용 시작 시각을 epoch 초로 바꾼다. 알 수 없거나 미래 값이면 지금으로 본다 */
+export function toStartedAtSeconds(startedAt: string | null, nowMs: number): number {
+  const startedAtMs = startedAt ? Date.parse(startedAt) : Number.NaN;
+
+  return Math.floor((Number.isFinite(startedAtMs) ? Math.min(startedAtMs, nowMs) : nowMs) / 1000);
 }

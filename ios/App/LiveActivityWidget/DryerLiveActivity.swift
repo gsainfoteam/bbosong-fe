@@ -31,14 +31,18 @@ private extension DryerActivityAttributes.ContentState {
         case .error: return tr("기기에 문제가 생겼어요", "Something went wrong")
         }
     }
+}
 
-    var iconName: String {
-        switch phase {
-        case .end: return "checkmark.circle.fill"
-        case .error: return "exclamationmark.triangle.fill"
-        case .pause: return "pause.circle.fill"
-        default: return "wind"
-        }
+/// 앱 로고. 상태는 문구와 진행 막대로 구분하고 아이콘은 항상 로고를 쓴다
+private struct AppLogo: View {
+    var size: CGFloat
+
+    var body: some View {
+        Image("AppLogo")
+            .resizable()
+            .scaledToFit()
+            .frame(width: size, height: size)
+            .accessibilityHidden(true)
     }
 }
 
@@ -61,33 +65,107 @@ private struct RemainingTime: View {
     }
 }
 
+/// 사용 시작부터 종료 예상 시각까지의 진행 막대. 시간이 흐르는 대로 OS가 채운다
+private struct CycleProgress: View {
+    let attributes: DryerActivityAttributes
+    let state: DryerActivityAttributes.ContentState
+
+    var body: some View {
+        if state.phase == .end {
+            ProgressView(value: 1).tint(brandColor)
+        } else if let end = state.countdownEnd, end > attributes.startDate {
+            ProgressView(
+                timerInterval: attributes.startDate...end,
+                countsDown: false,
+                label: { EmptyView() },
+                currentValueLabel: { EmptyView() }
+            )
+            .tint(brandColor)
+        }
+    }
+}
+
+/// "12:15 완료 예정". 종료 시각을 알 때만 보여준다
+private struct FinishTime: View {
+    let state: DryerActivityAttributes.ContentState
+
+    var body: some View {
+        if let end = state.countdownEnd {
+            HStack(spacing: 4) {
+                Text(tr("완료 예정", "Done at"))
+                Text(end, style: .time)
+            }
+        }
+    }
+}
+
+/// "건조 중 · 완료 예정 17:23". 잠금화면과 Dynamic Island 확장이 함께 쓴다
+private struct StatusFooter: View {
+    let state: DryerActivityAttributes.ContentState
+
+    var body: some View {
+        HStack {
+            Text(state.statusText)
+            Spacer()
+            FinishTime(state: state)
+        }
+        .font(.footnote)
+        .foregroundStyle(.secondary)
+    }
+}
+
 private struct LockScreenView: View {
     let attributes: DryerActivityAttributes
     let state: DryerActivityAttributes.ContentState
 
     var body: some View {
-        HStack(spacing: 14) {
-            Image(systemName: state.iconName)
-                .font(.title)
-                .foregroundStyle(brandColor)
-                .frame(width: 36)
+        VStack(spacing: 12) {
+            HStack(spacing: 14) {
+                AppLogo(size: 40)
 
-            VStack(alignment: .leading, spacing: 2) {
                 Text(attributes.title)
                     .font(.headline)
-                Text(state.statusText)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+
+                Spacer(minLength: 8)
+
+                RemainingTime(state: state)
+                    .font(.system(size: 30, weight: .semibold))
+                    .foregroundStyle(state.phase == .end ? brandColor : .primary)
             }
 
-            Spacer(minLength: 8)
+            CycleProgress(attributes: attributes, state: state)
 
-            RemainingTime(state: state)
-                .font(.system(size: 30, weight: .semibold))
-                .foregroundStyle(state.phase == .end ? brandColor : .primary)
+            StatusFooter(state: state)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
+    }
+}
+
+/// Dynamic Island를 길게 눌러 펼쳤을 때의 아래쪽 내용.
+/// 위쪽 줄은 카메라 영역 양옆(로고, 남은 시간)에만 놓을 수 있어 비어 보이므로, 제목도 아래쪽에 한 줄로 둔다
+private struct ExpandedBottom: View {
+    let attributes: DryerActivityAttributes
+    let state: DryerActivityAttributes.ContentState
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(attributes.title)
+                .font(.headline)
+                .foregroundStyle(brandColor)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+
+            CycleProgress(attributes: attributes, state: state)
+
+            // 맨 아래 줄은 Dynamic Island의 둥근 모서리에 걸리므로 좌우로 들여 쓴다
+            StatusFooter(state: state)
+                .padding(.horizontal, 10)
+        }
+        .padding(.top, 4)
+        .padding(.bottom, 12)
     }
 }
 
@@ -100,28 +178,22 @@ struct DryerLiveActivity: Widget {
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                    Label(context.attributes.title, systemImage: context.state.iconName)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(brandColor)
+                    AppLogo(size: 38)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
                     RemainingTime(state: context.state)
-                        .font(.title2.weight(.semibold))
+                        .font(.system(size: 34, weight: .semibold))
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    Text(context.state.statusText)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                    ExpandedBottom(attributes: context.attributes, state: context.state)
                 }
             } compactLeading: {
-                Image(systemName: context.state.iconName)
-                    .foregroundStyle(brandColor)
+                AppLogo(size: 22)
             } compactTrailing: {
                 RemainingTime(state: context.state)
                     .frame(maxWidth: 52)
             } minimal: {
-                Image(systemName: context.state.iconName)
-                    .foregroundStyle(brandColor)
+                AppLogo(size: 22)
             }
             .keylineTint(brandColor)
         }
@@ -131,7 +203,12 @@ struct DryerLiveActivity: Widget {
 // MARK: - Xcode Preview (Canvas에서 잠금화면/Dynamic Island를 상태별로 확인한다)
 
 #if DEBUG
-private let previewAttributes = DryerActivityAttributes(machineUuid: "preview", title: "A동 건조기 3번")
+/// 사용을 시작한 지 30분이 지난 것으로 보여준다
+private let previewAttributes = DryerActivityAttributes(
+    machineUuid: "preview",
+    title: "A동 건조기 3번",
+    startedAt: Date().addingTimeInterval(-30 * 60).timeIntervalSince1970
+)
 
 private func previewState(
     _ state: String,
@@ -163,6 +240,8 @@ private func previewState(
     DryerLiveActivity()
 } contentStates: {
     previewState("RUNNING", minutes: 42)
+    previewState("COOLING", minutes: 8)
+    previewState("DETECTING")
     previewState("END")
 }
 

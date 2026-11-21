@@ -30,6 +30,8 @@ export type LiveActivityStartOptions = {
   machineUuid: string;
   /** "A동 건조기 3번"처럼 화면에 그대로 보여줄 이름 */
   title: string;
+  /** 사용 시작 시각(epoch 초). 진행 막대의 시작점이며 activity를 처음 만들 때만 쓰인다 */
+  startedAt: number;
 } & LiveActivityContentState;
 
 export type LiveActivityPushTokenEvent = {

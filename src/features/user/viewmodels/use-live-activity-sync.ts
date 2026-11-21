@@ -12,6 +12,7 @@ import { ApiPaths, LiveActivityEnvironment } from '../models';
 import {
   liveActivityTargetKey,
   toLiveActivityContentState,
+  toStartedAtSeconds,
   type LiveActivityTarget,
 } from './live-activity-state';
 
@@ -88,6 +89,7 @@ export function useLiveActivitySync(targets: readonly LiveActivityTarget[]) {
       startLiveActivity({
         machineUuid: target.machineUuid,
         title: target.title,
+        startedAt: toStartedAtSeconds(target.startedAt, now),
         ...toLiveActivityContentState(target, now),
       }).catch(() => {
         // 사용자가 설정에서 Live Activity를 껐거나 동시에 너무 많이 떠 있는 경우. 앱 사용에는 영향이 없다

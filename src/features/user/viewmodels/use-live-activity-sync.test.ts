@@ -42,6 +42,7 @@ vi.mock('../models', () => ({
 const target: LiveActivityTarget = {
   machineUuid: 'machine-1',
   title: 'A동 건조기 3번',
+  startedAt: new Date().toISOString(),
   status: 'RUNNING',
   thinqCurrentState: 'RUNNING',
   remainingMinutes: 20,
@@ -75,6 +76,7 @@ describe('useLiveActivitySync', () => {
       expect.objectContaining({
         machineUuid: 'machine-1',
         title: 'A동 건조기 3번',
+        startedAt: expect.any(Number),
         state: 'RUNNING',
         remainingMinutes: 20,
       }),
