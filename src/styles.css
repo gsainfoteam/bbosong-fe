@@ -142,6 +142,9 @@ html {
   --animate-wave: wave 3.2s linear infinite;
   --animate-wave-back: wave 5.6s linear infinite reverse;
   --animate-shine: shine 2.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+
+  /* 시트와 대화상자가 들고 날 때. 빠르게 출발해 길게 멈춰, 손을 떼면 놓인 자리로 미끄러지듯 들어간다. */
+  --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 /* 물결 한 주기(22)만큼 옮겨야 반복이 이어 붙는다. 기기 그릇의 물결 파장과 같아야 한다. */

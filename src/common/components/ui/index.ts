@@ -1,3 +1,4 @@
+export * from './bottom-sheet/index';
 export * from './brand-mark/index';
 export * from './button/index';
 export * from './checkbox/index';
