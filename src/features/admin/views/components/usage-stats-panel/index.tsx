@@ -12,6 +12,7 @@ import {
   type UsageStatsFilter,
 } from '../../../viewmodels';
 import { buttonClass, inputClass, panelClass, secondaryButtonClass } from '../../styles';
+import { useEnumLabels } from '../../use-enum-labels';
 
 const RANGES = [7, 14, 30, 90] as const satisfies readonly DailySessionStatsRange[];
 const DIMENSIONS = ['hour', 'weekday'] as const satisfies readonly UsageStatsDimension[];
@@ -28,6 +29,7 @@ export function UsageStatsPanel({
   isError,
 }: UsageStatsPanel.Props) {
   const { t } = useTranslation('admin');
+  const labels = useEnumLabels();
   const weekdayLabels = [
     t('weekdayMon'),
     t('weekdayTue'),
@@ -120,7 +122,7 @@ export function UsageStatsPanel({
           <option value="">{t('allGenders')}</option>
           {Object.values(Gender).map((value) => (
             <option key={value} value={value}>
-              {t(value)}
+              {labels.gender[value]}
             </option>
           ))}
         </select>
@@ -138,7 +140,7 @@ export function UsageStatsPanel({
           <option value="">{t('allTypes')}</option>
           {Object.values(MachineType).map((value) => (
             <option key={value} value={value}>
-              {t(value)}
+              {labels.machineType[value]}
             </option>
           ))}
         </select>

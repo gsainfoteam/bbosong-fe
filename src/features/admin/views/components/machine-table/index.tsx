@@ -14,6 +14,7 @@ import {
   isMachineThinqRemainingDetecting,
   useMachineTiming,
 } from '../../../viewmodels';
+import { useEnumLabels } from '../../use-enum-labels';
 
 export function MachineTable({
   machines,
@@ -23,6 +24,7 @@ export function MachineTable({
   showThinq = false,
 }: MachineTable.Props) {
   const { t, i18n } = useTranslation('admin');
+  const labels = useEnumLabels();
   const now = useMachineTiming((showTiming || showThinq) && machines.length > 0);
   const rows = machines.map((machine) => ({
     machine,
@@ -36,8 +38,6 @@ export function MachineTable({
     thinqRemaining: formatThinqRemainingParts(getMachineThinqRemainingMinutes(machine)),
     thinqDetecting: isMachineThinqRemainingDetecting(machine),
   }));
-  // Keep translations for API enum values during i18next extraction.
-  // t('WASHER'); t('DRYER'); t('MALE'); t('FEMALE');
   return (
     <div className="border-border overflow-x-auto rounded-xl border bg-white dark:border-slate-800 dark:bg-slate-900">
       <table className="w-full text-left text-sm">
@@ -72,7 +72,7 @@ export function MachineTable({
                 <td className="px-5 py-4">
                   <div
                     className="font-mono text-sm font-medium tracking-wide whitespace-nowrap"
-                    title={`${t('building', { location: machine.location })} · ${t(machine.gender)} · ${t(machine.type)} #${machine.index}`}
+                    title={`${t('building', { location: machine.location })} · ${labels.gender[machine.gender]} · ${labels.machineType[machine.type]} #${machine.index}`}
                   >
                     {formatMachineCode(machine)}
                   </div>
@@ -81,7 +81,7 @@ export function MachineTable({
                   </div>
                 </td>
                 <td className="px-5 py-4 whitespace-nowrap">
-                  {t('building', { location: machine.location })} · {t(machine.gender)}
+                  {t('building', { location: machine.location })} · {labels.gender[machine.gender]}
                 </td>
                 <td className="px-5 py-4 whitespace-nowrap">
                   <MachineStatusBadge isAvailable={machine.isAvailable} status={machine.status} />

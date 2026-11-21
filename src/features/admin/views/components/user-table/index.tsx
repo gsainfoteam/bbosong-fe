@@ -2,9 +2,11 @@ import { useTranslation } from 'react-i18next';
 
 import { type AdminUserWithSubscriptions } from '../../../viewmodels';
 import { secondaryButtonClass } from '../../styles';
+import { useEnumLabels } from '../../use-enum-labels';
 
 export function UserTable({ users, currentUserUuid, isPending, onSelect }: UserTable.Props) {
   const { t, i18n } = useTranslation('admin');
+  const labels = useEnumLabels();
   const formatDate = (value: string) => new Date(value).toLocaleString(i18n.resolvedLanguage);
   return (
     <div className="border-border overflow-x-auto rounded-xl border bg-white dark:border-slate-800 dark:bg-slate-900">
@@ -39,8 +41,8 @@ export function UserTable({ users, currentUserUuid, isPending, onSelect }: UserT
                 </div>
               </td>
               <td className="px-5 py-4 whitespace-nowrap">{user.studentNumber}</td>
-              <td className="px-5 py-4 whitespace-nowrap">{t(user.gender)}</td>
-              <td className="px-5 py-4 whitespace-nowrap">{t(user.role)}</td>
+              <td className="px-5 py-4 whitespace-nowrap">{labels.gender[user.gender]}</td>
+              <td className="px-5 py-4 whitespace-nowrap">{labels.role[user.role]}</td>
               <td className="px-5 py-4 whitespace-nowrap">{user.machineUsageCount}</td>
               <td className="min-w-64 px-5 py-4">
                 {user.pushSubscriptions.length ? (

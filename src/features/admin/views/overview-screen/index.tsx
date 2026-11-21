@@ -26,6 +26,7 @@ import {
   UsageStatsPanel,
 } from '../components';
 import { panelClass } from '../styles';
+import { useEnumLabels } from '../use-enum-labels';
 
 function RoomTypeStats({
   label,
@@ -77,6 +78,7 @@ namespace RoomTypeStats {
 
 export function AdminOverviewScreen() {
   const { t } = useTranslation('admin');
+  const labels = useEnumLabels();
   const query = useAdminMachines();
   const [statsDays, setStatsDays] = useState<DailySessionStatsRange>(7);
   const [statsFilter, setStatsFilter] = useState<DailySessionStatsFilter>({});
@@ -191,7 +193,7 @@ export function AdminOverviewScreen() {
                   className="bg-bg rounded-lg p-4 dark:bg-slate-800"
                 >
                   <div className="mb-3 font-medium">
-                    {t('building', { location })} · {t(gender)}
+                    {t('building', { location })} · {labels.gender[gender]}
                   </div>
                   <div className="space-y-4">
                     {Object.values(MachineType).map((type) => {
@@ -201,7 +203,7 @@ export function AdminOverviewScreen() {
                       return (
                         <RoomTypeStats
                           key={type}
-                          label={t(type)}
+                          label={labels.machineType[type]}
                           available={typeStats.available}
                           running={typeStats.running}
                           registered={typeStats.registered}

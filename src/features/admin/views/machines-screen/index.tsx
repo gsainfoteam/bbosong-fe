@@ -37,9 +37,11 @@ import {
   ThinqRemaining,
 } from '../components';
 import { buttonClass, inputClass, secondaryButtonClass } from '../styles';
+import { useEnumLabels } from '../use-enum-labels';
 
 export function AdminMachinesScreen() {
   const { t, i18n } = useTranslation('admin');
+  const labels = useEnumLabels();
   const query = useAdminMachines();
   const actions = useAdminActions();
   const [mode, setMode] = useState<'single' | 'multiple' | null>(null);
@@ -270,7 +272,7 @@ export function AdminMachinesScreen() {
                 <select name="gender" className={inputClass}>
                   {Object.values(Gender).map((value) => (
                     <option key={value} value={value}>
-                      {t(value)}
+                      {labels.gender[value]}
                     </option>
                   ))}
                 </select>
@@ -289,7 +291,7 @@ export function AdminMachinesScreen() {
                 >
                   {Object.values(MachineType).map((value) => (
                     <option key={value} value={value}>
-                      {t(value)}
+                      {labels.machineType[value]}
                     </option>
                   ))}
                 </select>
@@ -542,8 +544,9 @@ export function AdminMachinesScreen() {
         >
           <p className="text-sm leading-6">
             {formatMachineCode(confirm.machine)} ·{' '}
-            {t('building', { location: confirm.machine.location })} · {t(confirm.machine.gender)} ·{' '}
-            {t(confirm.machine.type)} #{confirm.machine.index}
+            {t('building', { location: confirm.machine.location })} ·{' '}
+            {labels.gender[confirm.machine.gender]} · {labels.machineType[confirm.machine.type]} #
+            {confirm.machine.index}
           </p>
           <p className="text-text-secondary mt-3 text-sm leading-6 dark:text-slate-400">
             {confirm.action === 'delete' ? t('deleteConfirm') : t('commissionConfirm')}

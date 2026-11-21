@@ -3,9 +3,11 @@ import { useTranslation } from 'react-i18next';
 
 import { Gender, Location, MachineType, type useAdminMachines } from '../../../viewmodels';
 import { inputClass } from '../../styles';
+import { useEnumLabels } from '../../use-enum-labels';
 
 export function MachineFilters({ filters }: MachineFilters.Props) {
   const { t } = useTranslation('admin');
+  const labels = useEnumLabels();
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <label className="relative">
@@ -40,7 +42,7 @@ export function MachineFilters({ filters }: MachineFilters.Props) {
         <option value="">{t('allGenders')}</option>
         {Object.values(Gender).map((value) => (
           <option key={value} value={value}>
-            {t(value)}
+            {labels.gender[value]}
           </option>
         ))}
       </select>
@@ -53,7 +55,7 @@ export function MachineFilters({ filters }: MachineFilters.Props) {
         <option value="">{t('allTypes')}</option>
         {Object.values(MachineType).map((value) => (
           <option key={value} value={value}>
-            {t(value)}
+            {labels.machineType[value]}
           </option>
         ))}
       </select>
