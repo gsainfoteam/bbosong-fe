@@ -95,7 +95,8 @@ export async function unregisterPushDevice(endpoint: string) {
  */
 export async function registerNativePushDevice(platform: NativePushPlatform, token: string) {
   const { data, error } = await api.POST(ApiPaths.NotificationController_registerNativePush, {
-    body: { platform, token },
+    // Android 16 Live Update 알림은 아직 렌더링하지 않으므로 서버가 일반 완료/오류 푸시를 계속 보내도록 false로 등록한다
+    body: { platform, token, supportsLiveUpdate: false },
   });
 
   if (error) throw error;
