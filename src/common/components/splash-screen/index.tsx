@@ -1,5 +1,7 @@
 import { useLayoutEffect, useRef } from 'react';
 
+import { BrandMark } from '../ui';
+
 /**
  * 앱 부팅 중 보이는 스플래시. 로고가 위아래로 부드럽게 움직인다.
  *
@@ -7,7 +9,7 @@ import { useLayoutEffect, useRef } from 'react';
  * 애니메이션 시작 시각을 문서 타임라인 기준 0으로 고정해 위상을 전역 시간에 동기화한다.
  */
 export function SplashScreen({ className }: SplashScreen.Props) {
-  const logoRef = useRef<HTMLImageElement>(null);
+  const logoRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     const logo = logoRef.current;
@@ -21,15 +23,11 @@ export function SplashScreen({ className }: SplashScreen.Props) {
     <div
       role="status"
       aria-label="로딩 중"
-      className={`flex h-dvh items-center justify-center bg-white ${className ?? ''}`}
+      className={`bg-surface flex h-dvh items-center justify-center ${className ?? ''}`}
     >
-      <img
-        ref={logoRef}
-        src="/icon-512.png"
-        alt="로고"
-        className="motion-safe:animate-splash-bob size-32"
-        draggable={false}
-      />
+      <div ref={logoRef} className="motion-safe:animate-splash-bob">
+        <BrandMark size={112} />
+      </div>
     </div>
   );
 }

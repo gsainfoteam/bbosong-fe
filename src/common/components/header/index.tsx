@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/common/utils';
 
+import { BrandMark } from '../ui';
+
 const iconButton =
   'text-ink active:bg-soft grid size-11 place-items-center rounded-tile transition-colors disabled:cursor-not-allowed';
 
@@ -17,7 +19,7 @@ export const Header = ({ onRefresh, isRefreshing = false, className, ...props }:
       {...props}
     >
       <span className="flex items-center gap-[7px] text-[19px] font-extrabold tracking-[-0.03em]">
-        <BrandMark />
+        <BrandMark size={26} />
         {t('bbosong')}
       </span>
       <div className="flex items-center">
@@ -51,24 +53,6 @@ export const MyPageHeader = () => {
     </header>
   );
 };
-
-// 세탁기(원)와 건조기(둥근 사각)를 겹친 임시 마크. 로고가 정해지면 바꾼다.
-function BrandMark() {
-  return (
-    <svg width="24" height="18" viewBox="0 0 24 18" aria-hidden className="block">
-      <circle cx="8" cy="9" r="7.5" className="fill-sky-water" />
-      <rect
-        x="11"
-        y="2.5"
-        width="12.5"
-        height="12.5"
-        rx="3.6"
-        strokeWidth="1.6"
-        className="fill-orange-water stroke-white"
-      />
-    </svg>
-  );
-}
 
 export namespace Header {
   export type Props = {

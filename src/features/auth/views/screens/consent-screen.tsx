@@ -3,7 +3,7 @@ import type { SubmitEventHandler } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Checkbox, LanguageToggle } from '@/common/components';
+import { BrandMark, Button, Checkbox, LanguageToggle } from '@/common/components';
 import { cn } from '@/common/utils';
 
 export function ConsentScreen({
@@ -27,7 +27,7 @@ export function ConsentScreen({
       </div>
       <div className="mx-auto flex h-full w-full max-w-md flex-col">
         <div className="flex flex-1 flex-col items-center justify-center gap-4">
-          <img src="/icon-512.png" alt="logo" className="size-40" />
+          <BrandMark size={120} />
           <h1 className="text-display text-center leading-tight font-bold whitespace-pre-line">
             {t('consent.title')}
           </h1>

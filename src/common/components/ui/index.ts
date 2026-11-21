@@ -1,3 +1,4 @@
+export * from './brand-mark/index';
 export * from './button/index';
 export * from './checkbox/index';
 export * from './info-tooltip/index';
