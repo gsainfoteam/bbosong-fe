@@ -184,6 +184,17 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
+/* Tailwind v4 preflight는 버튼 커서를 default로 되돌린다. 요소마다 붙이면 빠뜨리므로 여기서 한 번에 준다.
+   base 레이어에 두어야 disabled:cursor-not-allowed 같은 유틸리티가 이긴다. */
+@layer base {
+  :is(button, select, summary, [role='button'], [role='radio'], [role='switch']):not(
+    :disabled,
+    [aria-disabled='true']
+  ) {
+    cursor: pointer;
+  }
+}
+
 /* View Transitions */
 
 .no-transition {
