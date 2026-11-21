@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { createFileRoute, Navigate, Outlet, useRouterState } from '@tanstack/react-router';
+import { createFileRoute, Outlet, useRouter, useRouterState } from '@tanstack/react-router';
 
 import { z } from 'zod';
 
@@ -25,14 +25,19 @@ export const Route = createFileRoute('/auth')({
 
 function Redirect() {
   const { redirect: redirectSearch, redirectUr } = Route.useSearch();
+  const router = useRouter();
   const redirectCache = useAuthRedirect((state) => state.redirect);
-  const [redirect] = useState(redirectSearch ?? redirectUr ?? redirectCache ?? '/');
+  const [redirect] = useState(() => {
+    const candidate = redirectSearch ?? redirectUr ?? redirectCache;
+    return candidate && redirectSearchSchema.safeParse(candidate).success ? candidate : '/';
+  });
 
   useEffect(() => {
+    void router.navigate({ href: redirect, replace: true });
     return () => useAuthRedirect.getState().clearRedirect();
-  }, []);
+  }, [router, redirect]);
 
-  return <Navigate to={redirect} replace />;
+  return <SplashScreen />;
 }
 
 function AuthLayout() {

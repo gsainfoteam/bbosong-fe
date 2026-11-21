@@ -5,7 +5,7 @@ import { useAuthContext } from 'react-oauth2-code-pkce';
 import { toast } from 'sonner';
 
 import { $api, markLoginCompleted } from '@/common/lib';
-import { useAuthPrompt, useAuthRedirect, useToken } from '@/features/auth';
+import { useAuthPrompt, useToken } from '@/features/auth';
 
 import { ApiPaths, type ConsentRequiredErrorDto, type GenderRequiredErrorDto } from '../../models';
 
@@ -20,10 +20,8 @@ export const useLogin = ({ showToast = false }: { showToast?: boolean } = {}) =>
       // 로그인이 최종 성공하면 더 이상 필요 없는 약관 요구 정보를 비운다
       useAuthPrompt.getState().setRequiredConsents(undefined);
       markLoginCompleted();
-
-      const { redirect, clearRedirect } = useAuthRedirect.getState();
-      clearRedirect();
-      navigate({ to: redirect ?? '/', replace: true });
+      // 원래 페이지 복귀는 /auth 레이아웃의 Redirect가 담당한다.
+      // 여기서 복귀 경로를 먼저 지우면 Redirect가 빈 값을 읽고 '/'로 이동해 버린다.
     },
     onError: (error) => {
       const err = error as
