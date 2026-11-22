@@ -11,10 +11,8 @@ const meta = {
   parameters: { layout: 'fullscreen' },
   globals: PHONE,
   args: {
-    header: {
-      onRefresh: () => console.log('Refresh'),
-      onRegister: () => console.log('Register'),
-    },
+    header: { onRefresh: () => console.log('Refresh') },
+    onRegister: () => console.log('Register'),
     myLaundry: {
       items: [
         { machine: myWasher, onUnregister: unregister },

@@ -28,11 +28,3 @@ export const Refreshing: Story = {
     isRefreshing: true,
   },
 };
-
-// 메인 화면에서 쓰는 조합
-export const WithRegister: Story = {
-  args: {
-    onRegister: () => console.log('Register'),
-    onRefresh: () => console.log('Refresh'),
-  },
-};

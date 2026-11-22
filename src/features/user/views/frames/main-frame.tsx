@@ -125,7 +125,6 @@ export function MainFrame() {
   const header = {
     onRefresh: () => void refresh(),
     isRefreshing,
-    onRegister: onOpenQrScan,
   };
 
   const toRoomNotification = (
@@ -210,6 +209,7 @@ export function MainFrame() {
         washers={current.filter((view) => view.type === 'washer')}
         dryers={current.filter((view) => view.type === 'dryer')}
         roomNotification={roomNotification}
+        onRegister={onOpenQrScan}
       />
       <RoomSheet {...roomSheet} />
     </>

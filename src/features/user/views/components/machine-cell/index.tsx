@@ -28,7 +28,7 @@ export function MachineCell({ machine, size = 66, className }: MachineCell.Props
       />
       <span
         className={cn(
-          'mt-[9px] text-[13px] leading-none tracking-[-0.01em] whitespace-nowrap',
+          'mt-[7px] text-[13px] leading-none tracking-[-0.01em] whitespace-nowrap',
           strong ? 'font-bold' : 'text-ink-2 font-medium',
           machine.state === 'idle' && IDLE_TEXT[machine.type],
         )}

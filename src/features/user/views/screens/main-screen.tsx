@@ -1,7 +1,7 @@
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, QrCode } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { Header } from '@/common/components';
+import { Button, Header } from '@/common/components';
 import { cn } from '@/common/utils';
 import { GetRoomNotificationButton, MachineList, MyLaundryCard } from '@/features/user';
 import { type MachineType, type MachineView } from '@/features/user/viewmodels';
@@ -21,8 +21,8 @@ function MachineSection({
   const free = machines.filter((machine) => machine.state === 'idle').length;
 
   return (
-    <section className="mt-6 [&+&]:mt-8">
-      <div className="mb-[22px] flex h-[22px] items-center justify-between">
+    <section className="mt-4.5 [&+&]:mt-6.5">
+      <div className="mb-5 flex h-5.5 items-center justify-between">
         <h2 className="text-[16px] font-extrabold tracking-[-0.02em]">
           {type === 'washer' ? t('washer') : t('dryer')}
         </h2>
@@ -51,21 +51,17 @@ export function MainScreen({
   washers,
   dryers,
   roomNotification,
+  onRegister,
   className,
 }: MainScreen.Props) {
-  const { t } = useTranslation('main');
+  const { t } = useTranslation(['main', 'common']);
   const solo = myLaundry.items.length === 1;
 
   return (
     <div className={cn('bg-soft flex min-h-dvh w-full flex-col', className)}>
-      {/* 헤더 위는 11px만 둔다. 폰에서는 바로 위에 상태 표시줄이 붙어 그 여백까지 더해 보인다. */}
       <Header {...header} />
-      {/*
-        간격은 헤더의 보이는 끝(등록 버튼 아래, 헤더 끝보다 11px 위)에서 잰다.
-        그래야 헤더→카드와 카드→시트 간격이 눈으로 같아진다. 카드가 없으면 시트가 그 자리를 잇는다.
-      */}
       {myLaundry.items.length > 0 && (
-        <div className={cn('mt-[11px] grid gap-2.5 px-5', solo ? 'grid-cols-1' : 'grid-cols-2')}>
+        <div className={cn('-mt-0.5 grid gap-2.5 px-5', solo ? 'grid-cols-1' : 'grid-cols-2')}>
           {myLaundry.items.map(({ machine, onUnregister, isUnregistering }) => (
             <MyLaundryCard
               key={machine.uuid}
@@ -81,8 +77,8 @@ export function MainScreen({
       )}
       <div
         className={cn(
-          'bg-surface rounded-t-sheet flex-1 px-5 pt-6 pb-[max(24px,env(safe-area-inset-bottom))]',
-          myLaundry.items.length > 0 ? 'mt-[22px]' : 'mt-[11px]',
+          'bg-surface rounded-t-sheet flex-1 px-5 pt-5 pb-[calc(max(24px,env(safe-area-inset-bottom,0px)+6px)+80px)]',
+          myLaundry.items.length > 0 ? 'mt-4' : '-mt-0.5',
         )}
       >
         <button
@@ -90,13 +86,26 @@ export function MainScreen({
           aria-haspopup="dialog"
           aria-label={t('roomCurrent', { room: room.title })}
           onClick={room.onOpen}
-          className="flex h-[26px] items-center gap-0.5 text-[21px] font-extrabold tracking-[-0.03em]"
+          className="flex h-6.5 items-center gap-0.5 text-[21px] font-extrabold tracking-[-0.03em]"
         >
           {room.title}
-          <ChevronDown size={20} className="text-ink-3 mt-[3px]" aria-hidden />
+          <ChevronDown size={20} className="text-ink-3 mt-0.75" aria-hidden />
         </button>
         <MachineSection type="washer" machines={washers} notification={roomNotification.washer} />
         <MachineSection type="dryer" machines={dryers} notification={roomNotification.dryer} />
+      </div>
+      <div className="pb-cta from-surface pointer-events-none fixed inset-x-0 bottom-0 mx-auto w-full max-w-120 bg-linear-to-t from-55% to-transparent px-5 pt-10">
+        <Button
+          type="button"
+          size="l"
+          wide
+          float
+          onClick={onRegister}
+          className="pointer-events-auto"
+        >
+          <QrCode size={20} aria-hidden />
+          {t('common:registerLabel')}
+        </Button>
       </div>
     </div>
   );
@@ -123,6 +132,7 @@ export namespace MainScreen {
     washers: MachineView[];
     dryers: MachineView[];
     roomNotification: Record<MachineType, GetRoomNotificationButton.Props>;
+    onRegister: () => void;
     className?: string;
   };
 }
