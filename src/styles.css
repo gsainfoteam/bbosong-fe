@@ -66,6 +66,11 @@ html {
   --text-heading--line-height: 1.35;
   --text-heading--letter-spacing: -0.025em;
 
+  --text-section: 16px; /* 목록 섹션 머리 */
+  --text-section--font-weight: 800;
+  --text-section--line-height: 1.4;
+  --text-section--letter-spacing: -0.02em;
+
   --text-body-strong: 15px;
   --text-body-strong--font-weight: 700;
   --text-body-strong--line-height: 1.6;

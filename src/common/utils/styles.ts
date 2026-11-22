@@ -5,6 +5,7 @@ import { createTV } from 'tailwind-variants';
 const tokens = [
   'text-display',
   'text-heading',
+  'text-section',
   'text-body-strong',
   'text-body-lg',
   'text-body',

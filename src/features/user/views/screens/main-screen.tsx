@@ -3,8 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { Header } from '@/common/components';
 import { cn } from '@/common/utils';
 import {
-  GetRoomNotificationButton,
+  type GetRoomNotificationButton,
   MachineList,
+  MachineSectionHeader,
   SelectBuilding,
   UsingMachineList,
 } from '@/features/user';
@@ -39,21 +40,23 @@ export function MainScreen({
           className={selectBuilding.className}
         />
         <div>
-          <div className="mb-4 flex items-center justify-between">
-            <p>{t('washer')}</p>
-            {washers.filter((i) => i.status === 'idle').length === 0 && (
-              <GetRoomNotificationButton {...roomNotification.washer} />
-            )}
-          </div>
+          <MachineSectionHeader
+            title={t('washer')}
+            machineType="washer"
+            freeCount={washers.filter((i) => i.status === 'idle').length}
+            roomNotification={roomNotification.washer}
+            className="mb-5"
+          />
           <MachineList machines={washers} className={machines.className} />
         </div>
         <div>
-          <div className="mb-4 flex items-center justify-between">
-            <p>{t('dryer')}</p>
-            {dryers.filter((i) => i.status === 'idle').length === 0 && (
-              <GetRoomNotificationButton {...roomNotification.dryer} />
-            )}
-          </div>
+          <MachineSectionHeader
+            title={t('dryer')}
+            machineType="dryer"
+            freeCount={dryers.filter((i) => i.status === 'idle').length}
+            roomNotification={roomNotification.dryer}
+            className="mb-5"
+          />
           <MachineList machines={dryers} className={machines.className} />
         </div>
       </div>

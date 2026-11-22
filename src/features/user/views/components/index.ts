@@ -5,6 +5,7 @@ export * from './machine-box/index';
 export * from './machine-completion-dialog/index';
 export * from './machine-list/index';
 export * from './machine-register-message/index';
+export * from './machine-section-header/index';
 export * from './select-building/index';
 export * from './using-machine-box/index';
 export * from './using-machine-list/index';

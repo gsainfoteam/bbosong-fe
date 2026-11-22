@@ -67,7 +67,7 @@ export namespace Button {
   export type Props = {
     /** 주 버튼은 화면당 하나, 보조/외곽선은 부가 동작, 위험은 되돌릴 수 없을 때만 쓴다. */
     variant?: NonNullable<VariantProps<typeof Button.styles>['variant']>;
-    /** l 56 · m 48 · s 36 */
+    /** l 56 · m 48 · s 36 · xs 28(알약) */
     size?: NonNullable<VariantProps<typeof Button.styles>['size']>;
     /** 처리 중. 폭은 그대로 두고 스피너와 글자만 바뀌도록 children을 바꿔 넘긴다. */
     loading?: boolean;
@@ -110,6 +110,9 @@ export namespace Button {
         // 색 있는 면(배너) 위에서는 같은 계열의 흰 버튼을 쓴다.
         'tone-washer': 'bg-surface text-sky-ink ring-sky-ink/18 ring-1',
         'tone-dryer': 'bg-surface text-orange-ink ring-orange-ink/18 ring-1',
+        // 기기 색 면 + 같은 계열 글자. 눌려 있으면(aria-pressed) 먹색으로 켜진다.
+        'soft-washer': 'bg-sky-tint text-sky-ink aria-pressed:bg-ink aria-pressed:text-white',
+        'soft-dryer': 'bg-orange-tint text-orange-ink aria-pressed:bg-ink aria-pressed:text-white',
         text: 'text-ink2 bg-transparent font-medium',
         'text-danger': 'text-danger bg-transparent',
       },
@@ -117,6 +120,8 @@ export namespace Button {
         l: 'rounded-button-lg text-button-lg h-14 gap-2 px-4.5',
         m: 'rounded-button text-body-strong h-12 gap-2 px-4.5',
         s: 'rounded-chip text-label h-9 gap-1.5 px-3',
+        /** 섹션 머리 옆 알약 버튼 */
+        xs: 'text-caption h-7 gap-1 rounded-full px-2.5 font-bold',
       },
     },
     compoundVariants: [

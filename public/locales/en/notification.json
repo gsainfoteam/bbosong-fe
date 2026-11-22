@@ -18,6 +18,7 @@
     "request": "Request alert",
     "requestDescription": "We'll let you know once when a {{type}} becomes available in the laundry room you're viewing.",
     "requested": "We'll let you know when a {{type}} frees up.",
+    "requestPill": "Notify me",
     "requestShort": "Notify me",
     "requestTitle": "Get notified when a {{type}} frees up?",
     "washer": "washer"
