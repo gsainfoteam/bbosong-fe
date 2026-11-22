@@ -34,7 +34,7 @@ const config: CapacitorConfig = {
     FirebaseMessaging: { presentationOptions: ['alert', 'sound'] },
     // Android 포그라운드 로컬 알림의 상태바 아이콘. 지정하지 않으면 시스템 기본 아이콘이 쓰인다.
     // 원격 알림용 아이콘(AndroidManifest의 default_notification_icon)과 같은 리소스를 쓴다
-    LocalNotifications: { smallIcon: 'ic_stat_notification', iconColor: '#4F7DF3' },
+    LocalNotifications: { smallIcon: 'ic_stat_notification', iconColor: '#1B1D21' },
     // 웹 앱이 준비될 때까지 스플래시를 유지한다. 숨기는 시점은 app.tsx의 SessionRouter에서 제어한다
     SplashScreen: { launchAutoHide: false, backgroundColor: '#ffffff' },
   },

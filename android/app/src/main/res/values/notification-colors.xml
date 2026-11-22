@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- 알림 상태바 아이콘 색. styles.css의 color-primary 토큰과 맞춘다 -->
-    <color name="notification_color">#4F7DF3</color>
+    <!-- 푸시 알림 기본 색. 브랜드 색은 기기 맥락에만 쓰므로 기기와 무관한 알림은 먹색(ink 토큰)이다 -->
+    <color name="notification_color">#1B1D21</color>
+
+    <!-- 세탁/건조 Live Update 색. styles.css의 sky-deep / orange-deep / ink3 토큰과 같은 값 -->
+    <color name="live_update_washer">#3CC3EC</color>
+    <color name="live_update_dryer">#F7953E</color>
+    <color name="live_update_off">#9A9DA4</color>
 </resources>
