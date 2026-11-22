@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import { AnimatePresence, motion, type PanInfo } from 'motion/react';
 import { useTranslation } from 'react-i18next';
@@ -16,27 +16,20 @@ import {
   type PushPermissionStatus,
 } from '@/features/push-notification';
 import {
-  toMachineView,
-  useFindMachines,
   useFindMyMachine,
   useFindUserProfile,
   useLiveActivitySync,
-  useNowTick,
+  useMachineViews,
   useRefreshMainData,
 } from '@/features/user/viewmodels';
 
 import { type GetRoomNotificationButton, RoomSheet } from '../components';
 import { MainScreen } from '../screens';
 import { QrScanFrame } from './qr-scan-frame';
+import { type Location, useRoomSelection } from './use-room-selection';
 
 const SHEET_CLOSE_OFFSET = 120;
 const SHEET_CLOSE_VELOCITY = 500;
-
-const LOCATIONS = ['a', 'b'] as const;
-
-type Location = (typeof LOCATIONS)[number];
-
-const isLocation = (value: unknown): value is Location => LOCATIONS.includes(value as Location);
 
 const ALERT_LOCATION: Record<Location, AlertLocation> = {
   a: AlertLocation.A,
@@ -70,7 +63,6 @@ const toAlertBlocker = (
 export function MainFrame() {
   const { t } = useTranslation('error');
   const { t: tNotification } = useTranslation('notification');
-  const { t: tMain } = useTranslation(['main', 'location']);
 
   const {
     user,
@@ -111,55 +103,22 @@ export function MainFrame() {
     if (offset.y > SHEET_CLOSE_OFFSET || velocity.y > SHEET_CLOSE_VELOCITY) onCloseQrScan();
   };
 
-  const [isRoomSheetOpen, setIsRoomSheetOpen] = useState(false);
-
-  const [currentLocation, setCurrentLocation] = useState<Location>(() => {
-    const savedLocation = localStorage.getItem('location');
-    return isLocation(savedLocation) ? savedLocation : 'a';
-  });
-
   const {
-    data: allMachines,
+    views,
     isLoading: isAllMachinesLoading,
     isError: isAllMachinesError,
     refetch: refetchAllMachines,
-  } = useFindMachines();
-
-  const hasUsingMachines = useMemo(
-    () => (allMachines ?? []).some((machine) => machine.status !== 'IDLE'),
-    [allMachines],
-  );
-  const now = useNowTick(hasUsingMachines);
-
-  useEffect(() => {
-    localStorage.setItem('location', currentLocation);
-  }, [currentLocation]);
+  } = useMachineViews(usingMachines);
 
   const isLoading = isUserLoading || isUsingMachinesLoading || isAllMachinesLoading;
   const isError = isUserError || isUsingMachinesError || isAllMachinesError;
 
-  const onSelectLocation = (item: string) => {
-    if (isLocation(item)) setCurrentLocation(item);
-    setIsRoomSheetOpen(false);
-  };
-
-  const views = useMemo(() => {
-    const mine = new Set(usingMachines.map((usage) => usage.machineUuid));
-    return (allMachines ?? [])
-      .map((machine) => toMachineView(machine, now, mine))
-      .sort((a, b) => a.id - b.id);
-  }, [allMachines, usingMachines, now]);
-
-  // 성별마다 세탁실이 따로라, 내 성별의 A동·B동만 고른다.
-  const roomViews = (location: Location) =>
-    views.filter((view) => view.location === location && view.gender === user?.gender);
-  const current = roomViews(currentLocation);
-
-  const roomLabel = (location: Location) =>
-    tMain('roomTile', {
-      location: tMain(location === 'a' ? 'location:a_long' : 'location:b_long'),
-      gender: user?.gender === 'female' ? tMain('female') : tMain('male'),
-    });
+  const {
+    location: currentLocation,
+    current,
+    room,
+    sheet: roomSheet,
+  } = useRoomSelection(views, user?.gender);
 
   const myLaundry = {
     items: usingMachines.flatMap((usage) => {
@@ -174,27 +133,6 @@ export function MainFrame() {
         ? pushPermissionStatus
         : undefined,
   };
-
-  const room = {
-    title: tMain('roomTitle', {
-      location: tMain(currentLocation === 'a' ? 'location:a_long' : 'location:b_long'),
-      gender: user?.gender === 'female' ? tMain('female') : tMain('male'),
-    }),
-    onOpen: () => setIsRoomSheetOpen(true),
-  };
-
-  const rooms: RoomSheet.Room[] = LOCATIONS.map((location) => {
-    const list = roomViews(location);
-    const freeOf = (type: string) =>
-      list.filter((view) => view.type === type && view.state === 'idle').length;
-    return {
-      location,
-      label: roomLabel(location),
-      freeWashers: freeOf('washer'),
-      freeDryers: freeOf('dryer'),
-      selected: location === currentLocation,
-    };
-  });
 
   const header = {
     onRefresh: () => void refresh(),
@@ -285,12 +223,7 @@ export function MainFrame() {
         dryers={current.filter((view) => view.type === 'dryer')}
         roomNotification={roomNotification}
       />
-      <RoomSheet
-        open={isRoomSheetOpen}
-        rooms={rooms}
-        onSelect={onSelectLocation}
-        onClose={() => setIsRoomSheetOpen(false)}
-      />
+      <RoomSheet {...roomSheet} />
       <AnimatePresence>
         {isQrOpen && (
           <>

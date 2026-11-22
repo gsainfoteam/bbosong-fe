@@ -46,19 +46,27 @@ function resolveLiveRemaining(machine: MachineListItem, now: number) {
   return { minutes: Math.max(0, Math.ceil((endsAt - now) / 60_000)), endsAt };
 }
 
+export function toMachineIdentity(
+  machine: Pick<MachineListItem, 'uuid' | 'type' | 'location' | 'gender' | 'index'>,
+) {
+  return {
+    uuid: machine.uuid,
+    type: (machine.type === 'DRYER' ? 'dryer' : 'washer') as MachineType,
+    location: (machine.location === 'B' ? 'b' : 'a') as MachineLocation,
+    gender: machine.gender.toLowerCase(),
+    id: machine.index,
+  } satisfies Partial<MachineView>;
+}
+
 export function toMachineView(
   machine: MachineListItem,
   now: number,
   myMachineUuids: ReadonlySet<string>,
 ): MachineView {
-  const type: MachineType = machine.type === 'DRYER' ? 'dryer' : 'washer';
+  const identity = toMachineIdentity(machine);
   const base = {
-    uuid: machine.uuid,
-    type,
-    location: (machine.location === 'B' ? 'b' : 'a') as MachineLocation,
-    gender: machine.gender.toLowerCase(),
-    id: machine.index,
-    phase: toPhase(type, machine.thinqCurrentState),
+    ...identity,
+    phase: toPhase(identity.type, machine.thinqCurrentState),
     mine: myMachineUuids.has(machine.uuid),
     level: 0,
   };
