@@ -16,7 +16,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-/** 44 · 누르면 soft 면이 깔린다. */
+/** 44 · 누르면 먹색이 옅게 깔린다. 흰 바탕과 회색 바탕 모두에서 눌림이 보인다. */
 export const Default: Story = {
   render: (args) => (
     <div className="flex gap-1.5">

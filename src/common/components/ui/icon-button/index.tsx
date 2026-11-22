@@ -19,7 +19,8 @@ export function IconButton({
       aria-label={label}
       className={cn(
         'text-ink rounded-tile inline-grid size-11 shrink-0 cursor-pointer place-items-center bg-transparent',
-        'active:bg-soft transition duration-120 active:scale-[0.97]',
+        // 눌림은 바탕과 상관없이 보이도록 먹색을 옅게 깐다. (회색 바탕 위에서 soft 면은 구분되지 않는다)
+        'active:bg-ink/8 transition duration-120 active:scale-[0.97]',
         'focus-visible:outline-ink focus-visible:outline-2 focus-visible:outline-offset-2',
         'disabled:text-ink3 disabled:cursor-not-allowed',
         className,
