@@ -36,6 +36,7 @@ vi.mock('@/common/components', () => ({
   Loading: () => <p>restoring</p>,
   SplashScreen: () => <p>restoring</p>,
   StoreDownloadModal: () => null,
+  Toaster: () => null,
 }));
 vi.mock('@/common/pages', () => ({ ErrorPage: () => null, NotFoundPage: () => null }));
 vi.mock('sonner', () => ({ Toaster: () => null }));

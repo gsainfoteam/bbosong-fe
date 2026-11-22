@@ -7,4 +7,5 @@ export * from './nav-bar/index';
 export * from './sheet/index';
 export * from './splash-screen/index';
 export * from './store-download-modal/index';
+export * from './toaster/index';
 export * from './ui/index';

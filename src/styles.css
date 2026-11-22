@@ -176,6 +176,7 @@ html {
   --shadow-dialog: 0 24px 60px -20px rgb(27 29 33 / 0.45); /* 다이얼로그 */
   --shadow-sheet: 0 -12px 40px -16px rgb(27 29 33 / 0.3); /* 아래 시트 */
   --shadow-float: 0 14px 26px -14px rgb(27 29 33 / 0.7); /* 떠 있는 버튼 */
+  --shadow-toast: 0 12px 28px -12px rgb(27 29 33 / 0.6); /* 토스트 */
   --shadow-knob: 0 1px 3px rgb(27 29 33 / 0.25); /* 스위치 손잡이 */
   --shadow-segment: 0 1px 3px rgb(27 29 33 / 0.12); /* 세그먼트 선택 칸 */
 }
