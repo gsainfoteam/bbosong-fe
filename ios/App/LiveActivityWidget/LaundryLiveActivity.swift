@@ -95,12 +95,13 @@ private struct MachineChip: View {
     let state: LaundryActivityAttributes.ContentState
     var size: CGFloat
     var glyph: ChipGlyph = .number
+    var round = false
 
     private var fill: Color { state.phase == .error ? Palette.off : attributes.color }
 
     @ViewBuilder
     private var shape: some View {
-        if attributes.machineKind == .washer {
+        if round || attributes.machineKind == .washer {
             Circle().fill(fill)
         } else {
             RoundedRectangle(cornerRadius: size * 0.27, style: .continuous).fill(fill)
@@ -287,11 +288,13 @@ private struct Subline: View {
     }
 }
 
-// MARK: - 잠금화면
+// MARK: - 잠금화면 · 펼친 Dynamic Island
 
-private struct LockScreenView: View {
+private struct ActivityRow: View {
     let attributes: LaundryActivityAttributes
     let state: LaundryActivityAttributes.ContentState
+    /// Dynamic Island는 항상 어두운 면이라 글자색을 직접 정한다
+    var onIsland = false
 
     var body: some View {
         let bar = CycleBar(attributes: attributes, state: state)
@@ -303,11 +306,12 @@ private struct LockScreenView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Headline(attributes: attributes, state: state)
                         .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(onIsland ? AnyShapeStyle(.white) : AnyShapeStyle(.primary))
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                     Subline(attributes: attributes, state: state)
                         .font(.system(size: 13))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(onIsland ? AnyShapeStyle(.white.opacity(0.6)) : AnyShapeStyle(.secondary))
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                 }
@@ -315,47 +319,15 @@ private struct LockScreenView: View {
                 Spacer(minLength: 8)
 
                 TimeLabel(attributes: attributes, state: state, size: 32)
+                    .foregroundStyle(onIsland ? AnyShapeStyle(attributes.waterColor) : AnyShapeStyle(.primary))
             }
 
             if bar.isVisible { bar }
         }
-        .padding(16)
     }
 }
 
 // MARK: - Dynamic Island
-
-/// Dynamic Island는 항상 어두운 면이라 글자색을 직접 정한다
-private struct ExpandedBottom: View {
-    let attributes: LaundryActivityAttributes
-    let state: LaundryActivityAttributes.ContentState
-
-    var body: some View {
-        let bar = CycleBar(attributes: attributes, state: state)
-
-        VStack(alignment: .leading, spacing: 3) {
-            Headline(attributes: attributes, state: state)
-                .font(.system(size: 16, weight: .bold))
-                .foregroundStyle(.white)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-            Subline(attributes: attributes, state: state)
-                .font(.system(size: 13))
-                .foregroundStyle(.white.opacity(0.6))
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-
-            if bar.isVisible {
-                bar.padding(.top, 9)
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        // 맨 아래 줄은 Dynamic Island의 둥근 모서리에 걸리므로 좌우로 들여 쓴다
-        .padding(.horizontal, 10)
-        .padding(.top, 4)
-        .padding(.bottom, 12)
-    }
-}
 
 /// 컴팩트 오른쪽. 끝나면 시간 대신 "끝", 시간을 모르면 아무것도 두지 않는다
 private struct CompactTrailing: View {
@@ -379,8 +351,7 @@ private struct CompactTrailing: View {
     }
 }
 
-/// 최소. 진행률을 보여줄 수 있는 건조기는 진행 고리 안에 흰 번호만 두고,
-/// 진행률이 없는 세탁기는 색칠된 원(칩) 안에 번호를 둔다.
+/// 최소. 끝나는 시각을 알면 진행 고리 안에 흰 번호만 두고, 모르면 칩을 둔다.
 private struct MinimalView: View {
     let attributes: LaundryActivityAttributes
     let state: LaundryActivityAttributes.ContentState
@@ -410,7 +381,8 @@ private struct MinimalView: View {
             }
             .frame(width: 26, height: 26)
         } else {
-            MachineChip(attributes: attributes, state: state, size: 26)
+            // 최소형 자리가 원이라 건조기의 둥근 사각을 넣으면 모서리만 삐죽 남는다
+            MachineChip(attributes: attributes, state: state, size: 26, round: true)
         }
     }
 }
@@ -418,23 +390,18 @@ private struct MinimalView: View {
 struct LaundryLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: LaundryActivityAttributes.self) { context in
-            LockScreenView(attributes: context.attributes, state: context.state)
+            ActivityRow(attributes: context.attributes, state: context.state)
+                .padding(16)
                 .activityBackgroundTint(Color(.systemBackground).opacity(0.9))
                 .activitySystemActionForegroundColor(context.attributes.color)
         } dynamicIsland: { context in
             DynamicIsland {
-                DynamicIslandExpandedRegion(.leading) {
-                    // 섬의 왼쪽 위는 둥글게 마스크되어 가장자리에 붙이면 칩 모서리가 깎인다. 안쪽으로 들인다
-                    MachineChip(attributes: context.attributes, state: context.state, size: 44)
-                        .padding(.leading, 8)
-                        .padding(.top, 6)
-                }
-                DynamicIslandExpandedRegion(.trailing) {
-                    TimeLabel(attributes: context.attributes, state: context.state, size: 34)
-                        .foregroundStyle(context.attributes.waterColor)
-                }
                 DynamicIslandExpandedRegion(.bottom) {
-                    ExpandedBottom(attributes: context.attributes, state: context.state)
+                    ActivityRow(attributes: context.attributes, state: context.state, onIsland: true)
+                        // 섬의 모서리가 둥글게 깎이므로 가장자리에서 들여 쓴다.
+                        // 위는 카메라 줄만큼 비므로 아래를 더 띄워야 내용이 위로 붙어 보이지 않는다.
+                        .padding(.horizontal, 10)
+                        .padding(.bottom, 20)
                 }
             } compactLeading: {
                 MachineChip(
