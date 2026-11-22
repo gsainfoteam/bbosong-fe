@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="live_update_channel_name">Laundry progress</string>
+    <string name="live_update_washing">Washing</string>
+    <string name="live_update_drying">Drying</string>
+    <string name="live_update_cooling">Cooling down</string>
+    <string name="live_update_paused">Paused</string>
+    <string name="live_update_calculating">Calculating time left</string>
+    <string name="live_update_almost_done">Almost done</string>
+    <string name="live_update_washer_done">Washing is done</string>
+    <string name="live_update_dryer_done">Drying is done</string>
+    <string name="live_update_error">Something went wrong</string>
+</resources>
