@@ -425,7 +425,10 @@ struct LaundryLiveActivity: Widget {
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
+                    // 섬의 왼쪽 위는 둥글게 마스크되어 가장자리에 붙이면 칩 모서리가 깎인다. 안쪽으로 들인다
                     MachineChip(attributes: context.attributes, state: context.state, size: 44)
+                        .padding(.leading, 8)
+                        .padding(.top, 6)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
                     TimeLabel(attributes: context.attributes, state: context.state, size: 34)
