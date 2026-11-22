@@ -4,9 +4,9 @@ import { useNavigate, useParams } from '@tanstack/react-router';
 
 import { useTranslation } from 'react-i18next';
 
-import { Button, Sheet } from '@/common/components';
+import { Sheet } from '@/common/components';
 import { PushPermissionCard, usePushPermission } from '@/features/push-notification';
-import { MachineCompletionDialog, MachineRegisterScreen } from '@/features/user';
+import { MachineBox, MachineCompletionDialog, MachineRegisterScreen } from '@/features/user';
 import { useFindMachineByUuid, useRegisterMachine } from '@/features/user/viewmodels';
 
 export function MachineRegisterFrame() {
@@ -83,10 +83,24 @@ export function MachineRegisterFrame() {
         aria-label={t('permission.completionTitle')}
         onCancel={closePermission}
       >
-        <PushPermissionCard presentation="sheet" />
-        <Button type="button" onClick={closePermission} variant="text" className="mt-3 w-full">
-          {t('permission.later')}
-        </Button>
+        <PushPermissionCard
+          presentation="sheet"
+          onLater={closePermission}
+          art={
+            // 방금 등록한 기기를 내 빨래 표식과 함께 보여 준다
+            <MachineBox
+              machine={{
+                ...machineData,
+                status: 'using',
+                mine: true,
+                elapsedMinutes: 20,
+                remainingDisplay: { kind: 'minutes', minutes: 80 },
+              }}
+              showCaption={false}
+              className="w-18"
+            />
+          }
+        />
       </Sheet>
     </>
   );
