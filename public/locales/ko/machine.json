@@ -10,6 +10,8 @@
   "dryer": "건조기",
   "elapsedHourMinute": "{{hours}}시간 {{minutes}}분째",
   "elapsedMinute": "{{minutes}}분째",
+  "emptyDryer": "이 세탁실에는 건조기가 없어요",
+  "emptyWasher": "이 세탁실에는 세탁기가 없어요",
   "endsAt": "{{time}} 종료",
   "free": "빈 자리 {{n}}",
   "hourMinute": "{{hours}}시간 {{minutes}}분",

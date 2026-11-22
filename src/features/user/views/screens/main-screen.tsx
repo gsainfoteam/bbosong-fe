@@ -26,20 +26,28 @@ function MachineSection({
         <h2 className="text-[16px] font-extrabold tracking-[-0.02em]">
           {type === 'washer' ? t('washer') : t('dryer')}
         </h2>
-        <span className="flex items-center gap-2.5">
-          {free > 0 ? (
-            <span className={cn('text-[13px] font-bold', FREE_TEXT[type])}>
-              {t('free', { n: String(free) })}
-            </span>
-          ) : (
-            <>
-              <span className="text-ink-3 text-[13px] font-medium">{t('noFree')}</span>
-              <GetRoomNotificationButton {...notification} />
-            </>
-          )}
-        </span>
+        {machines.length > 0 && (
+          <span className="flex items-center gap-2.5">
+            {free > 0 ? (
+              <span className={cn('text-[13px] font-bold', FREE_TEXT[type])}>
+                {t('free', { n: String(free) })}
+              </span>
+            ) : (
+              <>
+                <span className="text-ink-3 text-[13px] font-medium">{t('noFree')}</span>
+                <GetRoomNotificationButton {...notification} />
+              </>
+            )}
+          </span>
+        )}
       </div>
-      <MachineList machines={machines} />
+      {machines.length > 0 ? (
+        <MachineList machines={machines} />
+      ) : (
+        <p className="bg-soft rounded-banner text-ink-3 py-7.5 text-center text-[13.5px] font-medium">
+          {type === 'washer' ? t('emptyWasher') : t('emptyDryer')}
+        </p>
+      )}
     </section>
   );
 }

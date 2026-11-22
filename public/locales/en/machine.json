@@ -10,6 +10,8 @@
   "dryer": "Dryer",
   "elapsedHourMinute": "{{hours}}h {{minutes}}m in",
   "elapsedMinute": "{{minutes}}m in",
+  "emptyDryer": "No dryers in this room",
+  "emptyWasher": "No washers in this room",
   "endsAt": "Ends {{time}}",
   "free": "{{n}} free",
   "hourMinute": "{{hours}}h {{minutes}}m",

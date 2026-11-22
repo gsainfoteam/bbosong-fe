@@ -52,3 +52,7 @@ export const OneMachine: Story = {
 export const NoMachine: Story = {
   args: { myLaundry: { items: [], isNotificationEnabled: true } },
 };
+
+export const EmptyRoom: Story = {
+  args: { myLaundry: { items: [], isNotificationEnabled: true }, washers: [], dryers: [] },
+};
