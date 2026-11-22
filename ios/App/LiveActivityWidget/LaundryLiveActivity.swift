@@ -35,7 +35,6 @@ private func tr(_ ko: String, _ en: String) -> String {
     Locale.preferredLanguages.first?.hasPrefix("ko") == true ? ko : en
 }
 
-/// 숫자는 Allo를 쓰고 싶지만 위젯 익스텐션에 폰트를 넣기 전까지는 둥근 시스템 폰트(SF Pro Rounded)로 대신한다
 private func numeral(_ size: CGFloat, _ weight: Font.Weight = .bold) -> Font {
     .system(size: size, weight: weight, design: .rounded)
 }

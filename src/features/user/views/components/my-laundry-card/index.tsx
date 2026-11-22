@@ -9,7 +9,7 @@ import { type MachineView } from '@/features/user/viewmodels';
 import { useMachineText } from '../machine-cell';
 import { MachineVessel } from '../machine-vessel';
 
-// 단위 글자는 본문 크기로 두고 숫자만 키워 Allo로 쓴다. 언어마다 단위 위치가 달라 문장을 숫자 기준으로 쪼갠다.
+// 단위 글자는 본문 크기로 두고 숫자만 키워 숫자 글꼴로 쓴다. 언어마다 단위 위치가 달라 문장을 숫자 기준으로 쪼갠다.
 function BigTime({ text }: { text: string }) {
   return (
     <>

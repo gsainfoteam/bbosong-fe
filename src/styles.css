@@ -50,8 +50,8 @@ html::-webkit-scrollbar {
     'Pretendard GOV Variable', -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo',
     'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
   /* 기기 번호, 남은 시간처럼 혼자 서거나 강조되는 숫자에만 쓴다. 문장 속 숫자는 Pretendard 그대로 둔다. */
-  --font-num: 'Allo', 'Pretendard GOV Variable', sans-serif;
-  /* allo.css의 가변 글꼴은 둥근 정도(ROND) 축을 갖고 있고 기본값은 50이라, 100을 명시해야 확정한 둥근 숫자가 나온다. */
+  --font-num: ui-rounded, 'SF Pro Rounded', 'Allo', 'Pretendard GOV Variable', sans-serif;
+  /* SF Pro Rounded가 없는 기기(Android 등)에서 쓰는 Allo는 둥근 정도(ROND) 축의 기본값이 50이라 100을 명시해야 둥글게 나온다. */
   --font-num--font-variation-settings: 'ROND' 100;
 
   --text-display: 28px;
