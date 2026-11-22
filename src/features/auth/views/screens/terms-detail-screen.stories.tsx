@@ -9,7 +9,7 @@ const meta = {
   globals: { viewport: { value: 'phone', isRotated: false } },
   args: {
     title: '개인정보 처리 방침',
-    termsUrl: 'https://terms.gistory.me/embedded/moving-out/privacy/260301/',
+    termsUrl: 'https://terms.gistory.me/embedded/bbosong/privacy/260902/',
     onBack: () => console.log('Back'),
   },
 } satisfies Meta<typeof TermsDetailScreen>;
@@ -22,6 +22,6 @@ export const Privacy: Story = {};
 export const TermsOfService: Story = {
   args: {
     title: '이용 약관',
-    termsUrl: 'https://terms.gistory.me/embedded/moving-out/tos/260301/',
+    termsUrl: 'https://terms.gistory.me/embedded/bbosong/tos/260902/',
   },
 };
