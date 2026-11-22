@@ -39,7 +39,7 @@ export const Dryer: Story = {
   },
 };
 
-/** 빈 자리가 없으면 "비면 알림" 버튼이 붙는다. */
+/** 빈 자리가 없으면 "빈 자리 알림" 버튼이 붙는다. */
 export const NoFree: Story = {
   args: {
     title: '건조기',

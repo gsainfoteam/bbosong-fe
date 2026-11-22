@@ -77,7 +77,7 @@ export const Sizes: Story = {
   render: () => (
     <div className="flex w-80 flex-col gap-3">
       <Button size="l" className="w-full">
-        QR 찍고 내 빨래 등록
+        QR로 내 빨래 등록하기
       </Button>
       <div className="flex gap-2">
         <Button variant="secondary" className="flex-1">

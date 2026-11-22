@@ -6,7 +6,7 @@ import { GetRoomNotificationButton } from '../get-room-notification-button';
 
 /**
  * 세탁기/건조기 목록의 섹션 머리.
- * 빈 자리 수를 기기 색으로 보여 주고, 빈 자리가 없을 때만 "비면 알림" 버튼을 붙인다.
+ * 빈 자리 수를 기기 색으로 보여 주고, 빈 자리가 없을 때만 "빈 자리 알림" 버튼을 붙인다.
  */
 export function MachineSectionHeader({
   title,
@@ -41,7 +41,7 @@ export namespace MachineSectionHeader {
   export type Props = {
     title: string;
     machineType: 'washer' | 'dryer';
-    /** 지금 쓸 수 있는 기기 수. 0이면 "비면 알림" 버튼이 나온다. */
+    /** 지금 쓸 수 있는 기기 수. 0이면 "빈 자리 알림" 버튼이 나온다. */
     freeCount: number;
     roomNotification: GetRoomNotificationButton.Props;
     className?: string;

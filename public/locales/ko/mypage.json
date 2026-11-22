@@ -5,7 +5,7 @@
   "female": "여성",
   "gender": "성별",
   "language": "언어",
-  "loggingOut": "로그아웃 중...",
+  "loggingOut": "로그아웃 중…",
   "logout": "로그아웃",
   "male": "남성",
   "name": "이름",
@@ -15,7 +15,7 @@
   "version": "버전 {{version}}",
   "withdraw": "회원 탈퇴",
   "withdrawConfirm": "탈퇴하기",
-  "withdrawConfirmDescription": "탈퇴하면 이 계정으로 로그인할 수 없고 푸시 알림도 더 이상 받을 수 없습니다.",
+  "withdrawConfirmDescription": "탈퇴하면 이 계정으로 로그인할 수 없고 푸시 알림도 더 이상 받을 수 없어요.",
   "withdrawConfirmTitle": "정말 탈퇴하시겠어요?",
-  "withdrawing": "탈퇴 처리 중..."
+  "withdrawing": "탈퇴 처리 중…"
 }
