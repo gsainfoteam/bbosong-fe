@@ -76,6 +76,9 @@ html {
   --text-badge--font-weight: 700;
   --text-badge--line-height: 1.3;
 
+  --color-brand: #4fcbf0;
+  --color-brand-deep: #1c9fd0;
+
   /* 세탁기 · 하늘색. water가 브랜드 원색이고, 글자에는 ink 단계만 쓴다. */
   --color-sky-water: #9fe7fb;
   --color-sky-back: #cdf4fd;
