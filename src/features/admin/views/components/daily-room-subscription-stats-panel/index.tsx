@@ -66,7 +66,7 @@ export function DailyRoomSubscriptionStatsPanel({
           role="group"
           aria-label={t('dailySessionStatsRange')}
         >
-          <span className="text-ink2 text-sm dark:text-slate-400">
+          <span className="text-ink-2 text-sm dark:text-slate-400">
             {t('dailySessionStatsRange')}
           </span>
           {RANGES.map((range) => (

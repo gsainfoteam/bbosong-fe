@@ -13,10 +13,11 @@ import {
 } from '../../viewmodels';
 import { AdminDialog, AdminPage, UserTable } from '../components';
 import { buttonClass, inputClass, secondaryButtonClass } from '../styles';
+import { useEnumLabels } from '../use-enum-labels';
 
 export function AdminPermissionsScreen() {
   const { t } = useTranslation('admin');
-  // t('ADMIN'); t('USER');
+  const labels = useEnumLabels();
   const { user } = useAdminAccess();
   const actions = useAdminActions();
   const query = useAdminUsers();
@@ -84,7 +85,7 @@ export function AdminPermissionsScreen() {
               <option value="">{t('allRoles')}</option>
               {Object.values(UserRole).map((value) => (
                 <option key={value} value={value}>
-                  {t(value)}
+                  {labels.role[value]}
                 </option>
               ))}
             </select>
@@ -102,7 +103,7 @@ export function AdminPermissionsScreen() {
             </select>
           </label>
         </div>
-        <p className="text-ink2 text-sm dark:text-slate-400">
+        <p className="text-ink-2 text-sm dark:text-slate-400">
           {t('userCount', { count: query.filtered.length })}
         </p>
         <UserTable
@@ -115,7 +116,7 @@ export function AdminPermissionsScreen() {
             setChange(null);
           }}
         />
-        <p className="text-ink2 text-sm leading-6 dark:text-slate-400">
+        <p className="text-ink-2 text-sm leading-6 dark:text-slate-400">
           {t('permissionsHint')} {t('selfRoleHint')}
         </p>
       </AdminPage>
@@ -127,13 +128,13 @@ export function AdminPermissionsScreen() {
             <p className="mt-1 text-sm break-all">{selected.email}</p>
             <p className="mt-2 font-mono text-xs break-all">{selected.uuid}</p>
             <p className="mt-3 text-sm">
-              {t('role')}: {t(selected.role)}
+              {t('role')}: {labels.role[selected.role]}
             </p>
           </div>
           {change ? (
             <>
               <p className="mt-4 font-medium">
-                {t('targetRole')}: {t(change.targetRole)}
+                {t('targetRole')}: {labels.role[change.targetRole]}
               </p>
               <div className="mt-6 flex justify-end gap-2">
                 <button
@@ -167,7 +168,7 @@ export function AdminPermissionsScreen() {
                   >
                     {Object.values(UserRole).map((value) => (
                       <option key={value} value={value}>
-                        {t(value)}
+                        {labels.role[value]}
                       </option>
                     ))}
                   </select>

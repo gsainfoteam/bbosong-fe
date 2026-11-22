@@ -2,85 +2,109 @@ import { useState } from 'react';
 
 import { Link } from '@tanstack/react-router';
 
+import { ChevronRight, ExternalLink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { LanguageToggle, Modal, MyPageHeader } from '@/common/components';
-import { ListGroup, ListRow } from '@/common/components/ui/list-group';
+import { LanguageToggle, ListGroup, ListRow, Modal, TopBar } from '@/common/components';
 import { cn } from '@/common/utils';
-import { PushPermissionCard } from '@/features/push-notification';
+import { NotificationSettingRow } from '@/features/push-notification';
 
 import { type UserProfile } from '../../viewmodels';
 
 export function MypageScreen({
   user,
+  notification,
+  onBack,
   onLogout,
   isLoggingOut,
   onWithdraw,
   isWithdrawing = false,
   className,
-  ...props
 }: MyPageScreen.Props) {
   const { t } = useTranslation('mypage');
   const [withdrawModalOpen, setWithdrawModalOpen] = useState(false);
-  //t('male');
-  //t('female');
 
-  const sectionTitle = 'text-label text-ink2 mt-5.5 mb-2 ml-1';
+  const gender = {
+    male: t('male'),
+    female: t('female'),
+  } satisfies Record<NonNullable<UserProfile['gender']>, string>;
 
   return (
-    <div className={cn('bg-surface flex w-full flex-1 flex-col', className)} {...props}>
-      <MyPageHeader />
+    <div className={cn('bg-surface flex min-h-dvh w-full flex-1 flex-col', className)}>
+      <TopBar onBack={onBack} />
 
-      <div className="flex flex-1 flex-col px-5 pb-8">
-        <h1 className="text-display mt-3.5 mb-5.5">{t('title')}</h1>
+      <div className="pb-cta flex flex-1 flex-col gap-2.5 px-5">
+        <h1 className="mt-1.5 mb-2 text-[28px] font-extrabold tracking-[-0.03em]">{t('title')}</h1>
 
-        <h2 className={cn(sectionTitle, 'mt-0')}>{t('account')}</h2>
         {/* data-amp-mask: Amplitude 자동 수집 시 이름·학번·이메일 텍스트를 가린다 */}
-        <ListGroup data-amp-mask>
-          <ListRow label={t('name')} value={user.name} />
-          <ListRow label={t('studentNumber')} value={user.studentNumber} />
-          <ListRow label={t('email')} value={user.email} />
-          <ListRow label={t('gender')} value={user.gender ? t(user.gender) : ''} />
+        <ListGroup title={t('account')}>
+          <div data-amp-mask>
+            <ListRow label={t('name')} value={user.name} />
+            <ListRow label={t('studentNumber')} value={user.studentNumber} />
+            <ListRow label={t('email')} value={user.email} />
+            <ListRow label={t('gender')} value={user.gender ? gender[user.gender] : ''} />
+          </div>
         </ListGroup>
 
-        <h2 className={sectionTitle}>{t('language')}</h2>
-        <LanguageToggle variant="segment" />
+        <ListGroup title={t('settings')} className="mt-3">
+          <ListRow label={t('language')} trailing={<LanguageToggle size="s" />} />
+          <NotificationSettingRow {...notification} />
+        </ListGroup>
 
-        {/* 알림 권한이 이미 허용돼 있으면 아무것도 그리지 않는다. 제목은 카드가 갖고 있다. */}
-        <PushPermissionCard className="bg-soft rounded-banner mt-5.5 p-4" />
-
-        <ListGroup className="mt-5.5">
+        <ListGroup className="mt-3">
           {user.role === 'admin' && (
-            <ListRow asChild chevron label={t('toAdmin')}>
+            <ListRow
+              asChild
+              label={
+                <>
+                  {t('toAdmin')}
+                  <span aria-hidden className="text-ink-3 ml-1.5 text-[11.5px] font-bold">
+                    {t('adminTag')}
+                  </span>
+                </>
+              }
+              trailing={
+                <ChevronRight size={18} strokeWidth={2.2} className="text-ink-3" aria-hidden />
+              }
+            >
               <Link to="/admin" />
             </ListRow>
           )}
-          <ListRow asChild chevron label={t('feedback')}>
+          <ListRow
+            asChild
+            label={t('feedback')}
+            trailing={
+              <ExternalLink size={17} strokeWidth={2.1} className="text-ink-3" aria-hidden />
+            }
+          >
             <a
               href={`https://cs.gistory.me/?service=bbosong&email=${encodeURIComponent(user.email)}`}
               target="_blank"
               rel="noopener noreferrer"
             />
           </ListRow>
-          <ListRow
-            label={isLoggingOut ? t('loggingOut') : t('logout')}
-            onClick={onLogout}
-            disabled={isLoggingOut}
-            aria-busy={isLoggingOut}
-          />
+          <ListRow asChild label={isLoggingOut ? t('loggingOut') : t('logout')}>
+            <button
+              type="button"
+              onClick={onLogout}
+              disabled={isLoggingOut}
+              className="disabled:opacity-50"
+            />
+          </ListRow>
         </ListGroup>
 
-        {/* 되돌릴 수 없는 동작은 따로 떼어 맨 아래에 둔다 */}
-        <ListGroup className="mt-2.5">
-          <ListRow
-            danger
-            label={t('withdraw')}
-            onClick={() => setWithdrawModalOpen(true)}
-            disabled={isWithdrawing}
-          />
+        <ListGroup>
+          <ListRow asChild tone="danger" label={t('withdraw')}>
+            <button
+              type="button"
+              onClick={() => setWithdrawModalOpen(true)}
+              disabled={isWithdrawing}
+              className="disabled:opacity-50"
+            />
+          </ListRow>
         </ListGroup>
 
-        <p className="text-caption text-ink3 mt-5 ml-1">
+        <p className="text-ink-3 mx-1 mt-2 text-[12.5px]">
           {t('version', { version: __APP_VERSION__ })}
         </p>
       </div>
@@ -91,7 +115,6 @@ export function MypageScreen({
           description={t('withdrawConfirmDescription')}
           confirmText={isWithdrawing ? t('withdrawing') : t('withdrawConfirm')}
           isPending={isWithdrawing}
-          confirmVariant="danger"
           onConfirm={onWithdraw}
           onClose={() => setWithdrawModalOpen(false)}
         />
@@ -103,6 +126,8 @@ export function MypageScreen({
 export namespace MyPageScreen {
   export type Props = {
     user: UserProfile;
+    notification: NotificationSettingRow.Props;
+    onBack: () => void;
     onLogout: () => void;
     isLoggingOut?: boolean;
     onWithdraw: () => void;

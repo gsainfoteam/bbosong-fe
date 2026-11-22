@@ -7,6 +7,8 @@ import type { VariantProps } from 'tailwind-variants';
 export function Button({
   variant = 'primary',
   size = 'm',
+  wide,
+  float,
   asChild = false,
   loading = false,
   children,
@@ -36,17 +38,13 @@ export function Button({
         }
       : {};
 
-  // 처리 중에는 색을 그대로 두고 글자만 바꾸되, 중복 제출은 막는다.
   const busyProps = loading
-    ? {
-        'aria-busy': true,
-        onClick: (e: React.MouseEvent<HTMLButtonElement>) => e.preventDefault(),
-      }
+    ? { 'aria-busy': true, onClick: (e: React.MouseEvent<HTMLButtonElement>) => e.preventDefault() }
     : { onClick };
 
   return (
     <Comp
-      className={Button.styles({ variant, size, className })}
+      className={Button.styles({ variant, size, wide, float, className })}
       {...props}
       {...busyProps}
       {...disabledProps}
@@ -65,11 +63,10 @@ export function Button({
 
 export namespace Button {
   export type Props = {
-    /** 주 버튼은 화면당 하나, 보조/외곽선은 부가 동작, 위험은 되돌릴 수 없을 때만 쓴다. */
     variant?: NonNullable<VariantProps<typeof Button.styles>['variant']>;
-    /** l 56 · m 48 · s 36 · xs 28(알약) */
     size?: NonNullable<VariantProps<typeof Button.styles>['size']>;
-    /** 처리 중. 폭은 그대로 두고 스피너와 글자만 바뀌도록 children을 바꿔 넘긴다. */
+    wide?: boolean;
+    float?: boolean;
     loading?: boolean;
   } & (
     | { asChild?: false }
@@ -89,46 +86,38 @@ export namespace Button {
     );
   }
 
-  const disabledStyle = [
-    'disabled:bg-soft disabled:text-ink3 disabled:ring-0 disabled:inset-ring-0 disabled:cursor-not-allowed',
-    'aria-disabled:bg-soft aria-disabled:text-ink3 aria-disabled:ring-0 aria-disabled:inset-ring-0 aria-disabled:cursor-not-allowed',
-  ];
-
   export const styles = cv({
     base: [
-      'inline-flex cursor-pointer items-center justify-center whitespace-nowrap select-none',
-      'transition duration-120 active:scale-[0.97]',
-      'focus-visible:outline-ink focus-visible:outline-2 focus-visible:outline-offset-2',
-      ...disabledStyle,
+      'inline-flex shrink-0 items-center justify-center gap-2 font-bold tracking-[-0.01em] whitespace-nowrap',
+      'transition-[background-color,transform] duration-150 active:scale-[0.97]',
+      'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink',
+      // 비활성은 종류와 상관없이 같은 회색으로 둔다.
+      'disabled:cursor-not-allowed disabled:bg-soft disabled:text-ink-3 disabled:shadow-none disabled:active:scale-100',
+      'aria-disabled:cursor-not-allowed aria-disabled:bg-soft aria-disabled:text-ink-3 aria-disabled:shadow-none',
     ],
     variants: {
       variant: {
-        primary: 'bg-ink active:bg-ink-pressed text-white',
+        primary: 'bg-ink text-white active:bg-ink-pressed',
         secondary: 'bg-soft text-ink active:bg-soft-pressed',
-        outline: 'bg-surface text-ink inset-ring-line active:bg-soft inset-ring-1',
-        danger: 'bg-danger active:bg-danger-pressed text-white',
-        // 색 있는 면(배너) 위에서는 같은 계열의 흰 버튼을 쓴다.
-        'tone-washer': 'bg-surface text-sky-ink ring-sky-ink/18 ring-1',
-        'tone-dryer': 'bg-surface text-orange-ink ring-orange-ink/18 ring-1',
-        // 기기 색 면 + 같은 계열 글자. 눌려 있으면(aria-pressed) 먹색으로 켜진다.
-        'soft-washer': 'bg-sky-tint text-sky-ink aria-pressed:bg-ink aria-pressed:text-white',
-        'soft-dryer': 'bg-orange-tint text-orange-ink aria-pressed:bg-ink aria-pressed:text-white',
-        text: 'text-ink2 bg-transparent font-medium',
-        'text-danger': 'text-danger bg-transparent',
+        outline: 'bg-surface text-ink shadow-[inset_0_0_0_1px_var(--color-line)] active:bg-soft',
+        danger: 'bg-danger text-white active:bg-danger-pressed',
+        // 색이 들어간 면 위에서는 먹색 대신 그 면과 같은 계열의 흰 버튼을 쓴다.
+        'tone-sky': 'bg-white text-sky-ink shadow-[0_0_0_1px_rgb(11_111_147/0.18)]',
+        'tone-orange': 'bg-white text-orange-ink shadow-[0_0_0_1px_rgb(168_86_15/0.18)]',
+        inverse: 'bg-white text-ink active:bg-[#e9eaec]',
+        text: 'bg-transparent px-1 font-medium text-ink-2 disabled:bg-transparent',
       },
       size: {
-        l: 'rounded-button-lg text-button-lg h-14 gap-2 px-4.5',
-        m: 'rounded-button text-body-strong h-12 gap-2 px-4.5',
-        s: 'rounded-chip text-label h-9 gap-1.5 px-3',
-        /** 섹션 머리 옆 알약 버튼 */
-        xs: 'text-caption h-7 gap-1 rounded-full px-2.5 font-bold',
+        l: 'h-14 rounded-cta px-5 text-base',
+        m: 'h-12 rounded-button px-4.5 text-[15px]',
+        s: 'h-9 gap-1.5 rounded-chip px-3 text-[13px]',
+      },
+      wide: {
+        true: 'w-full',
+      },
+      float: {
+        true: 'shadow-float',
       },
     },
-    compoundVariants: [
-      {
-        variant: ['text', 'text-danger'],
-        class: 'px-1 disabled:bg-transparent aria-disabled:bg-transparent',
-      },
-    ],
   });
 }

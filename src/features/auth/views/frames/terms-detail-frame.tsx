@@ -10,7 +10,10 @@ export function TermsDetailFrame() {
   const { version } = useSearch({ from: '/auth/terms/$type' });
   const { t } = useTranslation('auth');
 
-  const titles = t('consent.termsTitle', { returnObjects: true }) as Record<typeof type, string>;
+  const titles = {
+    privacy: t('consent.termsTitle.privacy'),
+    tos: t('consent.termsTitle.tos'),
+  } satisfies Record<typeof type, string>;
 
   const handleBack = () => {
     navigate({
@@ -21,7 +24,7 @@ export function TermsDetailFrame() {
 
   return (
     <TermsDetailScreen
-      title={titles[type] ?? ''}
+      title={titles[type]}
       termsUrl={`https://terms.gistory.me/embedded/bbosong/${type}/${version}/`}
       onBack={handleBack}
     />

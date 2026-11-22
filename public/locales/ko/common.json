@@ -1,14 +1,14 @@
 {
   "bbosong": "뽀송",
+  "close": "닫기",
   "goBack": "돌아가기",
-  "index": "홈",
-  "language": "언어",
   "modal": {
     "cancel": "취소",
     "confirm": "확인"
   },
   "myPage": "내 정보",
   "refresh": "새로고침",
+  "registerLabel": "QR 찍고 내 빨래 등록",
   "storeDownload": {
     "description": "앱에서 세탁실 현황 알림을 받을 수 있어요.",
     "install": "앱 설치하기",
@@ -18,7 +18,5 @@
     "openTitle": "뽀송 앱에서 열까요?",
     "title": "뽀송 앱을 설치해 보세요"
   },
-  "switchToEnglish": "영어로 전환",
-  "switchToKorean": "한국어로 전환",
-  "yes": "예"
+  "switchLanguage": "언어 바꾸기, 지금 {{language}}"
 }

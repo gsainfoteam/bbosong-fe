@@ -1,7 +1,6 @@
 {
   "a": "A",
+  "a_long": "",
   "b": "B",
-  "change": "Change laundry room",
-  "laundryRoom": "Laundry Room",
-  "roomLabel": "{{room}}, {{washer}} free washers, {{dryer}} free dryers"
+  "b_long": ""
 }

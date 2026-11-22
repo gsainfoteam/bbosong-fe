@@ -8,8 +8,10 @@ export {
   unregisterPushDeviceFromServer,
   useInstallPrompt,
   useLaundryRoomAlert,
+  usePermissionPrompt,
   usePostInstallPermission,
   usePushDeviceSync,
   usePushPermission,
+  type PermissionPrompt,
   type PushPermissionStatus,
 } from './viewmodels';

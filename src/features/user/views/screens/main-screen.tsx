@@ -1,87 +1,131 @@
-import { QrCode } from 'lucide-react';
+import { ChevronDown, QrCode } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { Header } from '@/common/components';
-import { Button } from '@/common/components/ui/button';
+import { Button, Header } from '@/common/components';
 import { cn } from '@/common/utils';
-import {
-  type GetRoomNotificationButton,
-  MachineList,
-  MachineSectionHeader,
-  SelectBuilding,
-  UsingMachineList,
-} from '@/features/user';
+import { GetRoomNotificationButton, MachineList, MyLaundryCard } from '@/features/user';
+import { type MachineType, type MachineView } from '@/features/user/viewmodels';
+
+const FREE_TEXT = { washer: 'text-sky-ink', dryer: 'text-orange-ink' } as const;
+
+function MachineSection({
+  type,
+  machines,
+  notification,
+  onMachineLongPress,
+}: {
+  type: MachineType;
+  machines: MachineView[];
+  notification: GetRoomNotificationButton.Props;
+  onMachineLongPress?: MachineList.Props['onMachineLongPress'];
+}) {
+  const { t } = useTranslation('machine');
+  const free = machines.filter((machine) => machine.state === 'idle').length;
+
+  return (
+    <section className="mt-4.5 [&+&]:mt-6.5">
+      <div className="mb-5 flex h-5.5 items-center justify-between">
+        <h2 className="text-[16px] font-extrabold tracking-[-0.02em]">
+          {type === 'washer' ? t('washer') : t('dryer')}
+        </h2>
+        {machines.length > 0 && (
+          <span className="flex items-center gap-2.5">
+            {free > 0 ? (
+              <span className={cn('text-[13px] font-bold', FREE_TEXT[type])}>
+                {t('free', { n: String(free) })}
+              </span>
+            ) : (
+              <>
+                <span className="text-ink-3 text-[13px] font-medium">{t('noFree')}</span>
+                <GetRoomNotificationButton {...notification} />
+              </>
+            )}
+          </span>
+        )}
+      </div>
+      {machines.length > 0 ? (
+        <MachineList machines={machines} onMachineLongPress={onMachineLongPress} />
+      ) : (
+        <p className="bg-soft rounded-banner text-ink-3 py-7.5 text-center text-[13.5px] font-medium">
+          {type === 'washer' ? t('emptyWasher') : t('emptyDryer')}
+        </p>
+      )}
+    </section>
+  );
+}
 
 export function MainScreen({
   header,
-  usingMachineList,
-  selectBuilding,
-  machines,
+  myLaundry,
+  room,
+  washers,
+  dryers,
   roomNotification,
+  onMachineLongPress,
   onRegister,
   className,
-  ...props
 }: MainScreen.Props) {
-  const { t } = useTranslation(['machine', 'main']);
-
-  const washers = machines.machines.filter((machine) => machine.type === 'washer');
-  const dryers = machines.machines.filter((machine) => machine.type === 'dryer');
+  const { t } = useTranslation(['main', 'common']);
+  const solo = myLaundry.items.length === 1;
 
   return (
-    <div className={cn('bg-soft relative flex w-full flex-1 flex-col', className)} {...props}>
-      <div className="px-5">
-        <Header {...header} />
-        <UsingMachineList
-          machineList={usingMachineList.machineList}
-          isNotificationEnabled={usingMachineList.isNotificationEnabled}
-          notificationBlocker={usingMachineList.notificationBlocker}
-          className={cn('mt-0.5', usingMachineList.className)}
-        />
-      </div>
-
-      {/* 내 빨래 카드가 없으면 시트가 그 자리까지 올라온다 */}
+    <div className={cn('bg-soft flex min-h-dvh w-full flex-col', className)}>
+      <Header {...header} />
+      {myLaundry.items.length > 0 && (
+        <div className={cn('-mt-0.5 grid gap-2.5 px-5', solo ? 'grid-cols-1' : 'grid-cols-2')}>
+          {myLaundry.items.map(({ machine, onUnregister, isUnregistering }) => (
+            <MyLaundryCard
+              key={machine.uuid}
+              machine={machine}
+              solo={solo}
+              isNotificationEnabled={myLaundry.isNotificationEnabled}
+              notificationBlocker={myLaundry.notificationBlocker}
+              onUnregister={onUnregister}
+              isUnregistering={isUnregistering}
+            />
+          ))}
+        </div>
+      )}
       <div
         className={cn(
-          'bg-surface rounded-t-sheet flex-1 px-5 pt-5 pb-32',
-          usingMachineList.machineList.length === 0 ? 'mt-0.5' : 'mt-4',
+          'bg-surface rounded-t-sheet flex-1 px-5 pt-5 pb-[calc(max(24px,env(safe-area-inset-bottom,0px)+6px)+80px)]',
+          myLaundry.items.length > 0 ? 'mt-4' : '-mt-0.5',
         )}
       >
-        <SelectBuilding {...selectBuilding} />
-        <section className="mt-4.5">
-          <MachineSectionHeader
-            title={t('machine:washer')}
-            machineType="washer"
-            freeCount={washers.filter((i) => i.status === 'idle').length}
-            roomNotification={roomNotification.washer}
-            className="mb-5"
-          />
-          <MachineList
-            machines={washers}
-            onMachineLongPress={machines.onMachineLongPress}
-            className={machines.className}
-          />
-        </section>
-        <section className="mt-6.5">
-          <MachineSectionHeader
-            title={t('machine:dryer')}
-            machineType="dryer"
-            freeCount={dryers.filter((i) => i.status === 'idle').length}
-            roomNotification={roomNotification.dryer}
-            className="mb-5"
-          />
-          <MachineList
-            machines={dryers}
-            onMachineLongPress={machines.onMachineLongPress}
-            className={machines.className}
-          />
-        </section>
+        <button
+          type="button"
+          aria-haspopup="dialog"
+          aria-label={t('roomCurrent', { room: room.title })}
+          onClick={room.onOpen}
+          className="flex h-6.5 items-center gap-0.5 text-[21px] font-extrabold tracking-[-0.03em]"
+        >
+          {room.title}
+          <ChevronDown size={20} className="text-ink-3 mt-0.75" aria-hidden />
+        </button>
+        <MachineSection
+          type="washer"
+          machines={washers}
+          notification={roomNotification.washer}
+          onMachineLongPress={onMachineLongPress}
+        />
+        <MachineSection
+          type="dryer"
+          machines={dryers}
+          notification={roomNotification.dryer}
+          onMachineLongPress={onMachineLongPress}
+        />
       </div>
-
-      {/* 엄지가 닿는 아래에 떠 있는 등록 버튼 */}
-      <div className="pointer-events-none fixed inset-x-0 bottom-0 mx-auto w-full max-w-120 px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-        <Button size="l" onClick={onRegister} className="shadow-float pointer-events-auto w-full">
+      <div className="pb-cta from-surface pointer-events-none fixed inset-x-0 bottom-0 mx-auto w-full max-w-120 bg-linear-to-t from-55% to-transparent px-5 pt-10">
+        <Button
+          type="button"
+          size="l"
+          wide
+          float
+          onClick={onRegister}
+          className="pointer-events-auto"
+        >
           <QrCode size={20} aria-hidden />
-          {t('main:registerCta')}
+          {t('common:registerLabel')}
         </Button>
       </div>
     </div>
@@ -89,16 +133,27 @@ export function MainScreen({
 }
 
 export namespace MainScreen {
+  export type MyLaundryItem = {
+    machine: MachineView;
+    onUnregister: () => void;
+    isUnregistering?: boolean;
+  };
+
   export type Props = {
     header?: Header.Props;
-    usingMachineList: UsingMachineList.Props;
-    selectBuilding: SelectBuilding.Props;
-    machines: MachineList.Props;
-    roomNotification: Record<
-      GetRoomNotificationButton.MachineType,
-      GetRoomNotificationButton.Props
-    >;
-    /** QR 스캔 시트를 연다 */
+    myLaundry: {
+      items: MyLaundryItem[];
+      isNotificationEnabled: boolean;
+      notificationBlocker?: MyLaundryCard.NotificationBlocker;
+    };
+    room: {
+      title: string;
+      onOpen: () => void;
+    };
+    washers: MachineView[];
+    dryers: MachineView[];
+    roomNotification: Record<MachineType, GetRoomNotificationButton.Props>;
+    onMachineLongPress?: MachineList.Props['onMachineLongPress'];
     onRegister: () => void;
     className?: string;
   };

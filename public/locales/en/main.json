@@ -1,6 +1,21 @@
 {
+  "female": "Women's",
+  "male": "Men's",
+  "map": {
+    "callout": "Mine · {{time}}",
+    "door": "Entrance",
+    "label": "{{room}} floor plan",
+    "mine": "My laundry · {{machines}}",
+    "running": "In use",
+    "title": "Laundry map"
+  },
   "qrScan": "Scan QR code and register your machine",
-  "qrScanCameraError": "Unable to access the camera. Allow camera permission in your browser settings, then reopen this sheet.",
-  "registerCta": "Scan QR to register laundry",
-  "usingMachineTitle": "Using machines"
+  "qrScanCameraError": "Unable to access the camera. Allow camera permission in your browser settings, then try again.",
+  "qrScanCameraErrorTitle": "Camera unavailable",
+  "roomCurrent": "Switch laundry room, now {{room}}",
+  "roomFree": "{{room}}, {{washer}} washers and {{dryer}} dryers free",
+  "roomTile": "{{location}} {{gender}}",
+  "roomTitle": "{{location}} {{gender}} laundry",
+  "switchRoom": "Switch laundry room",
+  "unregisterLabel": "{{machine}}, unregister"
 }

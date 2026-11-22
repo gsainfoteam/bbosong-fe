@@ -1,5 +1,6 @@
 {
   "account": "Account",
+  "adminTag": "Admin",
   "email": "Email",
   "feedback": "Send feedback",
   "female": "Female",
@@ -9,6 +10,7 @@
   "logout": "Logout",
   "male": "Male",
   "name": "Name",
+  "settings": "Settings",
   "studentNumber": "Student Number",
   "title": "My info",
   "toAdmin": "Admin Console",

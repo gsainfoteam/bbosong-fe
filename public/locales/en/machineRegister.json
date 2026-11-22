@@ -1,4 +1,8 @@
 {
+  "confirm": {
+    "register": "Register",
+    "title": "Register {{type}} No. {{id}}\nas in use?"
+  },
   "confirmation": {
     "description": "Choosing Yes ends the previous usage and registers this machine to you. The previous user will receive a completion confirmation notification.",
     "no": "No",
@@ -10,7 +14,6 @@
     "notRunning": "This machine is not running. Start the machine and try registering again.",
     "usageChanged": "The machine usage has changed. Its status has been refreshed. Please register again."
   },
-  "message": "Registering as a machine in use.",
   "registering": "Registering…",
   "success": "Machine registered successfully.",
   "unregister": {

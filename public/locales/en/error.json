@@ -8,6 +8,13 @@
   "logoutFailed": "Logout failed.",
   "noIdpToken": "Login error",
   "notFound": "Not found.",
+  "page": {
+    "errorDescription": "Please try again in a moment.",
+    "errorTitle": "Something went wrong",
+    "home": "Go home",
+    "notFoundDescription": "The address may have changed, or the page doesn't exist.",
+    "notFoundTitle": "Page not found"
+  },
   "refetch": "Retry",
   "unauthorized": "Login required.",
   "withdrawFailed": "Failed to delete account."

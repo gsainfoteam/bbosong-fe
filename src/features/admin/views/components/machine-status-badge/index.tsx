@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { type AdminMachine } from '../../../viewmodels';
+import { useEnumLabels } from '../../use-enum-labels';
 
 function getTone({ isAvailable, status }: MachineStatusBadge.Props) {
   if (!isAvailable) return 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300';
@@ -12,9 +13,8 @@ function getTone({ isAvailable, status }: MachineStatusBadge.Props) {
 
 export function MachineStatusBadge({ isAvailable, status }: MachineStatusBadge.Props) {
   const { t } = useTranslation('admin');
-  // Keep translations for API enum values during i18next extraction.
-  // t('IDLE'); t('WASH'); t('RINSE'); t('SPIN'); t('DRY');
-  const label = isAvailable ? t(status) : t('unavailable');
+  const labels = useEnumLabels();
+  const label = isAvailable ? labels.status[status] : t('unavailable');
   const tone = getTone({ isAvailable, status });
   return (
     <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${tone}`}>

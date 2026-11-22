@@ -31,7 +31,7 @@ export function AdminLinksScreen() {
       <div className={`${panelClass} flex flex-wrap items-center justify-between gap-4`}>
         <div>
           <h2 className="text-base font-semibold">{t('missingLinksCount', { count: missing })}</h2>
-          <p className="text-ink2 mt-2 text-sm leading-6 dark:text-slate-400">
+          <p className="text-ink-2 mt-2 text-sm leading-6 dark:text-slate-400">
             {t('backfillDescription')}
           </p>
         </div>

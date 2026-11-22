@@ -36,7 +36,7 @@ export function AdminLayout() {
           </span>
           <div>
             <div className="text-lg font-bold tracking-tight">BBOSONG</div>
-            <div className="text-ink2 mt-1 text-xs dark:text-slate-400">{t('administration')}</div>
+            <div className="text-ink-2 mt-1 text-xs dark:text-slate-400">{t('administration')}</div>
           </div>
         </div>
         <nav
@@ -53,7 +53,7 @@ export function AdminLayout() {
                 'aria-current': 'page',
               }}
               inactiveProps={{
-                className: 'text-ink2 hover:bg-soft dark:text-slate-400 dark:hover:bg-slate-800',
+                className: 'text-ink-2 hover:bg-soft dark:text-slate-400 dark:hover:bg-slate-800',
               }}
               className="flex shrink-0 items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium"
             >
@@ -63,7 +63,7 @@ export function AdminLayout() {
           ))}
         </nav>
         <div className="border-line hidden border-t p-5 lg:mt-auto lg:block dark:border-slate-800">
-          <Link to="/" className="text-ink2 flex items-center gap-2 text-sm dark:text-slate-400">
+          <Link to="/" className="text-ink-2 flex items-center gap-2 text-sm dark:text-slate-400">
             <ArrowLeft size={16} />
             {t('backToService')}
           </Link>
@@ -76,7 +76,7 @@ export function AdminLayout() {
             {t('adminOnly')}
           </span>
           <div className="flex items-center gap-4">
-            <span className="text-ink2 hidden text-sm sm:block dark:text-slate-400">
+            <span className="text-ink-2 hidden text-sm sm:block dark:text-slate-400">
               {user?.name}
             </span>
             <LanguageToggle />

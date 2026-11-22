@@ -15,16 +15,17 @@
     "locationB": "Building B",
     "male": "men's",
     "needsPermission": "Please allow notifications first.",
+    "notifyOn": "Alert on",
+    "notifyShort": "Notify me",
     "request": "Request alert",
     "requestDescription": "We'll let you know once when a {{type}} becomes available in the laundry room you're viewing.",
     "requested": "We'll let you know when a {{type}} frees up.",
-    "requestPill": "Notify me",
     "requestShort": "Notify me",
     "requestTitle": "Get notified when a {{type}} frees up?",
     "washer": "washer"
   },
   "permission": {
-    "completionDescription": "Your machine is registered. Turn on notifications to know when it finishes.",
+    "completionDescription": "Your machine is registered. We'll let you know as soon as it's done.",
     "completionTitle": "Want to know when your laundry is done?",
     "denied": "Notifications are blocked. Please allow notifications for this site in your browser settings.",
     "deniedNative": "Notifications are turned off. Please allow notifications for this app in your device settings.",
@@ -37,8 +38,11 @@
     "installing": "Installing...",
     "later": "Maybe later",
     "needsInstall": "Install the app first to receive notifications. Installing means you won't miss alerts after closing the app.",
+    "openSettings": "Allow in settings",
     "requesting": "Requesting permission...",
-    "title": "Notifications",
-    "unsupported": "This browser does not support web push notifications."
+    "settingLabel": "Laundry done alerts",
+    "turnOffGuide": "You can turn off alerts in your device settings.",
+    "unsupported": "This browser does not support web push notifications.",
+    "unsupportedShort": "Not supported"
   }
 }

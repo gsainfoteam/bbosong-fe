@@ -1,19 +1,29 @@
 {
-  "captionHourMinute": "{{hours}}h {{minutes}}m",
-  "captionMinute": "{{minutes}}m",
+  "aria": {
+    "detecting": "calculating time left",
+    "elapsed": "in use for {{time}}",
+    "mine": "your laundry",
+    "remaining": "{{time}} left"
+  },
   "count": "No. {{id}}",
-  "disabled": "Unavailable",
+  "detecting": "Calculating",
   "dryer": "Dryer",
-  "elapsedHourMinute": "{{hours}}h {{minutes}}m elapsed",
-  "elapsedMinute": "{{minutes}}m elapsed",
-  "freeCount_one": "freeCount",
-  "freeCount_other": "freeCount",
-  "idle": "Empty",
-  "mine": "My laundry",
+  "elapsedHourMinute": "{{hours}}h {{minutes}}m in",
+  "elapsedMinute": "{{minutes}}m in",
+  "emptyDryer": "No dryers in this room",
+  "emptyWasher": "No washers in this room",
+  "endsAt": "Ends {{time}}",
+  "free": "{{n}} free",
+  "hourMinute": "{{hours}}h {{minutes}}m",
+  "idle": "Free",
+  "minute": "{{minutes}}m",
   "noFree": "None free",
-  "remainingDetecting": "Calculating",
-  "remainingHourMinute": "{{hours}}h {{minutes}}m left",
-  "remainingMinute": "{{minutes}}m left",
-  "using": "Using",
+  "off": "Unavailable",
+  "paused": "Paused",
+  "phase": {
+    "cooling": "Cooling",
+    "drying": "Drying",
+    "washing": "Washing"
+  },
   "washer": "Washer"
 }

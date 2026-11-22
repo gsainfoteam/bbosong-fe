@@ -31,7 +31,7 @@ export function PowerRecordResults({
     });
   if (!uuid) {
     return (
-      <div className={`${panelClass} text-ink2 py-12 text-center text-sm dark:text-slate-400`}>
+      <div className={`${panelClass} text-ink-2 py-12 text-center text-sm dark:text-slate-400`}>
         {t('selectMachineHint')}
       </div>
     );
@@ -55,7 +55,7 @@ export function PowerRecordResults({
   }
   if (!sorted.length) {
     return (
-      <div className={`${panelClass} text-ink2 py-12 text-center text-sm dark:text-slate-400`}>
+      <div className={`${panelClass} text-ink-2 py-12 text-center text-sm dark:text-slate-400`}>
         {t('noRecords')}
       </div>
     );
@@ -104,7 +104,7 @@ export function PowerRecordResults({
         <h2 className="mb-4 text-base font-semibold">
           {t('recordCount', { count: sorted.length })}
         </h2>
-        <p className="text-ink2 mb-4 text-sm dark:text-slate-400">{t('recentRecordsHint')}</p>
+        <p className="text-ink-2 mb-4 text-sm dark:text-slate-400">{t('recentRecordsHint')}</p>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>

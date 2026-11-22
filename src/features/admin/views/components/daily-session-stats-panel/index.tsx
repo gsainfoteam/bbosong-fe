@@ -18,6 +18,7 @@ import {
   type DailySessionStatsRange,
 } from '../../../viewmodels';
 import { buttonClass, inputClass, panelClass, secondaryButtonClass } from '../../styles';
+import { useEnumLabels } from '../../use-enum-labels';
 
 const RANGES = [7, 14, 30, 90] as const satisfies readonly DailySessionStatsRange[];
 
@@ -45,6 +46,7 @@ export function DailySessionStatsPanel({
   isError,
 }: DailySessionStatsPanel.Props) {
   const { t } = useTranslation('admin');
+  const labels = useEnumLabels();
   const chartData = toChartData(data);
   const showDots = chartData.length <= 14;
 
@@ -57,7 +59,7 @@ export function DailySessionStatsPanel({
           role="group"
           aria-label={t('dailySessionStatsRange')}
         >
-          <span className="text-ink2 text-sm dark:text-slate-400">
+          <span className="text-ink-2 text-sm dark:text-slate-400">
             {t('dailySessionStatsRange')}
           </span>
           {RANGES.map((range) => (
@@ -110,7 +112,7 @@ export function DailySessionStatsPanel({
           <option value="">{t('allGenders')}</option>
           {Object.values(Gender).map((value) => (
             <option key={value} value={value}>
-              {t(value)}
+              {labels.gender[value]}
             </option>
           ))}
         </select>

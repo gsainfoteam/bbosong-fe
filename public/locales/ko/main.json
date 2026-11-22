@@ -1,6 +1,21 @@
 {
+  "female": "여자",
+  "male": "남자",
+  "map": {
+    "callout": "내 빨래 · {{time}}",
+    "door": "입구",
+    "label": "{{room}} 배치도",
+    "mine": "내 빨래 · {{machines}}",
+    "running": "사용 중",
+    "title": "세탁실 지도"
+  },
   "qrScan": "QR 코드를 찍어 기기를 등록하세요",
   "qrScanCameraError": "카메라를 사용할 수 없어요. 브라우저 설정에서 카메라 권한을 허용한 뒤 다시 열어 주세요.",
-  "registerCta": "QR로 내 빨래 등록하기",
-  "usingMachineTitle": "사용 중인 기기 목록"
+  "qrScanCameraErrorTitle": "카메라를 쓸 수 없어요",
+  "roomCurrent": "세탁실 바꾸기, 지금 {{room}}",
+  "roomFree": "{{room}}, 빈 세탁기 {{washer}}대, 빈 건조기 {{dryer}}대",
+  "roomTile": "{{location}} {{gender}}",
+  "roomTitle": "{{location}} {{gender}} 세탁실",
+  "switchRoom": "세탁실 바꾸기",
+  "unregisterLabel": "{{machine}}, 등록 해제"
 }

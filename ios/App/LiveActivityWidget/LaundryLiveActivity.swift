@@ -35,7 +35,6 @@ private func tr(_ ko: String, _ en: String) -> String {
     Locale.preferredLanguages.first?.hasPrefix("ko") == true ? ko : en
 }
 
-/// 숫자는 Allo를 쓰고 싶지만 위젯 익스텐션에 폰트를 넣기 전까지는 둥근 시스템 폰트(SF Pro Rounded)로 대신한다
 private func numeral(_ size: CGFloat, _ weight: Font.Weight = .bold) -> Font {
     .system(size: size, weight: weight, design: .rounded)
 }
@@ -96,12 +95,13 @@ private struct MachineChip: View {
     let state: LaundryActivityAttributes.ContentState
     var size: CGFloat
     var glyph: ChipGlyph = .number
+    var round = false
 
     private var fill: Color { state.phase == .error ? Palette.off : attributes.color }
 
     @ViewBuilder
     private var shape: some View {
-        if attributes.machineKind == .washer {
+        if round || attributes.machineKind == .washer {
             Circle().fill(fill)
         } else {
             RoundedRectangle(cornerRadius: size * 0.27, style: .continuous).fill(fill)
@@ -157,6 +157,8 @@ private struct TimeLabel: View {
     var size: CGFloat
     /// "시작한 지" 같은 작은 설명을 시간 위에 얹을지. 좁은 자리(컴팩트)에서는 끈다
     var showsCaption = true
+    // 타이머 글자는 가장 긴 값만큼 폭을 미리 잡으므로, 왼쪽에 둘 때도 정렬을 바꿔야 붙는다
+    var alignment: TextAlignment = .trailing
 
     var body: some View {
         if let end = state.countdownEnd {
@@ -165,7 +167,7 @@ private struct TimeLabel: View {
             Text(timerInterval: now...max(end, now), countsDown: true)
                 .font(numeral(size))
                 .monospacedDigit()
-                .multilineTextAlignment(.trailing)
+                .multilineTextAlignment(alignment)
         } else if state.phase == .pause, let minutes = state.remainingMinutes {
             // 일시정지 중에는 시간이 멈춘다. 흐리게 보여준다
             Text(clock(minutes: minutes))
@@ -176,9 +178,9 @@ private struct TimeLabel: View {
             Text(tr("시간 계산 중", "Calculating"))
                 .font(.system(size: max(size * 0.55, 11), weight: .bold))
                 .foregroundStyle(.secondary)
-                .multilineTextAlignment(.trailing)
+                .multilineTextAlignment(alignment)
         } else if attributes.machineKind == .washer, state.phase == .running {
-            VStack(alignment: .trailing, spacing: 4) {
+            VStack(alignment: alignment == .leading ? .leading : .trailing, spacing: 4) {
                 if showsCaption {
                     Text(tr("시작한 지", "Running for"))
                         .font(.system(size: 11.5, weight: .semibold))
@@ -188,7 +190,7 @@ private struct TimeLabel: View {
                 Text(attributes.startDate, style: .timer)
                     .font(numeral(size))
                     .monospacedDigit()
-                    .multilineTextAlignment(.trailing)
+                    .multilineTextAlignment(alignment)
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
             }
@@ -288,11 +290,13 @@ private struct Subline: View {
     }
 }
 
-// MARK: - 잠금화면
+// MARK: - 잠금화면 · 펼친 Dynamic Island
 
-private struct LockScreenView: View {
+private struct ActivityRow: View {
     let attributes: LaundryActivityAttributes
     let state: LaundryActivityAttributes.ContentState
+    /// Dynamic Island는 항상 어두운 면이라 글자색을 직접 정한다
+    var onIsland = false
 
     var body: some View {
         let bar = CycleBar(attributes: attributes, state: state)
@@ -304,11 +308,12 @@ private struct LockScreenView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Headline(attributes: attributes, state: state)
                         .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(onIsland ? AnyShapeStyle(.white) : AnyShapeStyle(.primary))
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                     Subline(attributes: attributes, state: state)
                         .font(.system(size: 13))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(onIsland ? AnyShapeStyle(.white.opacity(0.6)) : AnyShapeStyle(.secondary))
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                 }
@@ -316,47 +321,65 @@ private struct LockScreenView: View {
                 Spacer(minLength: 8)
 
                 TimeLabel(attributes: attributes, state: state, size: 32)
+                    .foregroundStyle(onIsland ? AnyShapeStyle(attributes.waterColor) : AnyShapeStyle(.primary))
             }
 
             if bar.isVisible { bar }
         }
-        .padding(16)
     }
 }
 
-// MARK: - Dynamic Island
+// MARK: - Apple Watch Smart Stack
 
-/// Dynamic Island는 항상 어두운 면이라 글자색을 직접 정한다
-private struct ExpandedBottom: View {
+/// 워치는 잠금화면보다 훨씬 좁아 시간까지 한 줄에 넣을 수 없다. 칩과 이름·상태를 묶은 줄 아래에 시간과 막대를 쌓는다.
+private struct SmartStackView: View {
     let attributes: LaundryActivityAttributes
     let state: LaundryActivityAttributes.ContentState
 
     var body: some View {
         let bar = CycleBar(attributes: attributes, state: state)
 
-        VStack(alignment: .leading, spacing: 3) {
-            Headline(attributes: attributes, state: state)
-                .font(.system(size: 16, weight: .bold))
-                .foregroundStyle(.white)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-            Subline(attributes: attributes, state: state)
-                .font(.system(size: 13))
-                .foregroundStyle(.white.opacity(0.6))
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 8) {
+                MachineChip(attributes: attributes, state: state, size: 28)
 
-            if bar.isVisible {
-                bar.padding(.top, 9)
+                VStack(alignment: .leading, spacing: 1) {
+                    Headline(attributes: attributes, state: state)
+                        .font(.system(size: 13, weight: .bold))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                    Subline(attributes: attributes, state: state)
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                }
             }
+
+            TimeLabel(attributes: attributes, state: state, size: 26, showsCaption: false, alignment: .leading)
+
+            if bar.isVisible { bar }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        // 맨 아래 줄은 Dynamic Island의 둥근 모서리에 걸리므로 좌우로 들여 쓴다
-        .padding(.horizontal, 10)
-        .padding(.top, 4)
-        .padding(.bottom, 12)
     }
 }
+
+@available(iOS 18.0, *)
+private struct FamilyContent: View {
+    @Environment(\.activityFamily) private var family
+    let attributes: LaundryActivityAttributes
+    let state: LaundryActivityAttributes.ContentState
+
+    var body: some View {
+        if family == .small {
+            SmartStackView(attributes: attributes, state: state)
+        } else {
+            ActivityRow(attributes: attributes, state: state).padding(16)
+        }
+    }
+}
+
+// MARK: - Dynamic Island
 
 /// 컴팩트 오른쪽. 끝나면 시간 대신 "끝", 시간을 모르면 아무것도 두지 않는다
 private struct CompactTrailing: View {
@@ -380,8 +403,7 @@ private struct CompactTrailing: View {
     }
 }
 
-/// 최소. 진행률을 보여줄 수 있는 건조기는 진행 고리 안에 흰 번호만 두고,
-/// 진행률이 없는 세탁기는 색칠된 원(칩) 안에 번호를 둔다.
+/// 최소. 끝나는 시각을 알면 진행 고리 안에 흰 번호만 두고, 모르면 칩을 둔다.
 private struct MinimalView: View {
     let attributes: LaundryActivityAttributes
     let state: LaundryActivityAttributes.ContentState
@@ -411,31 +433,32 @@ private struct MinimalView: View {
             }
             .frame(width: 26, height: 26)
         } else {
-            MachineChip(attributes: attributes, state: state, size: 26)
+            // 최소형 자리가 원이라 건조기의 둥근 사각을 넣으면 모서리만 삐죽 남는다
+            MachineChip(attributes: attributes, state: state, size: 26, round: true)
         }
     }
 }
 
 struct LaundryLiveActivity: Widget {
     var body: some WidgetConfiguration {
-        ActivityConfiguration(for: LaundryActivityAttributes.self) { context in
-            LockScreenView(attributes: context.attributes, state: context.state)
-                .activityBackgroundTint(Color(.systemBackground).opacity(0.9))
+        let configuration = ActivityConfiguration(for: LaundryActivityAttributes.self) { context in
+            Group {
+                if #available(iOS 18.0, *) {
+                    FamilyContent(attributes: context.attributes, state: context.state)
+                } else {
+                    ActivityRow(attributes: context.attributes, state: context.state).padding(16)
+                }
+            }
+            .activityBackgroundTint(Color(.systemBackground).opacity(0.9))
                 .activitySystemActionForegroundColor(context.attributes.color)
         } dynamicIsland: { context in
             DynamicIsland {
-                DynamicIslandExpandedRegion(.leading) {
-                    // 섬의 왼쪽 위는 둥글게 마스크되어 가장자리에 붙이면 칩 모서리가 깎인다. 안쪽으로 들인다
-                    MachineChip(attributes: context.attributes, state: context.state, size: 44)
-                        .padding(.leading, 8)
-                        .padding(.top, 6)
-                }
-                DynamicIslandExpandedRegion(.trailing) {
-                    TimeLabel(attributes: context.attributes, state: context.state, size: 34)
-                        .foregroundStyle(context.attributes.waterColor)
-                }
                 DynamicIslandExpandedRegion(.bottom) {
-                    ExpandedBottom(attributes: context.attributes, state: context.state)
+                    ActivityRow(attributes: context.attributes, state: context.state, onIsland: true)
+                        // 섬의 모서리가 둥글게 깎이므로 가장자리에서 들여 쓴다.
+                        // 위는 카메라 줄만큼 비므로 아래를 더 띄워야 내용이 위로 붙어 보이지 않는다.
+                        .padding(.horizontal, 10)
+                        .padding(.bottom, 20)
                 }
             } compactLeading: {
                 MachineChip(
@@ -450,6 +473,13 @@ struct LaundryLiveActivity: Widget {
                 MinimalView(attributes: context.attributes, state: context.state)
             }
             .keylineTint(context.attributes.color)
+        }
+
+        // .small을 선언하지 않으면 워치 Smart Stack에는 컴팩트 양 끝만 붙여 보여준다
+        if #available(iOS 18.0, *) {
+            return configuration.supplementalActivityFamilies([.small])
+        } else {
+            return configuration
         }
     }
 }

@@ -1,31 +1,27 @@
-import { TermsDetailScreen } from '@/features/auth';
+import { TermsDetailScreen } from './terms-detail-screen';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-const meta: Meta<typeof TermsDetailScreen> = {
-  title: 'Auth/TermsDetailScreen',
+const meta = {
+  title: 'Auth/Screens/TermsDetail',
   component: TermsDetailScreen,
-  parameters: {
-    layout: 'fullscreen',
+  parameters: { layout: 'fullscreen' },
+  globals: { viewport: { value: 'phone', isRotated: false } },
+  args: {
+    title: '개인정보 처리 방침',
+    termsUrl: 'https://terms.gistory.me/embedded/bbosong/privacy/260902/',
+    onBack: () => console.log('Back'),
   },
-  tags: ['autodocs'],
-};
+} satisfies Meta<typeof TermsDetailScreen>;
 
 export default meta;
-type Story = StoryObj<typeof TermsDetailScreen>;
+type Story = StoryObj<typeof meta>;
 
-export const Privacy: Story = {
-  args: {
-    title: '개인정보처리방침',
-    termsUrl: 'https://terms.gistory.me/embedded/moving-out/privacy/260301/',
-    onBack: () => {},
-  },
-};
+export const Privacy: Story = {};
 
 export const TermsOfService: Story = {
   args: {
-    title: '이용약관',
-    termsUrl: 'https://terms.gistory.me/embedded/moving-out/tos/260301/',
-    onBack: () => {},
+    title: '이용 약관',
+    termsUrl: 'https://terms.gistory.me/embedded/bbosong/tos/260902/',
   },
 };

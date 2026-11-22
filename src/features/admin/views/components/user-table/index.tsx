@@ -2,14 +2,16 @@ import { useTranslation } from 'react-i18next';
 
 import { type AdminUserWithSubscriptions } from '../../../viewmodels';
 import { secondaryButtonClass } from '../../styles';
+import { useEnumLabels } from '../../use-enum-labels';
 
 export function UserTable({ users, currentUserUuid, isPending, onSelect }: UserTable.Props) {
   const { t, i18n } = useTranslation('admin');
+  const labels = useEnumLabels();
   const formatDate = (value: string) => new Date(value).toLocaleString(i18n.resolvedLanguage);
   return (
     <div className="border-line overflow-x-auto rounded-xl border bg-white dark:border-slate-800 dark:bg-slate-900">
       <table className="w-full text-left text-sm">
-        <thead className="bg-surface text-ink2 dark:bg-slate-800 dark:text-slate-400">
+        <thead className="bg-surface text-ink-2 dark:bg-slate-800 dark:text-slate-400">
           <tr>
             {[
               t('user'),
@@ -26,19 +28,19 @@ export function UserTable({ users, currentUserUuid, isPending, onSelect }: UserT
             ))}
           </tr>
         </thead>
-        <tbody className="divide-border divide-y dark:divide-slate-800">
+        <tbody className="divide-line divide-y dark:divide-slate-800">
           {users.map((user) => (
             <tr key={user.uuid}>
               <td className="px-5 py-4">
                 <div className="font-medium">{user.name}</div>
-                <div className="text-ink2 mt-1 break-all dark:text-slate-400">{user.email}</div>
-                <div className="text-ink2 mt-1 font-mono text-xs dark:text-slate-400">
+                <div className="text-ink-2 mt-1 break-all dark:text-slate-400">{user.email}</div>
+                <div className="text-ink-2 mt-1 font-mono text-xs dark:text-slate-400">
                   {user.uuid}
                 </div>
               </td>
               <td className="px-5 py-4 whitespace-nowrap">{user.studentNumber}</td>
-              <td className="px-5 py-4 whitespace-nowrap">{t(user.gender)}</td>
-              <td className="px-5 py-4 whitespace-nowrap">{t(user.role)}</td>
+              <td className="px-5 py-4 whitespace-nowrap">{labels.gender[user.gender]}</td>
+              <td className="px-5 py-4 whitespace-nowrap">{labels.role[user.role]}</td>
               <td className="px-5 py-4 whitespace-nowrap">{user.machineUsageCount}</td>
               <td className="min-w-64 px-5 py-4">
                 {user.pushSubscriptions.length ? (
@@ -55,13 +57,13 @@ export function UserTable({ users, currentUserUuid, isPending, onSelect }: UserT
                           <div className="break-all">{device.userAgent || t('unknownDevice')}</div>
                           <dl className="mt-2 space-y-2">
                             <div>
-                              <dt className="text-ink2 dark:text-slate-400">
+                              <dt className="text-ink-2 dark:text-slate-400">
                                 {t('pushRegisteredAt')}
                               </dt>
                               <dd className="mt-1">{formatDate(device.createdAt)}</dd>
                             </div>
                             <div>
-                              <dt className="text-ink2 dark:text-slate-400">
+                              <dt className="text-ink-2 dark:text-slate-400">
                                 {t('lastPushSentAt')}
                               </dt>
                               <dd className="mt-1">
@@ -76,12 +78,12 @@ export function UserTable({ users, currentUserUuid, isPending, onSelect }: UserT
                     </ul>
                   </details>
                 ) : (
-                  <span className="text-ink2 dark:text-slate-400">{t('noPushDevices')}</span>
+                  <span className="text-ink-2 dark:text-slate-400">{t('noPushDevices')}</span>
                 )}
               </td>
               <td className="px-5 py-4 whitespace-nowrap">
                 {user.uuid === currentUserUuid ? (
-                  <span className="text-ink2 dark:text-slate-400">{t('currentUser')}</span>
+                  <span className="text-ink-2 dark:text-slate-400">{t('currentUser')}</span>
                 ) : (
                   <button
                     type="button"
@@ -97,7 +99,7 @@ export function UserTable({ users, currentUserUuid, isPending, onSelect }: UserT
           ))}
           {!users.length && (
             <tr>
-              <td colSpan={7} className="text-ink2 px-5 py-12 text-center dark:text-slate-400">
+              <td colSpan={7} className="text-ink-2 px-5 py-12 text-center dark:text-slate-400">
                 {t('noUsers')}
               </td>
             </tr>

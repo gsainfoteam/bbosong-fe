@@ -14,6 +14,7 @@ import {
   isMachineThinqRemainingDetecting,
   useMachineTiming,
 } from '../../../viewmodels';
+import { useEnumLabels } from '../../use-enum-labels';
 
 export function MachineTable({
   machines,
@@ -23,6 +24,7 @@ export function MachineTable({
   showThinq = false,
 }: MachineTable.Props) {
   const { t, i18n } = useTranslation('admin');
+  const labels = useEnumLabels();
   const now = useMachineTiming((showTiming || showThinq) && machines.length > 0);
   const rows = machines.map((machine) => ({
     machine,
@@ -36,12 +38,10 @@ export function MachineTable({
     thinqRemaining: formatThinqRemainingParts(getMachineThinqRemainingMinutes(machine)),
     thinqDetecting: isMachineThinqRemainingDetecting(machine),
   }));
-  // Keep translations for API enum values during i18next extraction.
-  // t('WASHER'); t('DRYER'); t('MALE'); t('FEMALE');
   return (
     <div className="border-line overflow-x-auto rounded-xl border bg-white dark:border-slate-800 dark:bg-slate-900">
       <table className="w-full text-left text-sm">
-        <thead className="bg-surface text-ink2 dark:bg-slate-800 dark:text-slate-400">
+        <thead className="bg-surface text-ink-2 dark:bg-slate-800 dark:text-slate-400">
           <tr>
             {[
               t('machine'),
@@ -58,7 +58,7 @@ export function MachineTable({
             ))}
           </tr>
         </thead>
-        <tbody className="divide-border divide-y dark:divide-slate-800">
+        <tbody className="divide-line divide-y dark:divide-slate-800">
           {rows.map(
             ({
               machine,
@@ -72,16 +72,16 @@ export function MachineTable({
                 <td className="px-5 py-4">
                   <div
                     className="font-mono text-sm font-medium tracking-wide whitespace-nowrap"
-                    title={`${t('building', { location: machine.location })} · ${t(machine.gender)} · ${t(machine.type)} #${machine.index}`}
+                    title={`${t('building', { location: machine.location })} · ${labels.gender[machine.gender]} · ${labels.machineType[machine.type]} #${machine.index}`}
                   >
                     {formatMachineCode(machine)}
                   </div>
-                  <div className="text-ink2 mt-1 font-mono text-xs dark:text-slate-400">
+                  <div className="text-ink-2 mt-1 font-mono text-xs dark:text-slate-400">
                     {machine.uuid}
                   </div>
                 </td>
                 <td className="px-5 py-4 whitespace-nowrap">
-                  {t('building', { location: machine.location })} · {t(machine.gender)}
+                  {t('building', { location: machine.location })} · {labels.gender[machine.gender]}
                 </td>
                 <td className="px-5 py-4 whitespace-nowrap">
                   <MachineStatusBadge isAvailable={machine.isAvailable} status={machine.status} />
@@ -92,7 +92,7 @@ export function MachineTable({
                       {lastSeen ? (
                         <time dateTime={lastSeen.dateTime} title={lastSeen.absolute}>
                           {lastSeen.relative}
-                          <span className="text-ink2 mt-1 block text-xs dark:text-slate-400">
+                          <span className="text-ink-2 mt-1 block text-xs dark:text-slate-400">
                             {lastSeen.absolute}
                           </span>
                         </time>
@@ -119,19 +119,19 @@ export function MachineTable({
                             ? t('thinqStateDetecting')
                             : (machine.thinqCurrentState ?? t('thinqStateUnknown'))}
                         </div>
-                        <div className="text-ink2 text-xs dark:text-slate-400">
+                        <div className="text-ink-2 text-xs dark:text-slate-400">
                           <ThinqRemaining remaining={thinqRemaining} isDetecting={thinqDetecting} />
                         </div>
                         {thinqUpdated ? (
                           <time
-                            className="text-ink2 block text-xs dark:text-slate-400"
+                            className="text-ink-2 block text-xs dark:text-slate-400"
                             dateTime={thinqUpdated.dateTime}
                             title={thinqUpdated.absolute}
                           >
                             {t('thinqUpdatedAt')}: {thinqUpdated.relative}
                           </time>
                         ) : (
-                          <div className="text-ink2 text-xs dark:text-slate-400">
+                          <div className="text-ink-2 text-xs dark:text-slate-400">
                             {t('thinqUpdatedAt')}: -
                           </div>
                         )}
@@ -175,7 +175,7 @@ export function MachineTable({
                   Number(showLinks) +
                   Number(!!renderActions)
                 }
-                className="text-ink2 px-5 py-12 text-center dark:text-slate-400"
+                className="text-ink-2 px-5 py-12 text-center dark:text-slate-400"
               >
                 {t('noMachines')}
               </td>

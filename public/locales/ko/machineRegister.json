@@ -1,4 +1,8 @@
 {
+  "confirm": {
+    "register": "등록하기",
+    "title": "{{id}}번 {{type}}를\n사용 중인 기기로 등록할까요?"
+  },
   "confirmation": {
     "description": "예를 누르면 이전 사용이 끝나고 내 기기로 등록돼요. 이전 사용자에게는 완료 확인 알림이 가요.",
     "no": "아니오",
@@ -10,7 +14,6 @@
     "notRunning": "작동 중인 기기가 아니에요. 기기를 작동시킨 뒤 다시 등록해 주세요.",
     "usageChanged": "기기 사용 상태가 바뀌어서 새로고침했어요. 다시 등록해 주세요."
   },
-  "message": "사용 중인 기기로 등록해요.",
   "registering": "등록 중…",
   "success": "기기를 등록했어요.",
   "unregister": {

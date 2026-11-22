@@ -26,6 +26,7 @@ import {
   UsageStatsPanel,
 } from '../components';
 import { panelClass } from '../styles';
+import { useEnumLabels } from '../use-enum-labels';
 
 function RoomTypeStats({
   label,
@@ -37,25 +38,25 @@ function RoomTypeStats({
   const { t } = useTranslation('admin');
   return (
     <div>
-      <div className="text-ink2 mb-2 text-sm font-medium dark:text-slate-400">{label}</div>
+      <div className="text-ink-2 mb-2 text-sm font-medium dark:text-slate-400">{label}</div>
       <div className="grid grid-cols-3 gap-2 text-sm">
         <div>
-          <div className="text-ink2 dark:text-slate-400">{t('IDLE')}</div>
+          <div className="text-ink-2 dark:text-slate-400">{t('IDLE')}</div>
           <div className="mt-2 text-xl font-semibold text-emerald-600 dark:text-emerald-400">
             {available}
           </div>
         </div>
         <div>
-          <div className="text-ink2 dark:text-slate-400">{t('running')}</div>
+          <div className="text-ink-2 dark:text-slate-400">{t('running')}</div>
           <div className="text-ink mt-2 text-xl font-semibold">
             {running}
-            <span className="text-ink2 text-base font-medium dark:text-slate-400">
+            <span className="text-ink-2 text-base font-medium dark:text-slate-400">
               ({registered})
             </span>
           </div>
         </div>
         <div>
-          <div className="text-ink2 dark:text-slate-400">{t('unavailable')}</div>
+          <div className="text-ink-2 dark:text-slate-400">{t('unavailable')}</div>
           <div className="mt-2 text-xl font-semibold text-red-500">{unavailable}</div>
         </div>
       </div>
@@ -75,6 +76,7 @@ namespace RoomTypeStats {
 
 export function AdminOverviewScreen() {
   const { t } = useTranslation('admin');
+  const labels = useEnumLabels();
   const query = useAdminMachines();
   const [statsDays, setStatsDays] = useState<DailySessionStatsRange>(7);
   const [statsFilter, setStatsFilter] = useState<DailySessionStatsFilter>({});
@@ -129,13 +131,13 @@ export function AdminOverviewScreen() {
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         {cards.map(({ label, value, icon: Icon, color }) => (
           <div key={label} className={panelClass}>
-            <div className="text-ink2 flex items-center justify-between gap-2 text-sm dark:text-slate-400">
+            <div className="text-ink-2 flex items-center justify-between gap-2 text-sm dark:text-slate-400">
               <span>{label}</span>
               <Icon size={20} className={color} />
             </div>
             <div className="mt-5 text-3xl font-bold">
               {value}
-              <span className="text-ink2 ml-2 text-sm font-normal dark:text-slate-400">
+              <span className="text-ink-2 ml-2 text-sm font-normal dark:text-slate-400">
                 {t('unit')}
               </span>
             </div>
@@ -189,7 +191,7 @@ export function AdminOverviewScreen() {
                   className="bg-surface rounded-lg p-4 dark:bg-slate-800"
                 >
                   <div className="mb-3 font-medium">
-                    {t('building', { location })} · {t(gender)}
+                    {t('building', { location })} · {labels.gender[gender]}
                   </div>
                   <div className="space-y-4">
                     {Object.values(MachineType).map((type) => {
@@ -199,7 +201,7 @@ export function AdminOverviewScreen() {
                       return (
                         <RoomTypeStats
                           key={type}
-                          label={t(type)}
+                          label={labels.machineType[type]}
                           available={typeStats.available}
                           running={typeStats.running}
                           registered={typeStats.registered}
@@ -219,7 +221,7 @@ export function AdminOverviewScreen() {
           <Link2 size={22} className="text-amber-500" />
           <div>
             <h2 className="text-base font-semibold">{t('linkCheck')}</h2>
-            <p className="text-ink2 mt-2 text-sm dark:text-slate-400">
+            <p className="text-ink-2 mt-2 text-sm dark:text-slate-400">
               {t('missingLinksCount', { count: stats.missingLinks })}
             </p>
           </div>

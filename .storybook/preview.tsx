@@ -26,6 +26,20 @@ const preview: Preview = {
     locale: 'ko',
   },
   parameters: {
+    viewport: {
+      options: {
+        phone: {
+          name: 'Phone 390×844',
+          styles: { width: '390px', height: '844px' },
+          type: 'mobile',
+        },
+      },
+    },
+    options: {
+      storySort: {
+        order: ['Common', 'Auth', ['Screens', '*'], 'User', ['Screens', '*'], 'Admin'],
+      },
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,
@@ -45,7 +59,7 @@ const preview: Preview = {
     withLocale,
     (Story) => (
       <RouterContextProvider router={router}>
-        <div className="text-text-primary mx-auto w-full max-w-100">
+        <div className="text-ink mx-auto w-full max-w-100">
           <Story />
         </div>
       </RouterContextProvider>

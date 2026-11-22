@@ -18,15 +18,14 @@ export const Checkbox = forwardRef<
     <span
       aria-hidden
       className={cn(
-        'bg-surface flex size-6 shrink-0 items-center justify-center rounded-lg border-[1.8px] transition-colors',
-        'border-track peer-checked:border-ink peer-checked:bg-ink',
+        'flex size-6 shrink-0 items-center justify-center rounded-lg bg-white transition-colors',
+        'peer-checked:bg-ink shadow-[inset_0_0_0_1.8px_var(--color-track)] peer-checked:shadow-none',
         'peer-focus-visible:ring-ink peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2',
-        'peer-disabled:opacity-40',
         'pointer-events-none',
       )}
     >
       <Check
-        className="invisible size-4 text-white group-has-checked:visible"
+        className="invisible size-3.5 text-white group-has-checked:visible"
         strokeWidth={3}
         aria-hidden
       />

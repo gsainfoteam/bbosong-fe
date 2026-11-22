@@ -25,7 +25,6 @@ await i18n
       'location',
       'machine',
       'machineRegister',
-      'nav',
       'mypage',
       'notification',
       'admin',

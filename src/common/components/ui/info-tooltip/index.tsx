@@ -13,7 +13,7 @@ export function InfoTooltip({ label, content, className }: InfoTooltip.Props) {
         type="button"
         aria-label={label}
         aria-describedby={tooltipId}
-        className="text-ink2 hover:text-ink focus-visible:text-ink inline-flex cursor-help rounded-full focus:outline-none dark:text-slate-400"
+        className="text-ink-2 hover:text-ink focus-visible:text-ink inline-flex cursor-help rounded-full focus:outline-none dark:text-slate-400"
       >
         <Info size={14} aria-hidden="true" />
       </button>

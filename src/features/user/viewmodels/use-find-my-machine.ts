@@ -67,6 +67,7 @@ export function useFindMyMachine() {
 
       return [
         {
+          machineUuid: usage.machineUuid,
           location: mappedLocation,
           machine: {
             type: mappedType,
@@ -90,14 +91,9 @@ export function useFindMyMachine() {
       const machine = machineByUuid.get(usage.machineUuid);
       if (!machine) return [];
 
-      // t('location:a')
-      // t('location:b')
-      // t('machine:dryer')
-      // t('machine:washer')
-      // t('machine:count')
-      const location = machine.location === 'B' ? 'b' : 'a';
+      const location = machine.location === 'B' ? tTitle('location:b') : tTitle('location:a');
       const kind = machine.type === 'DRYER' ? 'DRYER' : 'WASHER';
-      const title = `${tTitle(`location:${location}`)} ${tTitle(kind === 'DRYER' ? 'machine:dryer' : 'machine:washer')} ${tTitle('machine:count', { id: String(machine.index) })}`;
+      const title = `${location} ${kind === 'DRYER' ? tTitle('machine:dryer') : tTitle('machine:washer')} ${tTitle('machine:count', { id: String(machine.index) })}`;
       const remainingMinutes = resolveRemainingMinutes(machine);
 
       return [

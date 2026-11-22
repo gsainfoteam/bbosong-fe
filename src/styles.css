@@ -1,4 +1,5 @@
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard-gov/dist/web/variable/pretendardvariable-gov-dynamic-subset.min.css');
+@import url('https://cdn.jsdelivr.net/npm/allo-font@1.0.3/allo.css');
 @import 'tailwindcss';
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *, .dark, .dark *));
@@ -21,24 +22,18 @@
 html {
   @apply m-0;
 
-  font-family:
-    'Pretendard Variable',
-    Pretendard,
-    -apple-system,
-    BlinkMacSystemFont,
-    system-ui,
-    Roboto,
-    'Helvetica Neue',
-    'Segoe UI',
-    'Apple SD Gothic Neo',
-    'Noto Sans KR',
-    'Malgun Gothic',
-    'Apple Color Emoji',
-    'Segoe UI Emoji',
-    'Segoe UI Symbol',
-    sans-serif;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scrollbar-width: none;
+  /* 한국어는 기본값이면 음절마다 줄이 바뀐다. keep-all만 두면 띄어쓰기 없는 긴 주소가 칸을 넘으므로, 넘칠 때만 끊는다. */
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+html::-webkit-scrollbar {
+  display: none;
 }
 
 @layer utilities {
@@ -53,9 +48,15 @@ html {
     scrollbar-width: none; /* Firefox */
   }
 }
-/* 뽀송 디자인 시스템 토큰 — 브랜드 색은 기기 맥락(하늘=세탁기, 주황=건조기)에만 쓰고 나머지는 먹색 중립 */
 @theme {
-  /* Typography — Pretendard 기준, 큰 숫자·기기 번호만 Allo */
+  --font-sans:
+    'Pretendard GOV Variable', -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo',
+    'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
+  /* 기기 번호, 남은 시간처럼 혼자 서거나 강조되는 숫자에만 쓴다. 문장 속 숫자는 Pretendard 그대로 둔다. */
+  --font-num: ui-rounded, 'SF Pro Rounded', 'Allo', 'Pretendard GOV Variable', sans-serif;
+  /* SF Pro Rounded가 없는 기기(Android 등)에서 쓰는 Allo는 둥근 정도(ROND) 축의 기본값이 50이라 100을 명시해야 둥글게 나온다. */
+  --font-num--font-variation-settings: 'ROND' 100;
+
   --text-display: 28px;
   --text-display--font-weight: 800;
   --text-display--line-height: 1.25;
@@ -66,121 +67,99 @@ html {
   --text-heading--line-height: 1.35;
   --text-heading--letter-spacing: -0.025em;
 
-  --text-title: 21px; /* 세탁실 이름 */
-  --text-title--font-weight: 800;
-  --text-title--line-height: 1.25;
-  --text-title--letter-spacing: -0.03em;
-
-  --text-numeral: 24px; /* 카드 속 큰 숫자 */
-  --text-numeral--font-weight: 700;
-  --text-numeral--line-height: 1;
-  --text-numeral--letter-spacing: -0.01em;
-
-  --text-section: 16px; /* 목록 섹션 머리 */
-  --text-section--font-weight: 800;
-  --text-section--line-height: 1.4;
-  --text-section--letter-spacing: -0.02em;
+  --text-body-lg: 15px;
+  --text-body-lg--line-height: 1.5;
 
   --text-body-strong: 15px;
   --text-body-strong--font-weight: 700;
   --text-body-strong--line-height: 1.6;
   --text-body-strong--letter-spacing: -0.01em;
 
-  --text-body-lg: 15px;
-  --text-body-lg--font-weight: 400;
-  --text-body-lg--line-height: 1.6;
-
   --text-body: 14px;
-  --text-body--font-weight: 400;
   --text-body--line-height: 1.6;
 
   --text-label: 13px;
   --text-label--font-weight: 700;
-  --text-label--line-height: 1.4;
-  --text-label--letter-spacing: -0.01em;
-
-  --text-button-lg: 16px; /* 큰 버튼 */
-  --text-button-lg--font-weight: 700;
-  --text-button-lg--line-height: 1.4;
-  --text-button-lg--letter-spacing: -0.01em;
+  --text-label--line-height: 1.3;
 
   --text-caption: 12.5px;
-  --text-caption--font-weight: 500;
   --text-caption--line-height: 1.4;
 
   --text-badge: 11.5px;
   --text-badge--font-weight: 700;
   --text-badge--line-height: 1.3;
 
-  /* 세탁기 · 하늘색 */
-  --color-sky-water: #9fe7fb; /* 물 · 브랜드 */
-  --color-sky-back: #cdf4fd; /* 뒤 물결 */
-  --color-sky-deep: #3cc3ec; /* 내 빨래 물 */
-  --color-sky-ring: #0e9ccb; /* 비어 있음 테두리 */
-  --color-sky-ink: #0b6f93; /* 글자 */
-  --color-sky-tint: #ebfafe; /* 면 */
-  --color-sky-deep-back: #8eddf5; /* 내 빨래 뒤 물결 */
+  --color-brand: #4fcbf0;
+  --color-brand-deep: #1c9fd0;
+
+  /* 세탁기 · 하늘색. water가 브랜드 원색이고, 글자에는 ink 단계만 쓴다. */
+  --color-sky-water: #9fe7fb;
+  --color-sky-back: #cdf4fd;
+  --color-sky-deep: #3cc3ec;
+  --color-sky-deep-back: #8eddf5;
+  --color-sky-ring: #0e9ccb;
+  --color-sky-ink: #0b6f93;
+  --color-sky-tint: #ebfafe;
 
   /* 건조기 · 주황 */
-  --color-orange-water: #fdb576; /* 열풍 · 브랜드 */
-  --color-orange-back: #fed9b7; /* 계산 중 바탕 */
-  --color-orange-deep: #f7953e; /* 내 빨래 · 켜짐 */
-  --color-orange-ring: #d9731a; /* 비어 있음 테두리 */
-  --color-orange-ink: #a8560f; /* 글자 */
-  --color-orange-tint: #fff3e8; /* 면 */
+  --color-orange-water: #fdb576;
+  --color-orange-back: #fed9b7;
+  --color-orange-deep: #f7953e;
+  --color-orange-deep-back: #fbc08a;
+  --color-orange-ring: #d9731a;
+  --color-orange-ink: #a8560f;
+  --color-orange-tint: #fff3e8;
 
-  /* 중립 · 먹색 */
-  --color-ink: #1b1d21; /* 글자 · 주 버튼 */
-  --color-ink2: #62656c; /* 보조 글자 */
-  --color-ink3: #9a9da4; /* 비활성 글자 */
-  --color-track: #dcdde1; /* 꺼진 스위치 */
-  --color-line: #e8e9ec; /* 구분선 */
-  --color-soft: #f4f5f7; /* 보조 면 */
-  --color-surface: #ffffff; /* 바탕 */
+  /* 기기와 상관없는 글자 · 주 버튼 · 스위치는 모두 먹색 중립 */
+  --color-ink: #1b1d21;
+  --color-ink-2: #62656c;
+  --color-ink-3: #9a9da4;
+  --color-track: #dcdde1;
+  --color-line: #e8e9ec;
+  --color-soft: #f4f5f7;
+  --color-surface: #ffffff;
+  --color-live: #2fbf71;
+  --color-danger: #d2382f;
+  --color-danger-tint: #fdeeec;
 
-  /* 상태 */
-  --color-live: #2fbf71; /* 실시간 점 */
-  --color-danger: #d2382f; /* 탈퇴 · 오류 */
-  --color-danger-tint: #fdeeec; /* 오류 면 */
-
-  /* 기기 아이콘 */
-  --color-icon-base: #f3f4f6; /* 돌아가는 기기 바탕 */
-  --color-icon-rim: #dfe1e5; /* 돌아가는 기기 테두리 */
-  --color-icon-rim-empty: #cfd1d6; /* 빈 기기 테두리 */
-  --color-icon-rim-off: #c4c6cb; /* 사용 불가 점선 테두리 */
-  --color-icon-skeleton: #eeeff2; /* 불러오는 중 */
-
-  /* 눌림 */
   --color-ink-pressed: #34373d;
   --color-soft-pressed: #eaebee;
   --color-danger-pressed: #b82e26;
 
-  /* 모서리 */
-  --radius-chip: 12px; /* 작은 버튼 */
-  --radius-tile: 14px; /* 아이콘 타일 */
-  --radius-button: 16px;
-  --radius-button-lg: 18px;
-  --radius-banner: 20px; /* 배너 · 묶음 */
-  --radius-card: 22px; /* 내 빨래 카드 */
-  --radius-sheet: 28px; /* 시트 · 다이얼로그 */
-  --radius-seg: 11px; /* 세그먼트 안쪽 칸 */
+  /* 기기 아이콘 전용 회색. 돌고 있는 기기는 회색 유리, 빈 기기는 흰 유리로 구분한다. */
+  --color-glass: #f3f4f6;
+  --color-glass-rim: #dfe1e5;
+  --color-idle-rim: #cfd1d6;
+  --color-off-rim: #c4c6cb;
+  --color-skeleton: #eeeff2;
 
-  /* 모션 — 동작 줄이기 설정이면 motion-reduce:animate-none 으로 멈춘다 */
-  --ease-sheet: cubic-bezier(0.2, 0.8, 0.2, 1); /* 시트가 올라올 때 */
-  --animate-wave-front: wave 3.2s linear infinite;
+  --radius-chip: 12px;
+  --radius-tile: 14px;
+  --radius-button: 16px;
+  --radius-cta: 18px;
+  --radius-banner: 20px;
+  --radius-card: 22px;
+  --radius-sheet: 28px;
+
+  /* 그림자는 화면 위에 떠 있는 것(고정 버튼 · 토스트 · 시트 · 다이얼로그)에만 준다. */
+  --shadow-float: 0 14px 26px -14px rgb(27 29 33 / 0.7);
+  --shadow-overlay: 0 24px 60px -20px rgb(27 29 33 / 0.45);
+  --shadow-toast: 0 12px 28px -12px rgb(27 29 33 / 0.6);
+  --shadow-knob: 0 1px 3px rgb(27 29 33 / 0.25);
+
+  --animate-wave: wave 3.2s linear infinite;
   --animate-wave-back: wave 5.6s linear infinite reverse;
   --animate-shine: shine 2.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-  --animate-blink: blink 1.4s ease-in-out infinite;
 
-  /* 그림자 */
-  --shadow-dialog: 0 24px 60px -20px rgb(27 29 33 / 0.45); /* 다이얼로그 */
-  --shadow-sheet: 0 -12px 40px -16px rgb(27 29 33 / 0.3); /* 아래 시트 */
-  --shadow-float: 0 14px 26px -14px rgb(27 29 33 / 0.7); /* 떠 있는 버튼 */
-  --shadow-toast: 0 12px 28px -12px rgb(27 29 33 / 0.6); /* 토스트 */
-  --shadow-knob: 0 1px 3px rgb(27 29 33 / 0.25); /* 스위치 손잡이 */
-  --shadow-segment: 0 1px 3px rgb(27 29 33 / 0.12); /* 세그먼트 선택 칸 */
+  /* 시트와 대화상자가 들고 날 때. 빠르게 출발해 길게 멈춰, 손을 떼면 놓인 자리로 미끄러지듯 들어간다. */
+  --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
+@utility pb-cta {
+  padding-bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 6px));
+}
+
+/* 물결 한 주기(22)만큼 옮겨야 반복이 이어 붙는다. 기기 아이콘의 물결 파장과 같아야 한다. */
 @keyframes wave {
   to {
     transform: translateX(-22px);
@@ -196,35 +175,42 @@ html {
   }
 }
 
-@keyframes blink {
-  50% {
-    opacity: 0.45;
+/* 레이어 밖에 두면 text-[17px] 같은 유틸리티보다 강해져, 제목마다 준 크기가 무시된다. */
+@layer base {
+  h1 {
+    font-size: var(--text-display);
+    font-weight: var(--text-display--font-weight);
+    line-height: var(--text-display--line-height);
+    letter-spacing: var(--text-display--letter-spacing);
+  }
+
+  h2 {
+    font-size: var(--text-heading);
+    font-weight: var(--text-heading--font-weight);
+    line-height: var(--text-heading--line-height);
+    letter-spacing: var(--text-heading--letter-spacing);
   }
 }
 
-h1 {
-  font-size: var(--text-display);
-  font-weight: var(--text-display--font-weight);
-  line-height: var(--text-display--line-height);
-  letter-spacing: var(--text-display--letter-spacing);
-}
-
-h2 {
-  font-size: var(--text-heading);
-  font-weight: var(--text-heading--font-weight);
-  line-height: var(--text-heading--line-height);
-  letter-spacing: var(--text-heading--letter-spacing);
-}
-
-body,
-p {
+body {
   font-size: var(--text-body-lg);
-  font-weight: var(--text-body-lg--font-weight);
   line-height: var(--text-body-lg--line-height);
+  background: var(--color-surface);
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+/* Tailwind v4 preflight는 버튼 커서를 default로 되돌린다. 요소마다 붙이면 빠뜨리므로 여기서 한 번에 준다.
+   base 레이어에 두어야 disabled:cursor-not-allowed 같은 유틸리티가 이긴다. */
+@layer base {
+  :is(button, select, summary, [role='button'], [role='radio'], [role='switch']):not(
+    :disabled,
+    [aria-disabled='true']
+  ) {
+    cursor: pointer;
+  }
 }
 
 /* View Transitions */

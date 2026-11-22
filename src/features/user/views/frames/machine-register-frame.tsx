@@ -1,25 +1,32 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useNavigate, useParams } from '@tanstack/react-router';
 
 import { useTranslation } from 'react-i18next';
 
-import { Sheet } from '@/common/components';
-import { PushPermissionCard, usePushPermission } from '@/features/push-notification';
-import { MachineBox, MachineCompletionDialog, MachineRegisterScreen } from '@/features/user';
-import { useFindMachineByUuid, useRegisterMachine } from '@/features/user/viewmodels';
+import { PushPermissionSheet, usePermissionPrompt } from '@/features/push-notification';
+import { MachineCompletionDialog, MachineRegisterScreen, MachineVessel } from '@/features/user';
+import {
+  toMachineIdentity,
+  useFindMachineByUuid,
+  useMachineViews,
+  useRegisterMachine,
+} from '@/features/user/viewmodels';
+
+import { useRoomNames } from './use-room-selection';
 
 export function MachineRegisterFrame() {
   const navigate = useNavigate();
-  const { t } = useTranslation('notification');
-  const { status } = usePushPermission();
+  const { t } = useTranslation('main');
+  const roomNames = useRoomNames();
+  const prompt = usePermissionPrompt();
   const [showPermission, setShowPermission] = useState(false);
-  const dialogRef = useRef<HTMLDialogElement>(null);
   const { machineUuid } = useParams({
     from: '/_auth-required/_user/machine-register/$machineUuid',
   });
 
   const { machine, isNotFound } = useFindMachineByUuid(machineUuid);
+  const { views } = useMachineViews();
   const {
     mutate: registerMachine,
     isPending,
@@ -27,7 +34,7 @@ export function MachineRegisterFrame() {
     confirmCompletion,
     cancelConfirmation,
   } = useRegisterMachine(() => {
-    if (status === 'granted') {
+    if (prompt.status === 'granted') {
       void navigate({ to: '/' });
     } else {
       setShowPermission(true);
@@ -35,29 +42,22 @@ export function MachineRegisterFrame() {
   });
 
   useEffect(() => {
-    if (showPermission) dialogRef.current?.showModal();
-  }, [showPermission]);
-
-  useEffect(() => {
-    if (showPermission && status === 'granted') {
-      dialogRef.current?.close();
+    if (showPermission && prompt.status === 'granted') {
       void navigate({ to: '/' });
     }
-  }, [navigate, showPermission, status]);
+  }, [navigate, showPermission, prompt.status]);
 
-  const closePermission = () => {
-    dialogRef.current?.close();
+  const goHome = () => {
     void navigate({ to: '/' });
   };
 
   if (isNotFound || !machine) return null;
 
-  const machineData = {
-    type: machine.type.toLowerCase() as 'washer' | 'dryer',
-    id: machine.index,
+  const identity = toMachineIdentity(machine);
+  const view: MachineRegisterScreen.Machine = views.find((item) => item.uuid === machineUuid) ?? {
+    ...identity,
+    state: 'loading',
   };
-
-  const location = machine.location.toLowerCase() as 'a' | 'b';
 
   const register = () => {
     registerMachine({ params: { path: { uuid: machineUuid } } });
@@ -66,9 +66,10 @@ export function MachineRegisterFrame() {
   return (
     <>
       <MachineRegisterScreen
-        machine={machineData}
-        location={location}
+        machine={view}
+        roomTitle={t('roomTitle', roomNames(identity.location, identity.gender))}
         onRegister={register}
+        onBack={goHome}
         isPending={isPending}
       />
       {confirmation && (
@@ -78,30 +79,21 @@ export function MachineRegisterFrame() {
           onClose={cancelConfirmation}
         />
       )}
-      <Sheet
-        ref={dialogRef}
-        aria-label={t('permission.completionTitle')}
-        onCancel={closePermission}
-      >
-        <PushPermissionCard
-          presentation="sheet"
-          onLater={closePermission}
-          art={
-            // 방금 등록한 기기를 내 빨래 표식과 함께 보여 준다
-            <MachineBox
-              machine={{
-                ...machineData,
-                status: 'using',
-                mine: true,
-                elapsedMinutes: 20,
-                remainingDisplay: { kind: 'minutes', minutes: 80 },
-              }}
-              showCaption={false}
-              className="w-18"
-            />
-          }
-        />
-      </Sheet>
+      <PushPermissionSheet
+        open={showPermission}
+        onClose={goHome}
+        prompt={prompt}
+        art={
+          <MachineVessel
+            type={view.type}
+            id={view.id}
+            state={view.state}
+            level={view.state === 'loading' ? 0 : view.level}
+            mine
+            size={72}
+          />
+        }
+      />
     </>
   );
 }

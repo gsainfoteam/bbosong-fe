@@ -37,9 +37,11 @@ import {
   ThinqRemaining,
 } from '../components';
 import { buttonClass, inputClass, secondaryButtonClass } from '../styles';
+import { useEnumLabels } from '../use-enum-labels';
 
 export function AdminMachinesScreen() {
   const { t, i18n } = useTranslation('admin');
+  const labels = useEnumLabels();
   const query = useAdminMachines();
   const actions = useAdminActions();
   const [mode, setMode] = useState<'single' | 'multiple' | null>(null);
@@ -179,7 +181,7 @@ export function AdminMachinesScreen() {
       onRefresh={() => void query.refetch()}
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <span className="text-ink2 text-sm dark:text-slate-400">
+        <span className="text-ink-2 text-sm dark:text-slate-400">
           {t('machineCount', { count: query.filtered.length })}
         </span>
         <div className="flex gap-2">
@@ -270,7 +272,7 @@ export function AdminMachinesScreen() {
                 <select name="gender" className={inputClass}>
                   {Object.values(Gender).map((value) => (
                     <option key={value} value={value}>
-                      {t(value)}
+                      {labels.gender[value]}
                     </option>
                   ))}
                 </select>
@@ -289,7 +291,7 @@ export function AdminMachinesScreen() {
                 >
                   {Object.values(MachineType).map((value) => (
                     <option key={value} value={value}>
-                      {t(value)}
+                      {labels.machineType[value]}
                     </option>
                   ))}
                 </select>
@@ -326,7 +328,7 @@ export function AdminMachinesScreen() {
                       </select>
                       {thinqDevices.isError && (
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-ink2 text-xs dark:text-slate-400">
+                          <span className="text-ink-2 text-xs dark:text-slate-400">
                             {t('thinqDevicesError')}
                           </span>
                           <button
@@ -339,7 +341,7 @@ export function AdminMachinesScreen() {
                           </button>
                         </div>
                       )}
-                      <span className="text-ink2 text-xs leading-5 dark:text-slate-400">
+                      <span className="text-ink-2 text-xs leading-5 dark:text-slate-400">
                         {t('thinqMappingHint')}
                       </span>
                     </label>
@@ -381,7 +383,7 @@ export function AdminMachinesScreen() {
                       />
                     </label>
                   </div>
-                  <p className="text-ink2 text-sm leading-6 dark:text-slate-400">
+                  <p className="text-ink-2 text-sm leading-6 dark:text-slate-400">
                     {t('rangeHint')}
                   </p>
                 </>
@@ -415,7 +417,7 @@ export function AdminMachinesScreen() {
                   name="isAvailable"
                   type="checkbox"
                   defaultChecked={editingLive.isAvailable}
-                  className="accent-primary size-4"
+                  className="accent-ink size-4"
                 />
                 {t('isAvailable')}
               </label>
@@ -468,7 +470,7 @@ export function AdminMachinesScreen() {
                     </select>
                     {thinqDevices.isError && (
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-ink2 text-xs dark:text-slate-400">
+                        <span className="text-ink-2 text-xs dark:text-slate-400">
                           {t('thinqDevicesError')}
                         </span>
                         <button
@@ -481,7 +483,7 @@ export function AdminMachinesScreen() {
                         </button>
                       </div>
                     )}
-                    <span className="text-ink2 text-xs leading-5 dark:text-slate-400">
+                    <span className="text-ink-2 text-xs leading-5 dark:text-slate-400">
                       {t('thinqMappingHint')}
                     </span>
                   </label>
@@ -515,7 +517,7 @@ export function AdminMachinesScreen() {
                   <input name="matterPayload" className={inputClass} placeholder="MT:…" />
                 </label>
               )}
-              <p className="text-ink2 text-sm leading-6 dark:text-slate-400">
+              <p className="text-ink-2 text-sm leading-6 dark:text-slate-400">
                 {editThinqDeviceId ? t('thinqEditHint') : t('editHint')}
               </p>
               <div className="flex justify-end gap-2">
@@ -542,10 +544,11 @@ export function AdminMachinesScreen() {
         >
           <p className="text-sm leading-6">
             {formatMachineCode(confirm.machine)} ·{' '}
-            {t('building', { location: confirm.machine.location })} · {t(confirm.machine.gender)} ·{' '}
-            {t(confirm.machine.type)} #{confirm.machine.index}
+            {t('building', { location: confirm.machine.location })} ·{' '}
+            {labels.gender[confirm.machine.gender]} · {labels.machineType[confirm.machine.type]} #
+            {confirm.machine.index}
           </p>
-          <p className="text-ink2 mt-3 text-sm leading-6 dark:text-slate-400">
+          <p className="text-ink-2 mt-3 text-sm leading-6 dark:text-slate-400">
             {confirm.action === 'delete' ? t('deleteConfirm') : t('commissionConfirm')}
           </p>
           <div className="mt-6 flex justify-end gap-2">
@@ -575,7 +578,7 @@ export function AdminMachinesScreen() {
           onClose={closePower}
         >
           <div className="mb-4 flex items-center gap-3">
-            <span className="text-ink2 text-sm dark:text-slate-400">{t('status')}</span>
+            <span className="text-ink-2 text-sm dark:text-slate-400">{t('status')}</span>
             <MachineStatusBadge
               isAvailable={powerMachine.isAvailable}
               status={powerMachine.status}
@@ -598,7 +601,7 @@ export function AdminMachinesScreen() {
             <button type="submit" className={buttonClass} disabled={power.isFetching}>
               {power.isFetching ? t('loading') : t('searchRecords')}
             </button>
-            <p className="text-ink2 text-sm leading-6 sm:col-span-2 dark:text-slate-400">
+            <p className="text-ink-2 text-sm leading-6 sm:col-span-2 dark:text-slate-400">
               {t('powerRangeHint')}
             </p>
             <div className="sm:col-span-2">
