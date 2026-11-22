@@ -4,7 +4,6 @@ import {
   calculateQrScanRegion,
   improveQrCameraTrack,
   QR_SCAN_MAX_SCANS_PER_SECOND,
-  QR_SCAN_TARGET_RESOLUTION,
 } from './qr-scan-settings';
 
 describe('calculateQrScanRegion', () => {
@@ -47,7 +46,7 @@ describe('calculateQrScanRegion', () => {
 });
 
 describe('improveQrCameraTrack', () => {
-  it('requests 1280x720 ideal and continuous focus when supported', async () => {
+  it('requests continuous focus when supported', async () => {
     const applyConstraints = vi.fn().mockResolvedValue(undefined);
     const track = {
       getCapabilities: () => ({ focusMode: ['continuous', 'manual'] }),
@@ -58,25 +57,25 @@ describe('improveQrCameraTrack', () => {
     await improveQrCameraTrack(stream);
 
     expect(applyConstraints).toHaveBeenCalledWith({
-      width: { ideal: QR_SCAN_TARGET_RESOLUTION.width },
-      height: { ideal: QR_SCAN_TARGET_RESOLUTION.height },
       advanced: [{ focusMode: 'continuous' }],
     });
   });
 
-  it('skips focus constraint when unsupported and ignores apply failures', async () => {
+  it('does not touch constraints when continuous focus is unsupported', async () => {
+    const applyConstraints = vi.fn().mockResolvedValue(undefined);
+    const track = { getCapabilities: () => ({}), applyConstraints };
+    const stream = { getVideoTracks: () => [track] } as unknown as MediaStream;
+
+    await improveQrCameraTrack(stream);
+    expect(applyConstraints).not.toHaveBeenCalled();
+  });
+
+  it('ignores apply failures', async () => {
     const applyConstraints = vi.fn().mockRejectedValue(new Error('unsupported'));
-    const track = {
-      getCapabilities: () => ({}),
-      applyConstraints,
-    };
+    const track = { getCapabilities: () => ({ focusMode: ['continuous'] }), applyConstraints };
     const stream = { getVideoTracks: () => [track] } as unknown as MediaStream;
 
     await expect(improveQrCameraTrack(stream)).resolves.toBeUndefined();
-    expect(applyConstraints).toHaveBeenCalledWith({
-      width: { ideal: QR_SCAN_TARGET_RESOLUTION.width },
-      height: { ideal: QR_SCAN_TARGET_RESOLUTION.height },
-    });
   });
 });
 

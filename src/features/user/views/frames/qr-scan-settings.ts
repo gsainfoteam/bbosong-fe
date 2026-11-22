@@ -53,17 +53,13 @@ export async function improveQrCameraTrack(stream: MediaStream): Promise<void> {
   if (!track) return;
 
   const capabilities = (track.getCapabilities?.() ?? {}) as FocusCapableCapabilities;
-  const constraints: MediaTrackConstraints = {
-    width: { ideal: QR_SCAN_TARGET_RESOLUTION.width },
-    height: { ideal: QR_SCAN_TARGET_RESOLUTION.height },
-  };
-
-  if (capabilities.focusMode?.includes('continuous')) {
-    constraints.advanced = [{ focusMode: 'continuous' } as MediaTrackConstraintSet];
-  }
+  // 해상도는 getUserMedia에서 이미 요청했다. 다시 적용하면 스트림 비율이 바뀌며 화면이 튄다.
+  if (!capabilities.focusMode?.includes('continuous')) return;
 
   try {
-    await track.applyConstraints(constraints);
+    await track.applyConstraints({
+      advanced: [{ focusMode: 'continuous' } as MediaTrackConstraintSet],
+    });
   } catch {
     // 기기/브라우저가 제약을 거부해도 스캔은 계속한다.
   }

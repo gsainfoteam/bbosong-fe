@@ -15,6 +15,7 @@ const CORNERS = [
 
 export function QrScanScreen({
   videoRef,
+  isCameraReady = true,
   isCameraError = false,
   onClose,
   className,
@@ -34,7 +35,10 @@ export function QrScanScreen({
             ref={videoRef}
             muted
             playsInline
-            className="absolute inset-0 size-full bg-[#2a2c31] object-cover"
+            className={cn(
+              'absolute inset-0 size-full bg-[#2a2c31] object-cover transition-opacity duration-200',
+              isCameraReady ? 'opacity-100' : 'opacity-0',
+            )}
           />
           <div
             aria-hidden
@@ -88,6 +92,7 @@ export function QrScanScreen({
 export namespace QrScanScreen {
   export type Props = {
     videoRef: Ref<HTMLVideoElement> | null;
+    isCameraReady?: boolean;
     isCameraError?: boolean;
     onClose: () => void;
     className?: string;
