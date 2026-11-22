@@ -166,6 +166,7 @@ html {
   --radius-seg: 11px; /* 세그먼트 안쪽 칸 */
 
   /* 모션 — 동작 줄이기 설정이면 motion-reduce:animate-none 으로 멈춘다 */
+  --ease-sheet: cubic-bezier(0.2, 0.8, 0.2, 1); /* 시트가 올라올 때 */
   --animate-wave-front: wave 3.2s linear infinite;
   --animate-wave-back: wave 5.6s linear infinite reverse;
   --animate-shine: shine 2.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
