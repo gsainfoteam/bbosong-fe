@@ -4,6 +4,7 @@ import {
   calculateQrScanRegion,
   improveQrCameraTrack,
   QR_SCAN_MAX_SCANS_PER_SECOND,
+  waitForStableVideoSize,
 } from './qr-scan-settings';
 
 describe('calculateQrScanRegion', () => {
@@ -76,6 +77,60 @@ describe('improveQrCameraTrack', () => {
     const stream = { getVideoTracks: () => [track] } as unknown as MediaStream;
 
     await expect(improveQrCameraTrack(stream)).resolves.toBeUndefined();
+  });
+});
+
+describe('waitForStableVideoSize', () => {
+  const createVideo = (sizes: [number, number][]) => {
+    const video = { videoWidth: 0, videoHeight: 0 };
+    let index = 0;
+    const nextFrame = vi.fn((callback: () => void) => {
+      const [width, height] = sizes[Math.min(index, sizes.length - 1)];
+      index += 1;
+      video.videoWidth = width;
+      video.videoHeight = height;
+      queueMicrotask(callback);
+    });
+    return { video, nextFrame };
+  };
+
+  it('waits until the size stays the same for the required frames', async () => {
+    const { video, nextFrame } = createVideo([
+      [0, 0],
+      [1280, 720],
+      [720, 1280],
+      [720, 1280],
+      [720, 1280],
+    ]);
+
+    await waitForStableVideoSize(video, { nextFrame, stableFrames: 3 });
+
+    expect(nextFrame).toHaveBeenCalledTimes(5);
+    expect(video).toEqual({ videoWidth: 720, videoHeight: 1280 });
+  });
+
+  it('gives up after the timeout', async () => {
+    vi.useFakeTimers();
+    const nextFrame = vi.fn();
+    const promise = waitForStableVideoSize(
+      { videoWidth: 0, videoHeight: 0 },
+      { nextFrame, timeoutMs: 500 },
+    );
+
+    vi.advanceTimersByTime(500);
+    await expect(promise).resolves.toBeUndefined();
+    vi.useRealTimers();
+  });
+
+  it('resolves right away when aborted', async () => {
+    const controller = new AbortController();
+    const promise = waitForStableVideoSize(
+      { videoWidth: 0, videoHeight: 0 },
+      { nextFrame: vi.fn(), signal: controller.signal },
+    );
+
+    controller.abort();
+    await expect(promise).resolves.toBeUndefined();
   });
 });
 
