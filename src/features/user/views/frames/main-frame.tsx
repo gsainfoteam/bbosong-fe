@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { SplashScreen } from '@/common/components';
+import { ErrorPage } from '@/common/pages';
 import { type Gender } from '@/features/auth';
 import {
   AlertGender,
@@ -57,8 +58,7 @@ const toAlertBlocker = (
 };
 
 export function MainFrame() {
-  const { t } = useTranslation('error');
-  const { t: tNotification } = useTranslation('notification');
+  const { t } = useTranslation('notification');
 
   const {
     user,
@@ -139,10 +139,7 @@ export function MainFrame() {
   const toRoomNotification = (
     machineType: GetRoomNotificationButton.MachineType,
   ): GetRoomNotificationButton.Props => {
-    const typeLabel =
-      machineType === 'washer'
-        ? tNotification('laundryRoom.washer')
-        : tNotification('laundryRoom.dryer');
+    const typeLabel = machineType === 'washer' ? t('laundryRoom.washer') : t('laundryRoom.dryer');
 
     // 성별을 모르면 어느 세탁실인지 알 수 없으므로 신청할 수 없다
     const target: LaundryRoomAlertTarget | undefined = user?.gender
@@ -162,14 +159,14 @@ export function MainFrame() {
         await toggleAlert(target);
         toast.success(
           active
-            ? tNotification('laundryRoom.canceled', { type: typeLabel })
-            : tNotification('laundryRoom.requested', { type: typeLabel }),
+            ? t('laundryRoom.canceled', { type: typeLabel })
+            : t('laundryRoom.requested', { type: typeLabel }),
         );
       } catch (error) {
         toast.error(
           isConflictError(error)
-            ? tNotification('laundryRoom.alreadyAvailable', { type: typeLabel })
-            : tNotification('laundryRoom.failed'),
+            ? t('laundryRoom.alreadyAvailable', { type: typeLabel })
+            : t('laundryRoom.failed'),
         );
       }
     };
@@ -199,14 +196,7 @@ export function MainFrame() {
   };
 
   if (isError) {
-    return (
-      <div className="bg-surface flex w-full flex-1 flex-col items-center justify-center">
-        <p role="alert">{t('generic')}</p>
-        <button type="button" onClick={onRetry}>
-          {t('refetch')}
-        </button>
-      </div>
-    );
+    return <ErrorPage reset={onRetry} home={false} />;
   }
 
   return (

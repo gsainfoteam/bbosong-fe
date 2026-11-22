@@ -3,7 +3,8 @@ import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
-import { Button, SplashScreen } from '@/common/components';
+import { SplashScreen } from '@/common/components';
+import { ErrorPage } from '@/common/pages';
 import { useLogout, useWithdraw } from '@/features/auth';
 import {
   type NotificationSettingRow,
@@ -40,7 +41,6 @@ function useNotificationSetting(): NotificationSettingRow.Props {
 export function MypageFrame() {
   const navigate = useNavigate();
   const { user, isError, isLoading, refetch } = useFindUserProfile();
-  const { t } = useTranslation('error');
   const notification = useNotificationSetting();
 
   const { mutate: logout, isPending: isLoggingOut } = useLogout({ showToast: true });
@@ -51,14 +51,7 @@ export function MypageFrame() {
   }
 
   if (isError || !user) {
-    return (
-      <div className="bg-surface flex w-full flex-1 flex-col items-center justify-center">
-        <p role="alert">{t('generic')}</p>
-        <Button variant="outline" size="s" onClick={() => void refetch()} className="mt-4">
-          {t('refetch')}
-        </Button>
-      </div>
-    );
+    return <ErrorPage reset={() => void refetch()} />;
   }
 
   return (

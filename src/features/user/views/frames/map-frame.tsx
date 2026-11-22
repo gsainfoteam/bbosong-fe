@@ -1,8 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
 
-import { useTranslation } from 'react-i18next';
-
 import { SplashScreen } from '@/common/components';
+import { ErrorPage } from '@/common/pages';
 import { MapScreen, RoomSheet } from '@/features/user';
 import {
   useFindMap,
@@ -15,7 +14,6 @@ import { useRoomSelection } from './use-room-selection';
 
 export function MapFrame() {
   const navigate = useNavigate();
-  const { t } = useTranslation('error');
   const { user, isLoading: isUserLoading, isError: isUserError } = useFindUserProfile();
   const { data: usingMachines, isLoading: isUsingLoading } = useFindMyMachine();
   const {
@@ -36,14 +34,7 @@ export function MapFrame() {
   if (isUserLoading || isUsingLoading || isMachinesLoading) return <SplashScreen />;
 
   if (isUserError || isMachinesError) {
-    return (
-      <div className="bg-surface flex w-full flex-1 flex-col items-center justify-center">
-        <p role="alert">{t('generic')}</p>
-        <button type="button" onClick={() => void refetch()}>
-          {t('refetch')}
-        </button>
-      </div>
-    );
+    return <ErrorPage reset={() => void refetch()} />;
   }
 
   return (
