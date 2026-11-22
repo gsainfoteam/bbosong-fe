@@ -55,7 +55,11 @@ export function MainScreen({
             roomNotification={roomNotification.washer}
             className="mb-5"
           />
-          <MachineList machines={washers} className={machines.className} />
+          <MachineList
+            machines={washers}
+            onMachineLongPress={machines.onMachineLongPress}
+            className={machines.className}
+          />
         </section>
         <section className="mt-6.5">
           <MachineSectionHeader
@@ -65,7 +69,11 @@ export function MainScreen({
             roomNotification={roomNotification.dryer}
             className="mb-5"
           />
-          <MachineList machines={dryers} className={machines.className} />
+          <MachineList
+            machines={dryers}
+            onMachineLongPress={machines.onMachineLongPress}
+            className={machines.className}
+          />
         </section>
       </div>
 

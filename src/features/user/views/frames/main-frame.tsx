@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import { useNavigate } from '@tanstack/react-router';
+
 import { AnimatePresence, motion, type PanInfo } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -29,6 +31,7 @@ import {
 import {
   type GetRoomNotificationButton,
   type MachineBox,
+  type MachineList,
   type SelectBuilding,
 } from '../components';
 import { MainScreen } from '../screens';
@@ -79,6 +82,7 @@ const toMachineStatus = (isAvailable: boolean, status: string): MachineBox.Statu
 };
 
 export function MainFrame() {
+  const navigate = useNavigate();
   const { t } = useTranslation('error');
   const { t: tNotification } = useTranslation('notification');
 
@@ -148,7 +152,7 @@ export function MainFrame() {
 
   const onSelectLocation = (item: Location) => setCurrentLocation(item);
 
-  const machines = useMemo<MachineBox.Props['machine'][]>(() => {
+  const machines = useMemo<MachineList.Item[]>(() => {
     if (!allMachines) return [];
 
     // 내가 등록한 기기는 아이콘에 표식을 달아 구분한다
@@ -170,6 +174,7 @@ export function MainFrame() {
         const type: MachineBox.Type = machine.type === 'DRYER' ? 'dryer' : 'washer';
 
         return {
+          uuid: machine.uuid,
           type,
           id: machine.index,
           status,
@@ -238,8 +243,17 @@ export function MainFrame() {
     isRefreshing,
   };
 
-  const machineList = {
+  // 관리자는 기기를 길게 눌러 그 기기의 등록 화면으로 바로 갈 수 있다
+  const machineList: MachineList.Props = {
     machines,
+    onMachineLongPress:
+      user?.role === 'admin'
+        ? ({ uuid }) => {
+            if (!uuid) return;
+            navigator.vibrate?.(15);
+            void navigate({ to: '/machine-register/$machineUuid', params: { machineUuid: uuid } });
+          }
+        : undefined,
   };
 
   const toRoomNotification = (
