@@ -157,6 +157,8 @@ private struct TimeLabel: View {
     var size: CGFloat
     /// "시작한 지" 같은 작은 설명을 시간 위에 얹을지. 좁은 자리(컴팩트)에서는 끈다
     var showsCaption = true
+    // 타이머 글자는 가장 긴 값만큼 폭을 미리 잡으므로, 왼쪽에 둘 때도 정렬을 바꿔야 붙는다
+    var alignment: TextAlignment = .trailing
 
     var body: some View {
         if let end = state.countdownEnd {
@@ -165,7 +167,7 @@ private struct TimeLabel: View {
             Text(timerInterval: now...max(end, now), countsDown: true)
                 .font(numeral(size))
                 .monospacedDigit()
-                .multilineTextAlignment(.trailing)
+                .multilineTextAlignment(alignment)
         } else if state.phase == .pause, let minutes = state.remainingMinutes {
             // 일시정지 중에는 시간이 멈춘다. 흐리게 보여준다
             Text(clock(minutes: minutes))
@@ -176,9 +178,9 @@ private struct TimeLabel: View {
             Text(tr("시간 계산 중", "Calculating"))
                 .font(.system(size: max(size * 0.55, 11), weight: .bold))
                 .foregroundStyle(.secondary)
-                .multilineTextAlignment(.trailing)
+                .multilineTextAlignment(alignment)
         } else if attributes.machineKind == .washer, state.phase == .running {
-            VStack(alignment: .trailing, spacing: 4) {
+            VStack(alignment: alignment == .leading ? .leading : .trailing, spacing: 4) {
                 if showsCaption {
                     Text(tr("시작한 지", "Running for"))
                         .font(.system(size: 11.5, weight: .semibold))
@@ -188,7 +190,7 @@ private struct TimeLabel: View {
                 Text(attributes.startDate, style: .timer)
                     .font(numeral(size))
                     .monospacedDigit()
-                    .multilineTextAlignment(.trailing)
+                    .multilineTextAlignment(alignment)
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
             }
@@ -327,6 +329,56 @@ private struct ActivityRow: View {
     }
 }
 
+// MARK: - Apple Watch Smart Stack
+
+/// 워치는 잠금화면보다 훨씬 좁아 시간까지 한 줄에 넣을 수 없다. 칩과 이름·상태를 묶은 줄 아래에 시간과 막대를 쌓는다.
+private struct SmartStackView: View {
+    let attributes: LaundryActivityAttributes
+    let state: LaundryActivityAttributes.ContentState
+
+    var body: some View {
+        let bar = CycleBar(attributes: attributes, state: state)
+
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 8) {
+                MachineChip(attributes: attributes, state: state, size: 28)
+
+                VStack(alignment: .leading, spacing: 1) {
+                    Headline(attributes: attributes, state: state)
+                        .font(.system(size: 13, weight: .bold))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                    Subline(attributes: attributes, state: state)
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                }
+            }
+
+            TimeLabel(attributes: attributes, state: state, size: 26, showsCaption: false, alignment: .leading)
+
+            if bar.isVisible { bar }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+@available(iOS 18.0, *)
+private struct FamilyContent: View {
+    @Environment(\.activityFamily) private var family
+    let attributes: LaundryActivityAttributes
+    let state: LaundryActivityAttributes.ContentState
+
+    var body: some View {
+        if family == .small {
+            SmartStackView(attributes: attributes, state: state)
+        } else {
+            ActivityRow(attributes: attributes, state: state).padding(16)
+        }
+    }
+}
+
 // MARK: - Dynamic Island
 
 /// 컴팩트 오른쪽. 끝나면 시간 대신 "끝", 시간을 모르면 아무것도 두지 않는다
@@ -389,10 +441,15 @@ private struct MinimalView: View {
 
 struct LaundryLiveActivity: Widget {
     var body: some WidgetConfiguration {
-        ActivityConfiguration(for: LaundryActivityAttributes.self) { context in
-            ActivityRow(attributes: context.attributes, state: context.state)
-                .padding(16)
-                .activityBackgroundTint(Color(.systemBackground).opacity(0.9))
+        let configuration = ActivityConfiguration(for: LaundryActivityAttributes.self) { context in
+            Group {
+                if #available(iOS 18.0, *) {
+                    FamilyContent(attributes: context.attributes, state: context.state)
+                } else {
+                    ActivityRow(attributes: context.attributes, state: context.state).padding(16)
+                }
+            }
+            .activityBackgroundTint(Color(.systemBackground).opacity(0.9))
                 .activitySystemActionForegroundColor(context.attributes.color)
         } dynamicIsland: { context in
             DynamicIsland {
@@ -416,6 +473,13 @@ struct LaundryLiveActivity: Widget {
                 MinimalView(attributes: context.attributes, state: context.state)
             }
             .keylineTint(context.attributes.color)
+        }
+
+        // .small을 선언하지 않으면 워치 Smart Stack에는 컴팩트 양 끝만 붙여 보여준다
+        if #available(iOS 18.0, *) {
+            return configuration.supplementalActivityFamilies([.small])
+        } else {
+            return configuration
         }
     }
 }
