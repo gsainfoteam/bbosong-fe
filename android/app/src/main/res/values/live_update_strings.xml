@@ -10,4 +10,5 @@
     <string name="live_update_washer_done">Washing is done</string>
     <string name="live_update_dryer_done">Drying is done</string>
     <string name="live_update_error">Something went wrong</string>
+    <string name="live_update_minutes_short">%dm</string>
 </resources>

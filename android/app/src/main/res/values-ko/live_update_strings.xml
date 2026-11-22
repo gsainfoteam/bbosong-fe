@@ -10,4 +10,5 @@
     <string name="live_update_washer_done">세탁이 끝났어요</string>
     <string name="live_update_dryer_done">건조가 끝났어요</string>
     <string name="live_update_error">기기에 문제가 생겼어요</string>
+    <string name="live_update_minutes_short">%d분</string>
 </resources>
