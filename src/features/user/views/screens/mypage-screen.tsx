@@ -6,6 +6,7 @@ import { ChevronRight, ExternalLink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { LanguageToggle, ListGroup, ListRow, Modal, TopBar } from '@/common/components';
+import { haptic } from '@/common/lib/haptic';
 import { cn } from '@/common/utils';
 import { NotificationSettingRow } from '@/features/push-notification';
 
@@ -98,7 +99,11 @@ export function MypageScreen({
           <ListRow asChild tone="danger" label={t('withdraw')}>
             <button
               type="button"
-              onClick={() => setWithdrawModalOpen(true)}
+              data-haptic="off"
+              onClick={() => {
+                haptic.warning();
+                setWithdrawModalOpen(true);
+              }}
               disabled={isWithdrawing}
               className="disabled:opacity-50"
             />
