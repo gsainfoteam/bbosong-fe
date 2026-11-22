@@ -12,7 +12,9 @@ export function TopBar({ title, onBack, icon = 'back', trailing, className }: To
   const Icon = icon === 'close' ? X : ChevronLeft;
 
   return (
-    <header className={cn('relative flex h-14 w-full items-center px-2', className)}>
+    <header
+      className={cn('sticky top-0 z-10 flex h-14 w-full items-center bg-inherit px-2', className)}
+    >
       {onBack && (
         <IconButton onClick={onBack} label={icon === 'close' ? t('close') : t('goBack')}>
           <Icon size={22} strokeWidth={2.2} aria-hidden />
