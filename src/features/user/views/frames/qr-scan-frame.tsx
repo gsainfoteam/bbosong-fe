@@ -18,6 +18,7 @@ export function QrScanFrame() {
   const router = useRouter();
   const resolveMachineShortlink = useResolveMachineShortlink();
   const [isCameraError, setIsCameraError] = useState(false);
+  const [isCameraReady, setIsCameraReady] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -100,6 +101,7 @@ export function QrScanFrame() {
       try {
         await startQrCamera(video);
         if (controller.signal.aborted) return;
+        setIsCameraReady(true);
         const engine = await createQrDecodeEngine();
         if (controller.signal.aborted) return;
         rafId = requestAnimationFrame(() => {
@@ -125,5 +127,12 @@ export function QrScanFrame() {
     else void navigate({ to: '/', replace: true });
   };
 
-  return <QrScanScreen videoRef={videoRef} isCameraError={isCameraError} onClose={onClose} />;
+  return (
+    <QrScanScreen
+      videoRef={videoRef}
+      isCameraReady={isCameraReady}
+      isCameraError={isCameraError}
+      onClose={onClose}
+    />
+  );
 }
