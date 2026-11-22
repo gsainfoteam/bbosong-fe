@@ -25,10 +25,15 @@ export function MachineRegisterScreen({
       <div className="flex h-1/2 w-full flex-col items-center justify-between px-10 py-15">
         <MachineRegisterMessage lang={i18n.language} machine={machine} location={location} />
         <div className="flex w-full flex-row items-center justify-between gap-2 p-5">
-          <Button disabled={isPending} onClick={() => navigate({ to: '/' })}>
+          <Button
+            variant="secondary"
+            disabled={isPending}
+            onClick={() => navigate({ to: '/' })}
+            className="flex-1"
+          >
             {t('goBack')}
           </Button>
-          <Button onClick={onRegister} disabled={isPending} aria-busy={isPending}>
+          <Button onClick={onRegister} loading={isPending} className="flex-1">
             {isPending ? t('machineRegister:registering') : t('yes')}
           </Button>
         </div>

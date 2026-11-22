@@ -1,5 +1,6 @@
 export * from './button/index';
 export * from './checkbox/index';
+export * from './icon-button/index';
 export * from './info-tooltip/index';
 export * from './loading/index';
 export * from './nav-button/index';

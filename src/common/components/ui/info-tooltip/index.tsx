@@ -20,7 +20,7 @@ export function InfoTooltip({ label, content, className }: InfoTooltip.Props) {
       <span
         id={tooltipId}
         role="tooltip"
-        className="pointer-events-none invisible absolute bottom-full left-1/2 z-20 mb-2 w-56 -translate-x-1/2 rounded-lg bg-slate-800 px-3 py-2 text-left text-xs leading-relaxed font-normal whitespace-normal text-white opacity-0 shadow-lg transition-opacity group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100 dark:bg-slate-700"
+        className="rounded-chip bg-ink text-caption pointer-events-none invisible absolute bottom-full left-1/2 z-20 mb-2 w-56 -translate-x-1/2 px-3 py-2 text-left leading-relaxed whitespace-normal text-white opacity-0 shadow-lg transition-opacity group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100"
       >
         {content}
       </span>

@@ -84,6 +84,11 @@ html {
   --text-label--line-height: 1.4;
   --text-label--letter-spacing: -0.01em;
 
+  --text-button-lg: 16px; /* 큰 버튼 */
+  --text-button-lg--font-weight: 700;
+  --text-button-lg--line-height: 1.4;
+  --text-button-lg--letter-spacing: -0.01em;
+
   --text-caption: 12.5px;
   --text-caption--font-weight: 500;
   --text-caption--line-height: 1.4;
@@ -122,6 +127,11 @@ html {
   --color-danger: #d2382f; /* 탈퇴 · 오류 */
   --color-danger-tint: #fdeeec; /* 오류 면 */
 
+  /* 눌림 */
+  --color-ink-pressed: #34373d;
+  --color-soft-pressed: #eaebee;
+  --color-danger-pressed: #b82e26;
+
   /* 모서리 */
   --radius-chip: 12px; /* 작은 버튼 */
   --radius-tile: 14px; /* 아이콘 타일 */
@@ -130,6 +140,11 @@ html {
   --radius-banner: 20px; /* 배너 · 묶음 */
   --radius-card: 22px; /* 내 빨래 카드 */
   --radius-sheet: 28px; /* 시트 · 다이얼로그 */
+  --radius-seg: 11px; /* 세그먼트 안쪽 칸 */
+
+  /* 그림자 */
+  --shadow-knob: 0 1px 3px rgb(27 29 33 / 0.25); /* 스위치 손잡이 */
+  --shadow-segment: 0 1px 3px rgb(27 29 33 / 0.12); /* 세그먼트 선택 칸 */
 }
 
 h1 {

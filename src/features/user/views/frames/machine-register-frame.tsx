@@ -86,11 +86,7 @@ export function MachineRegisterFrame() {
       >
         <div aria-hidden="true" className="bg-line mx-auto mb-6 h-1 w-10 rounded-full" />
         <PushPermissionCard presentation="sheet" />
-        <Button
-          type="button"
-          onClick={closePermission}
-          className="text-ink2 mt-3 w-full border-0 py-3 text-sm"
-        >
+        <Button type="button" onClick={closePermission} variant="text" className="mt-3 w-full">
           {t('permission.later')}
         </Button>
       </dialog>

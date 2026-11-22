@@ -17,15 +17,16 @@ export function ToggleSelect({
 
   return (
     <div
+      role="radiogroup"
       className={cn(
-        'bg-soft relative inline-flex w-full max-w-sm rounded-full p-1 select-none',
-        !available && 'opacity-50',
+        'bg-soft rounded-tile relative inline-flex w-full max-w-sm p-1 select-none',
+        !available && 'opacity-40',
         className,
       )}
     >
       {/* 슬라이딩 백그라운드 스위치 인디케이터 */}
       <div
-        className="absolute top-1 bottom-1 left-1 rounded-full bg-white shadow-sm transition-all duration-300 ease-out"
+        className="rounded-seg bg-surface shadow-segment absolute top-1 bottom-1 left-1 transition-all duration-300 ease-out"
         style={{
           width: `calc((100% - 8px) / ${stateList.length})`,
           transform: `translateX(${activeIndex * 100}%)`,
@@ -40,11 +41,13 @@ export function ToggleSelect({
             key={item}
             type="button"
             disabled={!available}
-            aria-pressed={isActive}
+            role="radio"
+            aria-checked={isActive}
             onClick={() => available && onChange(item)}
             className={cn(
-              'relative z-10 flex-1 rounded-full px-4 py-1.5 text-center text-sm font-medium transition-colors duration-300',
-              isActive ? 'text-black' : 'text-gray-500',
+              'rounded-seg text-body relative z-10 h-10 flex-1 px-4 text-center font-bold transition-colors duration-300',
+              'focus-visible:outline-ink focus-visible:outline-2',
+              isActive ? 'text-ink' : 'text-ink2',
             )}
           >
             {item}

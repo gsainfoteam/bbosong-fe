@@ -84,7 +84,7 @@ export function ConsentScreen({
           </div>
 
           <div>
-            <Button type="submit" variant="default" disabled={isSubmitDisabled} className="w-full">
+            <Button type="submit" size="l" disabled={isSubmitDisabled} className="w-full">
               {t('consent.next')}
             </Button>
           </div>

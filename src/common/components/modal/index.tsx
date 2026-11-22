@@ -77,7 +77,14 @@ export function Modal({
       <div className="mt-6 flex gap-3">
         {/* 처리 중에는 닫을 수 없으므로 취소 버튼을 숨기고 진행 상태만 보여준다. */}
         {!isPending && !hideCancel && (
-          <Button ref={cancelRef} type="button" autoFocus onClick={onClose}>
+          <Button
+            ref={cancelRef}
+            type="button"
+            variant="secondary"
+            autoFocus
+            onClick={onClose}
+            className="flex-1"
+          >
             {cancelText ?? t('modal.cancel')}
           </Button>
         )}
@@ -85,8 +92,9 @@ export function Modal({
           ref={confirmRef}
           type="button"
           autoFocus={hideCancel}
-          disabled={isPending}
+          loading={isPending}
           onClick={onConfirm}
+          className="flex-1"
         >
           {confirmText ?? t('modal.confirm')}
         </Button>

@@ -35,11 +35,24 @@ export const Active: Story = {
   },
 };
 
-export const Small: Story = {
+/** 흰 바탕에서는 먹색, 기기 배너 안에서는 그 기기 색으로 켜진다. */
+export const Washer: Story = {
   args: {
-    state: false,
+    state: true,
     available: true,
-    size: 'sm',
+    tone: 'washer',
+  },
+  render: (args) => {
+    const [state, setState] = useState(args.state);
+    return <ToggleBoolean {...args} state={state} onChange={() => setState((prev) => !prev)} />;
+  },
+};
+
+export const Dryer: Story = {
+  args: {
+    state: true,
+    available: true,
+    tone: 'dryer',
   },
   render: (args) => {
     const [state, setState] = useState(args.state);

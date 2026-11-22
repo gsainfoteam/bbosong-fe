@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import { Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 // import { cn } from '@/common/utils';
@@ -16,10 +15,11 @@ export function IdpLoginButton({ onLogin }: IdpLoginButton.Props) {
         setClicked(true);
         onLogin();
       }}
-      disabled={clicked}
-      className="mx-15 flex h-12 w-full items-center justify-center"
+      loading={clicked}
+      size="l"
+      className="w-full"
     >
-      {!clicked ? t('login') : <Loader2 className="text-ink animate-spin" size={20} />}
+      {t('login')}
     </Button>
   );
 }

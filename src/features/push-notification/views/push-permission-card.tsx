@@ -50,8 +50,9 @@ export function PushPermissionCard({
             <Button
               type="button"
               onClick={() => void promptInstall()}
-              disabled={isPrompting}
-              className={presentation === 'sheet' ? 'bg-ink border-0 py-4 text-white' : undefined}
+              loading={isPrompting}
+              size={presentation === 'sheet' ? 'l' : 'm'}
+              className="w-full"
             >
               {isPrompting ? t('permission.installing') : t('permission.install')}
             </Button>
@@ -78,8 +79,9 @@ export function PushPermissionCard({
           <Button
             type="button"
             onClick={() => void requestPermission()}
-            disabled={isRequesting}
-            className={presentation === 'sheet' ? 'bg-ink border-0 py-4 text-white' : undefined}
+            loading={isRequesting}
+            size={presentation === 'sheet' ? 'l' : 'm'}
+            className="w-full"
           >
             {isRequesting ? t('permission.requesting') : t('permission.enable')}
           </Button>

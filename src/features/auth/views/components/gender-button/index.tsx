@@ -12,7 +12,8 @@ export function GenderButton({
 }: GenderButton.Props) {
   return (
     <Button
-      className={cn(className, 'aspect-square')}
+      variant="outline"
+      className={cn(className, 'aspect-square h-auto w-full')}
       onClick={onClick}
       disabled={disabled}
       {...props}
