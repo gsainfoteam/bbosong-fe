@@ -1,5 +1,6 @@
 {
   "bbosong": "Bbosong",
+  "close": "Close",
   "goBack": "Back",
   "index": "Index",
   "modal": {
@@ -19,5 +20,6 @@
     "openTitle": "Open in the Bbosong app?",
     "title": "Get the Bbosong app"
   },
+  "switchLanguage": "Change language, now {{language}}",
   "yes": "Yes"
 }

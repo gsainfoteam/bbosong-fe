@@ -147,6 +147,10 @@ html {
   --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
+@utility pb-cta {
+  padding-bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 6px));
+}
+
 /* 물결 한 주기(22)만큼 옮겨야 반복이 이어 붙는다. 기기 그릇의 물결 파장과 같아야 한다. */
 @keyframes wave {
   to {

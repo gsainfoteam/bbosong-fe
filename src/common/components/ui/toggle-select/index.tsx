@@ -6,6 +6,7 @@ export function ToggleSelect({
   state,
   onChange,
   getLabel = (item) => item,
+  size = 'm',
   className,
   ...props
 }: ToggleSelect.Props & Omit<React.ComponentProps<'div'>, 'onChange'>) {
@@ -17,7 +18,8 @@ export function ToggleSelect({
     <div
       role="radiogroup"
       className={cn(
-        'bg-soft grid w-full auto-cols-fr grid-flow-col rounded-[14px] p-1 select-none',
+        'grid auto-cols-fr grid-flow-col select-none',
+        ToggleSelect.TRACK[size],
         !available && 'opacity-50',
         className,
       )}
@@ -35,7 +37,8 @@ export function ToggleSelect({
             disabled={!available}
             onClick={() => available && onChange(item)}
             className={cn(
-              'h-10 rounded-[11px] text-sm font-bold transition-[background-color,color,box-shadow] duration-200',
+              'font-bold transition-[background-color,color,box-shadow] duration-200',
+              ToggleSelect.ITEM[size],
               'focus-visible:outline-ink focus-visible:outline-2 focus-visible:-outline-offset-2',
               isActive ? 'text-ink bg-white shadow-[0_1px_3px_rgb(27_29_33/0.12)]' : 'text-ink-2',
             )}
@@ -49,12 +52,23 @@ export function ToggleSelect({
 }
 
 export namespace ToggleSelect {
+  export const TRACK = {
+    m: 'w-full rounded-[14px] bg-soft p-1',
+    s: 'rounded-[11px] bg-[#e9eaed] p-[3px]',
+  } as const;
+
+  export const ITEM = {
+    m: 'h-10 rounded-[11px] text-sm',
+    s: 'h-[30px] rounded-[9px] px-[11px] text-[13px]',
+  } as const;
+
   export type Props = {
     available?: boolean;
     stateList: string[];
     state: string;
     onChange: (state: string) => void;
     getLabel?: (state: string) => React.ReactNode;
+    size?: keyof typeof TRACK;
     className?: string;
   };
 }

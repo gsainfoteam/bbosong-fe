@@ -3,6 +3,7 @@ export * from './brand-mark/index';
 export * from './button/index';
 export * from './checkbox/index';
 export * from './info-tooltip/index';
+export * from './list-group/index';
 export * from './loading/index';
 export * from './slot/index';
 export * from './toggle-boolean/index';

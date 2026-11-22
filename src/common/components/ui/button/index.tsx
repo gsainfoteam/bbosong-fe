@@ -77,6 +77,7 @@ export namespace Button {
         // 색이 들어간 면 위에서는 먹색 대신 그 면과 같은 계열의 흰 버튼을 쓴다.
         'tone-sky': 'bg-white text-sky-ink shadow-[0_0_0_1px_rgb(11_111_147/0.18)]',
         'tone-orange': 'bg-white text-orange-ink shadow-[0_0_0_1px_rgb(168_86_15/0.18)]',
+        inverse: 'bg-white text-ink active:bg-[#e9eaec]',
         text: 'bg-transparent px-1 font-medium text-ink-2 disabled:bg-transparent',
       },
       size: {

@@ -56,3 +56,14 @@ export const Sizes: Story = {
 export const Disabled: Story = { args: { disabled: true } };
 
 export const WideFloat: Story = { args: { wide: true, float: true, size: 'l' } };
+
+export const Inverse: Story = {
+  args: { variant: 'inverse', size: 'l', wide: true, children: '돌아가기' },
+  decorators: [
+    (Story) => (
+      <div className="rounded-card bg-[#121316] p-5">
+        <Story />
+      </div>
+    ),
+  ],
+};
