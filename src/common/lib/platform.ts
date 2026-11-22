@@ -8,6 +8,20 @@ export function isNativeApp(): boolean {
   return Capacitor.isNativePlatform();
 }
 
+/**
+ * 설치된 네이티브 바이너리(스토어 앱)의 버전. 웹 번들은 OTA로 따로 교체되므로 `__BUILD_VERSION__`과 다를 수 있다.
+ * 웹이거나 조회에 실패하면 null. 기존 바이너리에도 있는 `@capacitor/app`만 쓰므로 새 네이티브 변경이 필요 없다.
+ */
+export async function getNativeAppVersion(): Promise<string | null> {
+  if (!isNativeApp()) return null;
+
+  try {
+    return (await App.getInfo()).version;
+  } catch {
+    return null;
+  }
+}
+
 /** 네이티브 스플래시를 숨긴다. 웹에서는 아무 일도 하지 않는다 */
 export function hideSplashScreen(): void {
   if (!isNativeApp()) return;

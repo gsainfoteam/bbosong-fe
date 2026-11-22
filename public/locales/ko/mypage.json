@@ -1,6 +1,7 @@
 {
   "account": "계정",
   "adminTag": "관리자",
+  "appVersion": "앱 버전 {{version}}",
   "email": "이메일",
   "feedback": "피드백 보내기",
   "female": "여성",
@@ -15,6 +16,7 @@
   "title": "내 정보",
   "toAdmin": "관리자 콘솔",
   "version": "버전 {{version}}",
+  "webVersion": "웹 버전 {{version}}",
   "withdraw": "회원 탈퇴",
   "withdrawConfirm": "탈퇴하기",
   "withdrawConfirmDescription": "탈퇴하면 이 계정으로 로그인할 수 없고 푸시 알림도 더 이상 받을 수 없어요.",

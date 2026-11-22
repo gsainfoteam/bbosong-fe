@@ -1,6 +1,7 @@
 {
   "account": "Account",
   "adminTag": "Admin",
+  "appVersion": "App version {{version}}",
   "email": "Email",
   "feedback": "Send feedback",
   "female": "Female",
@@ -15,6 +16,7 @@
   "title": "My info",
   "toAdmin": "Admin Console",
   "version": "Version {{version}}",
+  "webVersion": "Web version {{version}}",
   "withdraw": "Delete account",
   "withdrawConfirm": "Delete account",
   "withdrawConfirmDescription": "After deleting your account, you will not be able to log in with it, and you will no longer receive push notifications.",
