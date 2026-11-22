@@ -57,6 +57,7 @@ describe('MypageScreen admin link', () => {
     render(
       <MypageScreen
         notification={notification}
+        versions={{ web: '0.0.0-test' }}
         onBack={() => {}}
         user={{ ...baseUser, role: 'admin' }}
         onLogout={() => {}}
@@ -69,6 +70,7 @@ describe('MypageScreen admin link', () => {
     render(
       <MypageScreen
         notification={notification}
+        versions={{ web: '0.0.0-test' }}
         onBack={() => {}}
         user={{ ...baseUser, role: 'user' }}
         onLogout={() => {}}
@@ -85,6 +87,7 @@ describe('MypageScreen withdraw', () => {
     render(
       <MypageScreen
         notification={notification}
+        versions={{ web: '0.0.0-test' }}
         onBack={() => {}}
         user={{ ...baseUser, role: 'user' }}
         onLogout={() => {}}
@@ -104,6 +107,7 @@ describe('MypageScreen withdraw', () => {
     render(
       <MypageScreen
         notification={notification}
+        versions={{ web: '0.0.0-test' }}
         onBack={() => {}}
         user={{ ...baseUser, role: 'user' }}
         onLogout={() => {}}
