@@ -4,7 +4,7 @@ export function ToggleBoolean({
   available = true,
   state,
   onChange,
-  size = 'md',
+  tone = 'default',
   className,
   ...props
 }: ToggleBoolean.Props) {
@@ -14,28 +14,16 @@ export function ToggleBoolean({
     }
   };
 
-  const sizeClasses = {
-    md: {
-      track: 'h-6 w-11',
-      knob: 'h-5 w-5',
-      translate: state ? 'translate-x-5' : 'translate-x-0',
-    },
-    sm: {
-      track: 'h-5 w-9',
-      knob: 'h-4 w-4',
-      translate: state ? 'translate-x-4' : 'translate-x-0',
-    },
-  };
-
   return (
     <button
       type="button"
       onClick={handleClick}
       className={cn(
-        'relative inline-flex shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none',
-        sizeClasses[size].track,
-        state ? 'bg-primary' : 'bg-border-strong',
-        !available && 'pointer-events-none cursor-not-allowed opacity-50',
+        'flex h-7.5 w-12.5 shrink-0 cursor-pointer rounded-full p-0.75 transition-colors duration-200 ease-in-out',
+        'focus-visible:outline-ink focus-visible:outline-2 focus-visible:outline-offset-2',
+        state ? ToggleBoolean.onColor[tone] : 'bg-track',
+        state ? 'justify-end' : 'justify-start',
+        !available && 'cursor-not-allowed opacity-40',
         className,
       )}
       role="switch"
@@ -43,23 +31,26 @@ export function ToggleBoolean({
       disabled={!available}
       {...props}
     >
-      <span
-        className={cn(
-          'pointer-events-none inline-block transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-          sizeClasses[size].knob,
-          sizeClasses[size].translate,
-        )}
-      />
+      <span className="shadow-knob pointer-events-none block size-6 rounded-full bg-white" />
     </button>
   );
 }
 
 export namespace ToggleBoolean {
+  /** 켜진 색은 놓인 자리를 따른다. 흰 바탕이면 먹색, 기기 배너 안이면 그 기기의 진한 색. */
+  export type Tone = 'default' | 'washer' | 'dryer';
+
+  export const onColor: Record<Tone, string> = {
+    default: 'bg-ink',
+    washer: 'bg-sky-deep',
+    dryer: 'bg-orange-deep',
+  };
+
   export type Props = {
     available?: boolean;
     state: boolean;
     onChange?: () => void;
-    size?: 'sm' | 'md';
+    tone?: Tone;
     className?: string;
   };
 }

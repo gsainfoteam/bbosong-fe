@@ -14,6 +14,7 @@ export function Modal({
   cancelText,
   isPending = false,
   hideCancel = false,
+  confirmVariant = 'primary',
   onConfirm,
   onClose,
   className,
@@ -61,31 +62,37 @@ export function Modal({
         if (!isPending) onClose();
       }}
       className={cn(
-        'bg-bg border-border text-text-primary fixed inset-0 m-auto w-[calc(100%-2rem)] max-w-120 rounded-2xl border p-6 shadow-xl backdrop:bg-black/40',
+        'bg-surface text-ink shadow-dialog rounded-sheet backdrop:bg-ink/44 fixed inset-0 m-auto w-[calc(100%-4rem)] max-w-81.5 border-0 px-5 pt-6 pb-5',
         className,
       )}
     >
-      <h2 id={titleId} className="text-lg font-semibold">
+      <h2 id={titleId} className="text-heading text-balance">
         {title}
       </h2>
       {description && (
-        <p id={descriptionId} className="text-text-secondary mt-3 text-sm">
+        <p id={descriptionId} className="text-body text-ink2 mt-2">
           {description}
         </p>
       )}
       {children && <div className="mt-3">{children}</div>}
-      <div className="mt-6 flex gap-3">
+      <div
+        className={cn(
+          'mt-5.5 grid gap-2',
+          !isPending && !hideCancel ? 'grid-cols-2' : 'grid-cols-1',
+        )}
+      >
         {/* 처리 중에는 닫을 수 없으므로 취소 버튼을 숨기고 진행 상태만 보여준다. */}
         {!isPending && !hideCancel && (
-          <Button ref={cancelRef} type="button" autoFocus onClick={onClose}>
+          <Button ref={cancelRef} type="button" variant="secondary" autoFocus onClick={onClose}>
             {cancelText ?? t('modal.cancel')}
           </Button>
         )}
         <Button
           ref={confirmRef}
           type="button"
+          variant={confirmVariant}
           autoFocus={hideCancel}
-          disabled={isPending}
+          loading={isPending}
           onClick={onConfirm}
         >
           {confirmText ?? t('modal.confirm')}
@@ -108,6 +115,8 @@ export namespace Modal {
     isPending?: boolean;
     /** true면 취소 버튼 없이 확인 버튼만 보여준다. 안내만 하는 모달에 쓴다. */
     hideCancel?: boolean;
+    /** 확인 버튼 종류. 탈퇴처럼 되돌릴 수 없는 동작에만 danger를 쓴다. */
+    confirmVariant?: 'primary' | 'danger';
     onConfirm: () => void;
     onClose: () => void;
     className?: string;

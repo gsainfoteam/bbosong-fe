@@ -1,245 +1,317 @@
-import { useId } from 'react';
+import { useId, type ReactNode, type SVGProps } from 'react';
 
 import { useTranslation } from 'react-i18next';
 
-import { cn, formatRemainingMinutes } from '@/common/utils';
+import { cn } from '@/common/utils';
+
+import { toDisplay, useLabels } from './labels';
+import { levelRatio } from './level-ratio';
 
 /*
- * 모든 수치는 viewBox(한 변 100) 기준이다. 디자인 시안의 박스 한 변(≈94px)을 100으로 환산했고,
- * 박스 크기가 바뀌어도 글자·선·여백의 비율이 그대로 유지된다.
+ * 기기 아이콘. 찬 높이가 곧 남은 시간이다.
+ * 세탁기(원)는 물결로, 건조기(둥근 사각)는 평평하게 차오른다.
+ * 모든 수치는 viewBox(한 변 66) 기준이라 칸 크기가 바뀌어도 비율이 유지된다.
  */
-const SIZE = 100;
-const CENTER = SIZE / 2;
+const VIEW = 66;
+const CENTER = VIEW / 2;
+/** 세탁기 원의 반지름 */
+const RADIUS = 31;
+/** 건조기 사각형이 가장자리에서 떨어진 거리, 한 변, 모서리 */
+const INSET = 2;
+const SIDE = VIEW - INSET * 2;
+const CORNER = 18;
 
-/** 안쪽 흰 선 */
-const LINE_WIDTH = 0.6;
-/** 세탁기 안쪽 원의 반지름 */
-const RING_RADIUS = 37.5;
-/** 건조기 안쪽 사각형이 가장자리에서 떨어진 거리 */
-const FRAME_INSET = 10.5;
+const WAVE_LENGTH = 22;
+const WAVE_FRONT_AMPLITUDE = 2;
+const WAVE_BACK_AMPLITUDE = 1.8;
+/** 뒤 물결은 앞 물결보다 이만큼 위에서 출렁인다. */
+const WAVE_BACK_RISE = 1.8;
+/** 뒤 물결은 앞 물결과 어긋나도록 이만큼 밀어 둔다. */
+const WAVE_BACK_SHIFT = -9;
 
-/** 디자인 12px */
-const LABEL_FONT_SIZE = 12.8;
-/** 디자인 43px */
-const NUMBER_FONT_SIZE = 46.5;
-/** Pretendard 숫자 높이(0.71em)의 절반. 숫자가 세로 가운데에 오도록 기준선을 이만큼 내린다. */
-const DIGIT_HALF_HEIGHT = 0.355;
-/** 아래 라벨은 선보다 살짝 안쪽에 놓인다. */
-const BOTTOM_LABEL_SHIFT = 1.2;
-/** 라벨 글자와 끊긴 선 끝 사이의 여백 */
-const LABEL_GAP = 3.8;
-/** 세탁기 원은 라벨이 짧아도 이 각도만큼은 선을 비워 둔다. */
-const RING_MIN_GAP_DEG = { top: 138, bottom: 79.5 };
+/** 내 빨래 표식의 중심. 둥근 사각은 모서리가 비어 있어 살짝 더 바깥에 둔다. */
+const MARK_POSITION = { washer: '55 11', dryer: '57 9' } as const;
 
-const round = (value: number) => Math.round(value * 1000) / 1000;
+/** 차오른 높이의 위쪽 y좌표 */
+const levelY = (ratio: number) => INSET + SIDE * (1 - ratio);
 
-/** 각도는 시계 방향 기준(0° = 오른쪽, 90° = 아래) */
-function pointOnCircle(radius: number, deg: number) {
-  const rad = (deg * Math.PI) / 180;
-
-  return `${round(CENTER + radius * Math.cos(rad))} ${round(CENTER + radius * Math.sin(rad))}`;
-}
-
-function arc(radius: number, fromDeg: number, toDeg: number, clockwise = true) {
-  const sweep = clockwise ? 1 : 0;
-
-  return `M ${pointOnCircle(radius, fromDeg)} A ${radius} ${radius} 0 0 ${sweep} ${pointOnCircle(radius, toDeg)}`;
-}
-
-function ringGap(centerDeg: number, spanDeg: number) {
-  return arc(RING_RADIUS, centerDeg - spanDeg / 2, centerDeg + spanDeg / 2);
-}
-
-function horizontalLine(y: number) {
-  return `M 0 ${y} H ${SIZE}`;
-}
-
-const SHAPE: Record<
-  MachineBox.Type,
-  {
-    rounded: boolean;
-    frameInset: number;
-    /** 원 둘레를 따라 놓인 라벨은 디자인상 자간이 더 넓다. */
-    labelSpacing: number;
-    /** 라벨이 따라가는 경로. 글자가 바로 서도록 둘 다 왼쪽 → 오른쪽으로 진행한다. */
-    labelPath: { top: string; bottom: string };
-    minGap?: { top: string; bottom: string };
-  }
-> = {
-  washer: {
-    rounded: true,
-    frameInset: CENTER - RING_RADIUS,
-    labelSpacing: 0.75,
-    labelPath: {
-      top: arc(RING_RADIUS, 180, 360),
-      bottom: arc(RING_RADIUS - BOTTOM_LABEL_SHIFT, 180, 0, false),
-    },
-    minGap: {
-      top: ringGap(270, RING_MIN_GAP_DEG.top),
-      bottom: ringGap(90, RING_MIN_GAP_DEG.bottom),
-    },
-  },
-  dryer: {
-    rounded: false,
-    frameInset: FRAME_INSET,
-    labelSpacing: 0.25,
-    labelPath: {
-      top: horizontalLine(FRAME_INSET),
-      bottom: horizontalLine(SIZE - FRAME_INSET - BOTTOM_LABEL_SHIFT),
-    },
-  },
-};
-
-const SURFACE: Record<MachineBox.Type, Record<MachineBox.Status, string>> = {
-  washer: {
-    idle: 'fill-washer',
-    using: 'fill-disabled',
-    disabled: 'fill-disabled',
-  },
-  dryer: {
-    idle: 'fill-dryer',
-    using: 'fill-disabled',
-    disabled: 'fill-disabled',
-  },
-};
-
-function useTimeLabel(
-  machine: Pick<MachineBox.Props['machine'], 'status' | 'elapsedMinutes' | 'remainingDisplay'>,
-) {
-  const { t } = useTranslation('machine');
-
-  if (machine.status !== 'using') return '';
-
-  if (machine.remainingDisplay?.kind === 'detecting') return t('remainingDetecting');
-
-  if (machine.remainingDisplay?.kind === 'minutes') {
-    const { hours, minutes } = formatRemainingMinutes(machine.remainingDisplay.minutes);
-    return hours > 0
-      ? t('remainingHourMinute', { hours: String(hours), minutes: String(minutes) })
-      : t('remainingMinute', { minutes: String(minutes) });
+function wavePath(y: number, amplitude: number, periods: number, closed: boolean) {
+  let d = `M-${WAVE_LENGTH},${y}`;
+  for (let i = 0; i < periods; i += 1) {
+    const x = -WAVE_LENGTH + i * WAVE_LENGTH;
+    d += ` Q${x + WAVE_LENGTH / 4},${y - amplitude} ${x + WAVE_LENGTH / 2},${y} T${x + WAVE_LENGTH},${y}`;
   }
 
-  if (machine.elapsedMinutes === undefined || machine.elapsedMinutes < 0) return '';
-
-  const hours = Math.floor(machine.elapsedMinutes / 60);
-  const minutes = machine.elapsedMinutes % 60;
-
-  return hours > 0
-    ? t('elapsedHourMinute', { hours: String(hours), minutes: String(minutes) })
-    : t('elapsedMinute', { minutes: String(minutes) });
+  return closed ? `${d} V${VIEW + 14} H-${WAVE_LENGTH} Z` : d;
 }
 
-function Label({
-  pathId,
-  spacing,
-  children,
-}: {
-  pathId: string;
-  spacing: number;
-  children: string;
-}) {
-  return (
-    <text
-      fontSize={LABEL_FONT_SIZE}
-      letterSpacing={spacing}
-      textAnchor="middle"
-      dominantBaseline="central"
-    >
-      <textPath href={`#${pathId}`} startOffset="50%">
-        {children}
-      </textPath>
-    </text>
+function Shape({
+  type,
+  ...props
+}: { type: MachineBox.Type } & Omit<SVGProps<SVGCircleElement & SVGRectElement>, 'ref'>) {
+  return type === 'washer' ? (
+    <circle cx={CENTER} cy={CENTER} r={RADIUS} {...props} />
+  ) : (
+    <rect x={INSET} y={INSET} width={SIDE} height={SIDE} rx={CORNER} {...props} />
   );
 }
 
-export function MachineBox({ machine, className, ...props }: MachineBox.Props) {
-  const { t } = useTranslation('machine');
-  const id = useId();
-  const timeLabel = useTimeLabel(machine);
+const WATER = {
+  washer: {
+    front: { normal: 'fill-sky-water', mine: 'fill-sky-deep' },
+    back: { normal: 'fill-sky-back', mine: 'fill-sky-deep-back' },
+    tint: 'fill-sky-tint',
+    color: { normal: 'var(--color-sky-water)', mine: 'var(--color-sky-deep)' },
+    rimMine: 'stroke-sky-deep',
+    caption: 'text-sky-ink',
+  },
+  dryer: {
+    front: { normal: 'fill-orange-water', mine: 'fill-orange-deep' },
+    back: { normal: 'fill-orange-back', mine: 'fill-orange-back' },
+    tint: 'fill-orange-tint',
+    color: { normal: 'var(--color-orange-water)', mine: 'var(--color-orange-deep)' },
+    rimMine: 'stroke-orange-deep',
+    caption: 'text-orange-ink',
+  },
+} as const;
 
-  // t('idle')
-  // t('using')
-  // t('disabled')
-  const statusLabel = t(machine.status);
-
-  const shape = SHAPE[machine.type];
-  const inset = shape.frameInset;
-  const maskId = `${id}mask`;
-  const pathId = { top: `${id}top`, bottom: `${id}bottom` };
-
-  const labels = (
+/** 유리 그늘: 위쪽만 살짝 어둡게 */
+function Glass({ id, type }: { id: string; type: MachineBox.Type }) {
+  return (
     <>
-      {timeLabel && (
-        <Label pathId={pathId.top} spacing={shape.labelSpacing}>
-          {timeLabel}
-        </Label>
-      )}
-      <Label pathId={pathId.bottom} spacing={shape.labelSpacing}>
-        {statusLabel}
-      </Label>
+      <defs>
+        <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" style={{ stopColor: 'var(--color-ink)', stopOpacity: 0.06 }} />
+          <stop offset="0.35" style={{ stopColor: 'var(--color-ink)', stopOpacity: 0 }} />
+        </linearGradient>
+      </defs>
+      <Shape type={type} fill={`url(#${id})`} />
     </>
   );
+}
+
+function MineMark({ type }: { type: MachineBox.Type }) {
+  return (
+    <g transform={`translate(${MARK_POSITION[type]})`}>
+      <circle r={8.5} className="fill-ink stroke-surface" strokeWidth={2} />
+      <circle cy={-1.6} r={2} className="fill-surface" />
+      <path d="M-3.6,3.8 a3.6,3.2 0 0 1 7.2,0" className="fill-surface" />
+    </g>
+  );
+}
+
+/** 물(열풍)이 찬 모양. 세탁기는 물결, 건조기는 평평한 면이다. */
+function Fill({ type, mine, ratio }: { type: MachineBox.Type; mine: boolean; ratio: number }) {
+  const water = WATER[type];
+  const tone = mine ? 'mine' : 'normal';
+  const y = levelY(ratio);
+
+  if (type === 'dryer') {
+    return (
+      <>
+        <rect x={0} y={y} width={VIEW} height={VIEW + 4} className={water.front[tone]} />
+        <rect x={0} y={y} width={VIEW} height={1.2} className="fill-surface" fillOpacity={0.55} />
+      </>
+    );
+  }
 
   return (
-    <svg
-      viewBox={`0 0 ${SIZE} ${SIZE}`}
-      role="img"
-      aria-label={[t(machine.type), machine.id, statusLabel, timeLabel].filter(Boolean).join(' ')}
-      className={cn('block aspect-square w-full font-light', className)}
-      {...props}
-    >
-      <defs>
-        <path id={pathId.top} d={shape.labelPath.top} />
-        <path id={pathId.bottom} d={shape.labelPath.bottom} />
-
-        {/* 흰 선에서 라벨이 놓이는 자리를 지운다. */}
-        <mask id={maskId} maskUnits="userSpaceOnUse" x={0} y={0} width={SIZE} height={SIZE}>
-          <rect width={SIZE} height={SIZE} fill="white" />
-          <g fill="none" stroke="black" strokeWidth={LABEL_GAP * 2} strokeLinejoin="round">
-            {timeLabel && shape.minGap && <path d={shape.minGap.top} />}
-            {shape.minGap && <path d={shape.minGap.bottom} />}
-            <g fill="black">{labels}</g>
-          </g>
-        </mask>
-      </defs>
-
-      <rect
-        width={SIZE}
-        height={SIZE}
-        rx={shape.rounded ? CENTER : 0}
-        className={SURFACE[machine.type][machine.status]}
+    <>
+      <g transform={`translate(${WAVE_BACK_SHIFT} 0)`}>
+        <path
+          d={wavePath(y - WAVE_BACK_RISE, WAVE_BACK_AMPLITUDE, 7, true)}
+          className={cn(water.back[tone], 'animate-wave-back motion-reduce:animate-none')}
+        />
+      </g>
+      <path
+        d={wavePath(y, WAVE_FRONT_AMPLITUDE, 6, true)}
+        className={cn(water.front[tone], 'animate-wave-front motion-reduce:animate-none')}
       />
-      <rect
-        x={inset}
-        y={inset}
-        width={SIZE - inset * 2}
-        height={SIZE - inset * 2}
-        rx={shape.rounded ? CENTER - inset : 0}
+      <path
+        d={wavePath(y, WAVE_FRONT_AMPLITUDE, 6, false)}
         fill="none"
-        strokeWidth={LINE_WIDTH}
-        mask={`url(#${maskId})`}
-        className="stroke-white"
+        className="animate-wave-front stroke-surface motion-reduce:animate-none"
+        strokeOpacity={0.55}
+        strokeWidth={1}
       />
+    </>
+  );
+}
 
-      <g className="fill-text-primary">
-        {labels}
+const SHINE_STOPS = [
+  [0, 0],
+  [0.18, 0.08],
+  [0.32, 0.3],
+  [0.5, 0.7],
+  [0.68, 0.3],
+  [0.82, 0.08],
+  [1, 0],
+] as const;
+
+/** 계산 중: 옅은 면 위로 빛이 한 번씩 지나간다. */
+function Calculating({ id, type }: { id: string; type: MachineBox.Type }) {
+  const water = WATER[type];
+
+  return (
+    <>
+      <defs>
+        <linearGradient id={id} x1="0" y1="0" x2="1" y2="0">
+          {SHINE_STOPS.map(([offset, opacity]) => (
+            <stop
+              key={offset}
+              offset={offset}
+              style={{ stopColor: water.color.normal, stopOpacity: opacity }}
+            />
+          ))}
+        </linearGradient>
+      </defs>
+      <rect width={VIEW} height={VIEW} className={water.tint} />
+      <g className="animate-shine motion-reduce:animate-none">
+        <rect
+          x={-17}
+          y={-30}
+          width={100}
+          height={126}
+          fill={`url(#${id})`}
+          transform={`rotate(14 ${CENTER} ${CENTER})`}
+        />
+      </g>
+    </>
+  );
+}
+
+/** 시간 모름: 남은 시간이 없어 지난 시간만 알 때, 아래에서 위로 옅어지는 면만 깐다. */
+function Elapsed({ id, type, mine }: { id: string; type: MachineBox.Type; mine: boolean }) {
+  const color = WATER[type].color[mine ? 'mine' : 'normal'];
+
+  return (
+    <>
+      <defs>
+        <linearGradient id={id} x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0" style={{ stopColor: color }} />
+          <stop offset="0.75" style={{ stopColor: color, stopOpacity: 0 }} />
+        </linearGradient>
+      </defs>
+      <rect width={VIEW} height={VIEW} fill={`url(#${id})`} />
+    </>
+  );
+}
+
+export function MachineBox({ machine, showCaption = true, className }: MachineBox.Props) {
+  const { t } = useTranslation('machine');
+  const id = useId();
+  const display = toDisplay(machine);
+  const { caption, spoken } = useLabels(display);
+
+  const mine = machine.mine === true && display.kind !== 'idle' && display.kind !== 'disabled';
+  const water = WATER[machine.type];
+  const clipId = `${id}clip`;
+
+  if (display.kind === 'loading') {
+    return (
+      <div role="status" aria-busy className={cn('flex w-full flex-col items-center', className)}>
+        <svg viewBox={`0 0 ${VIEW} ${VIEW}`} aria-hidden className="block aspect-square w-full">
+          <g className="animate-blink motion-reduce:animate-none">
+            <Shape type={machine.type} className="fill-icon-skeleton" />
+          </g>
+        </svg>
+        <span className="bg-icon-skeleton animate-blink mt-2.25 block h-3.25 w-9.5 rounded-md motion-reduce:animate-none" />
+      </div>
+    );
+  }
+
+  const running = display.kind !== 'idle' && display.kind !== 'disabled';
+
+  const ring = (() => {
+    if (display.kind === 'idle') return { className: 'stroke-icon-rim-empty', width: 1.6 };
+    if (display.kind === 'disabled') return { className: 'stroke-icon-rim-off', width: 1.4 };
+    if (mine) return { className: water.rimMine, width: 2.6 };
+    return { className: 'stroke-icon-rim', width: 1.4 };
+  })();
+
+  const surface = cn(
+    display.kind === 'idle' && 'fill-surface',
+    display.kind === 'disabled' && 'fill-soft',
+    running && 'fill-icon-base',
+  );
+
+  let content: ReactNode = null;
+  if (display.kind === 'remaining') {
+    content = (
+      <Fill
+        type={machine.type}
+        mine={mine}
+        ratio={levelRatio(display.minutes, machine.elapsedMinutes)}
+      />
+    );
+  } else if (display.kind === 'detecting') {
+    content = <Calculating id={`${id}shine`} type={machine.type} />;
+  } else if (display.kind === 'elapsed') {
+    content = <Elapsed id={`${id}elapsed`} type={machine.type} mine={mine} />;
+  }
+
+  const label = [t(machine.type), t('count', { id: String(machine.id) }), mine && t('mine'), spoken]
+    .filter(Boolean)
+    .join(', ');
+
+  return (
+    <div
+      role="img"
+      aria-label={label}
+      className={cn('flex w-full flex-col items-center', className)}
+    >
+      <svg viewBox={`0 0 ${VIEW} ${VIEW}`} aria-hidden className="block aspect-square w-full">
+        <defs>
+          <clipPath id={clipId}>
+            <Shape type={machine.type} />
+          </clipPath>
+        </defs>
+
+        <Shape type={machine.type} className={surface} />
+        {content && <g clipPath={`url(#${clipId})`}>{content}</g>}
+        {running && <Glass id={`${id}glass`} type={machine.type} />}
+        <Shape
+          type={machine.type}
+          fill="none"
+          className={ring.className}
+          strokeWidth={ring.width}
+          strokeDasharray={display.kind === 'disabled' ? '3.2 3.6' : undefined}
+        />
         <text
           x={CENTER}
-          y={CENTER + NUMBER_FONT_SIZE * DIGIT_HALF_HEIGHT}
-          fontSize={NUMBER_FONT_SIZE}
+          y={33.5}
+          fontSize={21}
+          fontWeight={700}
           textAnchor="middle"
+          dominantBaseline="central"
+          className={display.kind === 'disabled' ? 'fill-ink3' : 'fill-ink'}
         >
           {machine.id}
         </text>
-      </g>
-    </svg>
+        {mine && <MineMark type={machine.type} />}
+      </svg>
+
+      {showCaption && (
+        <b
+          aria-hidden
+          className={cn(
+            'text-label mt-2.25 leading-none whitespace-nowrap',
+            display.kind === 'idle' && water.caption,
+            display.kind !== 'idle' && display.kind !== 'remaining' && 'text-ink2 font-medium',
+          )}
+        >
+          {caption}
+        </b>
+      )}
+    </div>
   );
 }
 
 export namespace MachineBox {
   export type Type = 'washer' | 'dryer';
 
-  export type Status = 'idle' | 'using' | 'disabled';
+  /** loading은 목록을 불러오는 동안 같은 자리에 깜빡이는 모양만 보여 준다. */
+  export type Status = 'idle' | 'using' | 'disabled' | 'loading';
 
   export type RemainingDisplay = { kind: 'minutes'; minutes: number } | { kind: 'detecting' };
 
@@ -248,9 +320,14 @@ export namespace MachineBox {
       type: Type;
       id: number;
       status: Status;
+      /** 지난 시간. 남은 시간이 있으면 전체 시간(지난 + 남은)을 추정해 찬 높이를 정한다. */
       elapsedMinutes?: number;
       remainingDisplay?: RemainingDisplay;
+      /** 내가 등록한 기기 */
+      mine?: boolean;
     };
+    /** false면 아이콘만 그린다. 옆에 시간을 따로 보여 줄 때 쓴다. */
+    showCaption?: boolean;
     className?: string;
   };
 }

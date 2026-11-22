@@ -1,6 +1,5 @@
 {
   "account": "Account",
-  "addMachine": "Add machine in use",
   "email": "Email",
   "feedback": "Send feedback",
   "female": "Female",
@@ -11,6 +10,7 @@
   "male": "Male",
   "name": "Name",
   "studentNumber": "Student Number",
+  "title": "My info",
   "toAdmin": "Admin Console",
   "version": "Version {{version}}",
   "withdraw": "Delete account",

@@ -31,28 +31,28 @@ export function DailyRoomSubscriptionStatsPanel({
       dataKey: 'subscriptionCount',
       name: t('subscriptionRequests'),
       help: t('subscriptionRequestsHelp'),
-      color: '#4f7df3',
+      color: 'var(--color-sky-ring)',
       dashed: false,
     },
     {
       dataKey: 'subscriptionUserCount',
       name: t('subscriptionRequestUsers'),
       help: t('subscriptionRequestUsersHelp'),
-      color: '#4f7df3',
+      color: 'var(--color-sky-ring)',
       dashed: true,
     },
     {
       dataKey: 'notificationCount',
       name: t('notificationsSent'),
       help: t('notificationsSentHelp'),
-      color: '#10b981',
+      color: 'var(--color-live)',
       dashed: false,
     },
     {
       dataKey: 'notificationUserCount',
       name: t('notificationUsers'),
       help: t('notificationUsersHelp'),
-      color: '#10b981',
+      color: 'var(--color-live)',
       dashed: true,
     },
   ];
@@ -66,7 +66,7 @@ export function DailyRoomSubscriptionStatsPanel({
           role="group"
           aria-label={t('dailySessionStatsRange')}
         >
-          <span className="text-text-secondary text-sm dark:text-slate-400">
+          <span className="text-ink2 text-sm dark:text-slate-400">
             {t('dailySessionStatsRange')}
           </span>
           {RANGES.map((range) => (
@@ -100,7 +100,7 @@ export function DailyRoomSubscriptionStatsPanel({
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-track)" vertical={false} />
                 <XAxis dataKey="date" tick={{ fontSize: 12 }} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
                 <Tooltip />

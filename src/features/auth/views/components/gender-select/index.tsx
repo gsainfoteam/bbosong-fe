@@ -38,7 +38,7 @@ export function GenderSelect({ onLogin, isLoginError, className, ...props }: Gen
           </GenderButton>
         </>
       ) : (
-        <Loader2 className="text-text-primary animate-spin" />
+        <Loader2 className="text-ink animate-spin" />
       )}
     </div>
   );

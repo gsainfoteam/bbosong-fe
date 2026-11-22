@@ -53,80 +53,167 @@ html {
     scrollbar-width: none; /* Firefox */
   }
 }
-/* 24, 16, 12 */
+/* 뽀송 디자인 시스템 토큰 — 브랜드 색은 기기 맥락(하늘=세탁기, 주황=건조기)에만 쓰고 나머지는 먹색 중립 */
 @theme {
-  /* Typography — 6-step scale */
-  --text-display: 24px;
-  --text-display--font-weight: 500;
-  --text-display--line-height: 29px;
+  /* Typography — Pretendard 기준, 큰 숫자·기기 번호만 Allo */
+  --text-display: 28px;
+  --text-display--font-weight: 800;
+  --text-display--line-height: 1.25;
+  --text-display--letter-spacing: -0.03em;
 
-  --text-heading: 20px;
-  --text-heading--font-weight: 500;
-  --text-heading--line-height: 26px;
+  --text-heading: 18px;
+  --text-heading--font-weight: 800;
+  --text-heading--line-height: 1.35;
+  --text-heading--letter-spacing: -0.025em;
 
-  --text-body-lg: 16px;
-  --text-body-lg--font-weight: 300;
-  --text-body-lg--line-height: 18px;
+  --text-title: 21px; /* 세탁실 이름 */
+  --text-title--font-weight: 800;
+  --text-title--line-height: 1.25;
+  --text-title--letter-spacing: -0.03em;
+
+  --text-numeral: 24px; /* 카드 속 큰 숫자 */
+  --text-numeral--font-weight: 700;
+  --text-numeral--line-height: 1;
+  --text-numeral--letter-spacing: -0.01em;
+
+  --text-section: 16px; /* 목록 섹션 머리 */
+  --text-section--font-weight: 800;
+  --text-section--line-height: 1.4;
+  --text-section--letter-spacing: -0.02em;
+
+  --text-body-strong: 15px;
+  --text-body-strong--font-weight: 700;
+  --text-body-strong--line-height: 1.6;
+  --text-body-strong--letter-spacing: -0.01em;
+
+  --text-body-lg: 15px;
+  --text-body-lg--font-weight: 400;
+  --text-body-lg--line-height: 1.6;
 
   --text-body: 14px;
   --text-body--font-weight: 400;
-  --text-body--line-height: 20px;
+  --text-body--line-height: 1.6;
 
   --text-label: 13px;
-  --text-label--font-weight: 500;
-  --text-label--line-height: 18px;
+  --text-label--font-weight: 700;
+  --text-label--line-height: 1.4;
+  --text-label--letter-spacing: -0.01em;
 
-  --text-caption: 12px;
-  --text-caption--font-weight: 400;
-  /*--text-caption--line-height: 15px;*/
+  --text-button-lg: 16px; /* 큰 버튼 */
+  --text-button-lg--font-weight: 700;
+  --text-button-lg--line-height: 1.4;
+  --text-button-lg--letter-spacing: -0.01em;
 
-  /* Primary */
-  --color-primary: #4f7df3;
-  --color-primary-light: #e9efff;
-  --color-available: #78c6e8;
-  --color-washer: #9fe7fb;
-  --color-dryer: #fdb576;
-  --color-unavailable: #e45b5b;
-  --color-disabled: #e6e6e6;
+  --text-caption: 12.5px;
+  --text-caption--font-weight: 500;
+  --text-caption--line-height: 1.4;
 
-  /* Text */
-  --color-text-primary: #202938;
-  --color-text-secondary: #667085;
-  --color-text-error: #c93c3c;
+  --text-badge: 11.5px;
+  --text-badge--font-weight: 700;
+  --text-badge--line-height: 1.3;
 
-  /* Background */
-  --color-bg: #f7f8fa;
-  --color-bg-surface: #d3d3d3;
-  --color-bg-subtle: #090909;
+  /* 세탁기 · 하늘색 */
+  --color-sky-water: #9fe7fb; /* 물 · 브랜드 */
+  --color-sky-back: #cdf4fd; /* 뒤 물결 */
+  --color-sky-deep: #3cc3ec; /* 내 빨래 물 */
+  --color-sky-ring: #0e9ccb; /* 비어 있음 테두리 */
+  --color-sky-ink: #0b6f93; /* 글자 */
+  --color-sky-tint: #ebfafe; /* 면 */
+  --color-sky-deep-back: #8eddf5; /* 내 빨래 뒤 물결 */
 
-  /* Border */
-  --color-border: #e2e6ec;
-  /*--color-border-strong: #d1d1d1;*/
+  /* 건조기 · 주황 */
+  --color-orange-water: #fdb576; /* 열풍 · 브랜드 */
+  --color-orange-back: #fed9b7; /* 계산 중 바탕 */
+  --color-orange-deep: #f7953e; /* 내 빨래 · 켜짐 */
+  --color-orange-ring: #d9731a; /* 비어 있음 테두리 */
+  --color-orange-ink: #a8560f; /* 글자 */
+  --color-orange-tint: #fff3e8; /* 면 */
 
-  /* Icon */
-  /*--color-icon: #b4b4b4;*/
-  /*--color-icon-muted: #e5e5e5;*/
+  /* 중립 · 먹색 */
+  --color-ink: #1b1d21; /* 글자 · 주 버튼 */
+  --color-ink2: #62656c; /* 보조 글자 */
+  --color-ink3: #9a9da4; /* 비활성 글자 */
+  --color-track: #dcdde1; /* 꺼진 스위치 */
+  --color-line: #e8e9ec; /* 구분선 */
+  --color-soft: #f4f5f7; /* 보조 면 */
+  --color-surface: #ffffff; /* 바탕 */
 
-  /* Status */
-  /*--color-status-pass: #22c55e;*/
-  /*--color-status-fail: #ef4444;*/
-  /*--color-status-pending: #f97316;*/
-  /*--color-status-progress: #3b82f6;*/
-  /*--color-status-inactive: #9ca3af;*/
-  /*--color-status-pass-light: #f0fdf4;*/
-  /*--color-status-fail-light: #fef2f2;*/
+  /* 상태 */
+  --color-live: #2fbf71; /* 실시간 점 */
+  --color-danger: #d2382f; /* 탈퇴 · 오류 */
+  --color-danger-tint: #fdeeec; /* 오류 면 */
+
+  /* 기기 아이콘 */
+  --color-icon-base: #f3f4f6; /* 돌아가는 기기 바탕 */
+  --color-icon-rim: #dfe1e5; /* 돌아가는 기기 테두리 */
+  --color-icon-rim-empty: #cfd1d6; /* 빈 기기 테두리 */
+  --color-icon-rim-off: #c4c6cb; /* 사용 불가 점선 테두리 */
+  --color-icon-skeleton: #eeeff2; /* 불러오는 중 */
+
+  /* 눌림 */
+  --color-ink-pressed: #34373d;
+  --color-soft-pressed: #eaebee;
+  --color-danger-pressed: #b82e26;
+
+  /* 모서리 */
+  --radius-chip: 12px; /* 작은 버튼 */
+  --radius-tile: 14px; /* 아이콘 타일 */
+  --radius-button: 16px;
+  --radius-button-lg: 18px;
+  --radius-banner: 20px; /* 배너 · 묶음 */
+  --radius-card: 22px; /* 내 빨래 카드 */
+  --radius-sheet: 28px; /* 시트 · 다이얼로그 */
+  --radius-seg: 11px; /* 세그먼트 안쪽 칸 */
+
+  /* 모션 — 동작 줄이기 설정이면 motion-reduce:animate-none 으로 멈춘다 */
+  --ease-sheet: cubic-bezier(0.2, 0.8, 0.2, 1); /* 시트가 올라올 때 */
+  --animate-wave-front: wave 3.2s linear infinite;
+  --animate-wave-back: wave 5.6s linear infinite reverse;
+  --animate-shine: shine 2.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  --animate-blink: blink 1.4s ease-in-out infinite;
+
+  /* 그림자 */
+  --shadow-dialog: 0 24px 60px -20px rgb(27 29 33 / 0.45); /* 다이얼로그 */
+  --shadow-sheet: 0 -12px 40px -16px rgb(27 29 33 / 0.3); /* 아래 시트 */
+  --shadow-float: 0 14px 26px -14px rgb(27 29 33 / 0.7); /* 떠 있는 버튼 */
+  --shadow-toast: 0 12px 28px -12px rgb(27 29 33 / 0.6); /* 토스트 */
+  --shadow-knob: 0 1px 3px rgb(27 29 33 / 0.25); /* 스위치 손잡이 */
+  --shadow-segment: 0 1px 3px rgb(27 29 33 / 0.12); /* 세그먼트 선택 칸 */
+}
+
+@keyframes wave {
+  to {
+    transform: translateX(-22px);
+  }
+}
+
+@keyframes shine {
+  from {
+    transform: translateX(-90px);
+  }
+  to {
+    transform: translateX(90px);
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.45;
+  }
 }
 
 h1 {
   font-size: var(--text-display);
   font-weight: var(--text-display--font-weight);
   line-height: var(--text-display--line-height);
+  letter-spacing: var(--text-display--letter-spacing);
 }
 
 h2 {
   font-size: var(--text-heading);
   font-weight: var(--text-heading--font-weight);
   line-height: var(--text-heading--line-height);
+  letter-spacing: var(--text-heading--letter-spacing);
 }
 
 body,

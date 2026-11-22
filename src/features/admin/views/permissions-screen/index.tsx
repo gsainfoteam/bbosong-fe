@@ -102,7 +102,7 @@ export function AdminPermissionsScreen() {
             </select>
           </label>
         </div>
-        <p className="text-text-secondary text-sm dark:text-slate-400">
+        <p className="text-ink2 text-sm dark:text-slate-400">
           {t('userCount', { count: query.filtered.length })}
         </p>
         <UserTable
@@ -115,14 +115,14 @@ export function AdminPermissionsScreen() {
             setChange(null);
           }}
         />
-        <p className="text-text-secondary text-sm leading-6 dark:text-slate-400">
+        <p className="text-ink2 text-sm leading-6 dark:text-slate-400">
           {t('permissionsHint')} {t('selfRoleHint')}
         </p>
       </AdminPage>
       {selected && (
         <AdminDialog title={t('changeRole')} onClose={close} isPending={actions.isPending}>
           {change && <p className="mb-4 text-sm leading-6">{t('roleConfirm')}</p>}
-          <div className="bg-bg rounded-lg p-4 dark:bg-slate-800">
+          <div className="bg-surface rounded-lg p-4 dark:bg-slate-800">
             <p className="font-medium">{selected.name}</p>
             <p className="mt-1 text-sm break-all">{selected.email}</p>
             <p className="mt-2 font-mono text-xs break-all">{selected.uuid}</p>

@@ -1,10 +1,13 @@
 import { useState } from 'react';
 
-import { Bell, BellOff, Plus } from 'lucide-react';
+import { Bell, BellOff } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { Modal } from '@/common/components';
 import { cn } from '@/common/utils';
+
+import { MachineBox } from '../machine-box';
+import { toDisplay, useLabels } from '../machine-box/labels';
 
 const MACHINE_KEYS = {
   washer: 'machine:washer',
@@ -23,12 +26,26 @@ const NOTIFICATION_DISABLED_KEYS = {
 //   b: 'location:b',
 // } as const;
 
+/** 숫자는 크게, 단위는 본문 크기로 보여 준다. (예: 1시간 3분 → 1 · 시간 · 3 · 분) */
+function Numeral({ text }: { text: string }) {
+  return text.split(/(\d+)/).map((part, index) =>
+    /^\d+$/.test(part) ? (
+      <span key={index} className="text-numeral mr-px">
+        {part}
+      </span>
+    ) : (
+      part
+    ),
+  );
+}
+
 export function UsingMachineBox({
   machine,
-  location,
+  location: _location,
   notification,
   isNotificationEnabled = true,
   notificationBlocker,
+  state = { status: 'using' },
   onUnregister,
   isUnregistering = false,
   className,
@@ -39,6 +56,7 @@ export function UsingMachineBox({
 
   // t('machine:washer')
   // t('machine:dryer')
+  // t('machine:count')
   // t('location:a')
   // t('location:b')
   // t('location:laundryRoom')
@@ -46,29 +64,45 @@ export function UsingMachineBox({
   // t('machineRegister:unregister.confirmation.notificationNeedsInstall')
   // t('machineRegister:unregister.confirmation.notificationUnsupported')
 
+  const display = toDisplay({ ...machine, ...state, mine: true });
+  const { caption, spoken } = useLabels(display);
+  const name = `${t(MACHINE_KEYS[machine.type])} ${t('machine:count', { id: String(machine.id) })}`;
+
   return (
-    <div
-      className={cn(
-        className,
-        'text-text-primary border-border flex min-h-20 min-w-20 shrink-0 flex-col items-center justify-center gap-0.5 rounded-lg border px-2',
-      )}
-      {...props}
-    >
-      <p>
-        {t(`location:${location}`)} {t('machine:count', { id: String(machine.id) })}
-      </p>
-      <p className="mb-0.5">{t(MACHINE_KEYS[machine.type])}</p>
+    <div className={cn('relative min-w-0', className)} {...props}>
       <button
         type="button"
-        aria-label={t('machineRegister:unregister.confirmation.title')}
+        aria-label={[
+          name,
+          t('machine:mine'),
+          spoken,
+          t('machineRegister:unregister.confirmation.title'),
+        ].join(', ')}
         onClick={() => setIsConfirmOpen(true)}
+        className="bg-surface rounded-banner flex w-full min-w-0 cursor-pointer items-center gap-3 px-3.5 py-3 text-left transition duration-120 active:scale-[0.97]"
       >
-        {isNotificationEnabled ? (
-          <Bell className={cn(notification && 'text-primary')} aria-hidden />
-        ) : (
-          <BellOff aria-hidden />
-        )}
+        <MachineBox
+          machine={{ ...machine, ...state, mine: true }}
+          showCaption={false}
+          className="w-10 shrink-0"
+        />
+        <span className="min-w-0">
+          <span className="text-body block leading-none font-bold whitespace-nowrap">
+            <Numeral text={caption} />
+          </span>
+          <span className="text-caption text-ink2 mt-1.5 block leading-none whitespace-nowrap">
+            {name}
+          </span>
+        </span>
       </button>
+      {/* 알림 상태는 모서리에 작게 표시만 한다. 해제는 카드를 눌러 확인 모달에서 한다. */}
+      <span aria-hidden className="absolute top-2.5 right-3 flex">
+        {isNotificationEnabled ? (
+          <Bell size={14} className={notification ? 'text-ink' : 'text-ink3'} />
+        ) : (
+          <BellOff size={14} className="text-ink3" />
+        )}
+      </span>
       {isConfirmOpen && (
         <Modal
           title={t('machineRegister:unregister.confirmation.title')}
@@ -83,28 +117,13 @@ export function UsingMachineBox({
           onClose={() => setIsConfirmOpen(false)}
         >
           {!isNotificationEnabled && (
-            <p role="note" className="text-text-error">
+            <p role="note" className="text-danger">
               {t(NOTIFICATION_DISABLED_KEYS[notificationBlocker ?? 'default'])}
             </p>
           )}
         </Modal>
       )}
     </div>
-  );
-}
-
-export function AddUsingMachineBox({ onAdd }: AddUsingMachineBox.Props) {
-  const { t } = useTranslation('mypage');
-
-  return (
-    <button
-      type="button"
-      aria-label={t('addMachine')}
-      className="flex min-h-20 w-20 shrink-0 items-center justify-center"
-      onClick={onAdd}
-    >
-      <Plus size={32} strokeWidth={1.5} aria-hidden />
-    </button>
   );
 }
 
@@ -116,6 +135,8 @@ export namespace UsingMachineBox {
     machine: { type: 'washer' | 'dryer'; id: number };
     location: 'a' | 'b';
     notification: boolean;
+    /** 시간·상태. 알 수 없으면 "사용 중"으로 보여 준다. */
+    state?: Omit<MachineBox.Props['machine'], 'type' | 'id' | 'mine'>;
     /** 브라우저 알림 권한이 꺼져 있으면 false. BellOff 아이콘과 해제 모달에 안내 문구를 보여준다. */
     isNotificationEnabled?: boolean;
     /**
@@ -128,11 +149,5 @@ export namespace UsingMachineBox {
     onUnregister: () => void;
     isUnregistering?: boolean;
     className?: string;
-  };
-}
-
-export namespace AddUsingMachineBox {
-  export type Props = {
-    onAdd: () => void;
   };
 }

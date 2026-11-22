@@ -1,35 +1,37 @@
 import { Link } from '@tanstack/react-router';
 
-import { Menu, RefreshCw, X } from 'lucide-react';
+import { ArrowLeft, RefreshCw, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/common/utils';
+
+import { IconButton } from '../ui';
 
 export const Header = ({ onRefresh, isRefreshing = false, className, ...props }: Header.Props) => {
   const { t } = useTranslation('common');
 
   return (
     <header
-      className={cn(className, 'text-text-primary flex w-full justify-between px-4 py-2')}
+      className={cn(className, 'text-ink flex h-12 w-full items-center justify-between')}
       {...props}
     >
-      <h1>{t('bbosong')}</h1>
-      <div className="flex items-center gap-3">
+      <h1 className="text-heading">{t('bbosong')}</h1>
+      <div className="-mr-2.5 flex items-center">
         {onRefresh && (
-          <button
-            type="button"
-            aria-label={t('refresh')}
+          <IconButton
+            label={t('refresh')}
             aria-busy={isRefreshing}
             disabled={isRefreshing}
             onClick={onRefresh}
-            className="disabled:cursor-not-allowed"
           >
-            <RefreshCw className={cn(isRefreshing && 'animate-spin')} />
-          </button>
+            <RefreshCw size={22} className={cn(isRefreshing && 'animate-spin')} aria-hidden />
+          </IconButton>
         )}
-        <Link to="/mypage" aria-label={t('myPage')}>
-          <Menu />
-        </Link>
+        <IconButton asChild label={t('myPage')}>
+          <Link to="/mypage">
+            <User size={22} aria-hidden />
+          </Link>
+        </IconButton>
       </div>
     </header>
   );
@@ -38,10 +40,12 @@ export const Header = ({ onRefresh, isRefreshing = false, className, ...props }:
 export const MyPageHeader = () => {
   const { t } = useTranslation('common');
   return (
-    <header className="text-text-primary flex w-full flex-row-reverse px-4 py-2">
-      <Link to="/" aria-label={t('index')}>
-        <X />
-      </Link>
+    <header className="text-ink flex h-14 w-full items-center px-2">
+      <IconButton asChild label={t('index')}>
+        <Link to="/">
+          <ArrowLeft size={22} aria-hidden />
+        </Link>
+      </IconButton>
     </header>
   );
 };

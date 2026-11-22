@@ -18,17 +18,22 @@ export function MachineRegisterScreen({
   return (
     <div className="h-dvh">
       <div className="h-1/2 content-center p-10">
-        <div className="bg-bg-surface flex aspect-square w-full flex-col justify-end p-5">
+        <div className="bg-soft flex aspect-square w-full flex-col justify-end p-5">
           <img src={machineRegister} alt="machineRegister" />
         </div>
       </div>
       <div className="flex h-1/2 w-full flex-col items-center justify-between px-10 py-15">
         <MachineRegisterMessage lang={i18n.language} machine={machine} location={location} />
         <div className="flex w-full flex-row items-center justify-between gap-2 p-5">
-          <Button disabled={isPending} onClick={() => navigate({ to: '/' })}>
+          <Button
+            variant="secondary"
+            disabled={isPending}
+            onClick={() => navigate({ to: '/' })}
+            className="flex-1"
+          >
             {t('goBack')}
           </Button>
-          <Button onClick={onRegister} disabled={isPending} aria-busy={isPending}>
+          <Button onClick={onRegister} loading={isPending} className="flex-1">
             {isPending ? t('machineRegister:registering') : t('yes')}
           </Button>
         </div>

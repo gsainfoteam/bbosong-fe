@@ -5,14 +5,25 @@ import { createTV } from 'tailwind-variants';
 const tokens = [
   'text-display',
   'text-heading',
+  'text-section',
+  'text-title',
+  'text-numeral',
+  'text-body-strong',
   'text-body-lg',
   'text-body',
+  'text-button-lg',
   'text-label',
   'text-caption',
+  'text-badge',
 ] as const;
+
+const radii = ['chip', 'tile', 'button', 'button-lg', 'banner', 'card', 'sheet', 'seg'] as const;
 
 const twMergeConfig = {
   extend: {
+    theme: {
+      radius: radii,
+    },
     classGroups: {
       'font-size': tokens,
     },

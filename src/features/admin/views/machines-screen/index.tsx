@@ -179,7 +179,7 @@ export function AdminMachinesScreen() {
       onRefresh={() => void query.refetch()}
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <span className="text-text-secondary text-sm dark:text-slate-400">
+        <span className="text-ink2 text-sm dark:text-slate-400">
           {t('machineCount', { count: query.filtered.length })}
         </span>
         <div className="flex gap-2">
@@ -326,7 +326,7 @@ export function AdminMachinesScreen() {
                       </select>
                       {thinqDevices.isError && (
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-text-secondary text-xs dark:text-slate-400">
+                          <span className="text-ink2 text-xs dark:text-slate-400">
                             {t('thinqDevicesError')}
                           </span>
                           <button
@@ -339,7 +339,7 @@ export function AdminMachinesScreen() {
                           </button>
                         </div>
                       )}
-                      <span className="text-text-secondary text-xs leading-5 dark:text-slate-400">
+                      <span className="text-ink2 text-xs leading-5 dark:text-slate-400">
                         {t('thinqMappingHint')}
                       </span>
                     </label>
@@ -381,7 +381,7 @@ export function AdminMachinesScreen() {
                       />
                     </label>
                   </div>
-                  <p className="text-text-secondary text-sm leading-6 dark:text-slate-400">
+                  <p className="text-ink2 text-sm leading-6 dark:text-slate-400">
                     {t('rangeHint')}
                   </p>
                 </>
@@ -468,7 +468,7 @@ export function AdminMachinesScreen() {
                     </select>
                     {thinqDevices.isError && (
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-text-secondary text-xs dark:text-slate-400">
+                        <span className="text-ink2 text-xs dark:text-slate-400">
                           {t('thinqDevicesError')}
                         </span>
                         <button
@@ -481,11 +481,11 @@ export function AdminMachinesScreen() {
                         </button>
                       </div>
                     )}
-                    <span className="text-text-secondary text-xs leading-5 dark:text-slate-400">
+                    <span className="text-ink2 text-xs leading-5 dark:text-slate-400">
                       {t('thinqMappingHint')}
                     </span>
                   </label>
-                  <div className="border-border space-y-1 rounded-lg border px-3 py-2 text-sm dark:border-slate-700">
+                  <div className="border-line space-y-1 rounded-lg border px-3 py-2 text-sm dark:border-slate-700">
                     <div className="font-medium">{t('thinqStatus')}</div>
                     <div>
                       {t('thinqCurrentState')}:{' '}
@@ -515,7 +515,7 @@ export function AdminMachinesScreen() {
                   <input name="matterPayload" className={inputClass} placeholder="MT:…" />
                 </label>
               )}
-              <p className="text-text-secondary text-sm leading-6 dark:text-slate-400">
+              <p className="text-ink2 text-sm leading-6 dark:text-slate-400">
                 {editThinqDeviceId ? t('thinqEditHint') : t('editHint')}
               </p>
               <div className="flex justify-end gap-2">
@@ -545,7 +545,7 @@ export function AdminMachinesScreen() {
             {t('building', { location: confirm.machine.location })} · {t(confirm.machine.gender)} ·{' '}
             {t(confirm.machine.type)} #{confirm.machine.index}
           </p>
-          <p className="text-text-secondary mt-3 text-sm leading-6 dark:text-slate-400">
+          <p className="text-ink2 mt-3 text-sm leading-6 dark:text-slate-400">
             {confirm.action === 'delete' ? t('deleteConfirm') : t('commissionConfirm')}
           </p>
           <div className="mt-6 flex justify-end gap-2">
@@ -575,7 +575,7 @@ export function AdminMachinesScreen() {
           onClose={closePower}
         >
           <div className="mb-4 flex items-center gap-3">
-            <span className="text-text-secondary text-sm dark:text-slate-400">{t('status')}</span>
+            <span className="text-ink2 text-sm dark:text-slate-400">{t('status')}</span>
             <MachineStatusBadge
               isAvailable={powerMachine.isAvailable}
               status={powerMachine.status}
@@ -598,7 +598,7 @@ export function AdminMachinesScreen() {
             <button type="submit" className={buttonClass} disabled={power.isFetching}>
               {power.isFetching ? t('loading') : t('searchRecords')}
             </button>
-            <p className="text-text-secondary text-sm leading-6 sm:col-span-2 dark:text-slate-400">
+            <p className="text-ink2 text-sm leading-6 sm:col-span-2 dark:text-slate-400">
               {t('powerRangeHint')}
             </p>
             <div className="sm:col-span-2">

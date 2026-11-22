@@ -83,7 +83,7 @@ export function AdminPowerScreen() {
         >
           {power.isFetching ? t('loading') : t('searchRecords')}
         </button>
-        <p className="text-text-secondary text-sm leading-6 md:col-span-3 dark:text-slate-400">
+        <p className="text-ink2 text-sm leading-6 md:col-span-3 dark:text-slate-400">
           {t('powerRangeHint')}
         </p>
         <div className="md:col-span-3">

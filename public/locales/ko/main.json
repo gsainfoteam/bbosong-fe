@@ -1,6 +1,6 @@
 {
-  "noUsingMachine": "사용 중인 기기가 없습니다.",
-  "qrScan": "QR 코드를 촬영하고 기기를 등록하세요",
-  "qrScanCameraError": "카메라를 사용할 수 없습니다. 브라우저 설정에서 카메라 권한을 허용한 뒤 다시 열어주세요.",
+  "qrScan": "QR 코드를 찍어 기기를 등록하세요",
+  "qrScanCameraError": "카메라를 사용할 수 없어요. 브라우저 설정에서 카메라 권한을 허용한 뒤 다시 열어 주세요.",
+  "registerCta": "QR로 내 빨래 등록하기",
   "usingMachineTitle": "사용 중인 기기 목록"
 }

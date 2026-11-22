@@ -11,21 +11,22 @@ export const Checkbox = forwardRef<
   <span className={cn('group relative inline-flex cursor-pointer items-center', className)}>
     <input
       ref={ref}
-      className="peer absolute inset-0 z-10 size-5 cursor-pointer opacity-0 focus-visible:outline-none"
+      className="peer absolute inset-0 z-10 size-6 cursor-pointer opacity-0 focus-visible:outline-none"
       {...props}
       type="checkbox"
     />
     <span
       aria-hidden
       className={cn(
-        'flex size-5 shrink-0 items-center justify-center rounded-md border-2 transition-colors',
-        'border-border peer-checked:border-primary peer-checked:bg-primary',
-        'peer-focus-visible:ring-primary peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2',
+        'bg-surface flex size-6 shrink-0 items-center justify-center rounded-lg border-[1.8px] transition-colors',
+        'border-track peer-checked:border-ink peer-checked:bg-ink',
+        'peer-focus-visible:ring-ink peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2',
+        'peer-disabled:opacity-40',
         'pointer-events-none',
       )}
     >
       <Check
-        className="invisible size-3.5 text-white group-has-checked:visible"
+        className="invisible size-4 text-white group-has-checked:visible"
         strokeWidth={3}
         aria-hidden
       />

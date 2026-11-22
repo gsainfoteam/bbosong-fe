@@ -4,26 +4,21 @@ import { SelectBuilding } from '.';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-// location 네임스페이스의 키로 전달하면 DropDown이 번역해 표시
-const BUILDINGS: SelectBuilding.Props['dropDownProps']['items'] = ['a', 'b'];
+const ROOMS: SelectBuilding.Room[] = [
+  { value: 'a', washerFree: 2, dryerFree: 0 },
+  { value: 'b', washerFree: 0, dryerFree: 1 },
+];
 
 const meta: Meta<typeof SelectBuilding> = {
   title: 'User/SelectBuilding',
   component: SelectBuilding,
-  parameters: {
-    layout: 'padded',
-  },
-  args: {},
-  // 드롭다운 선택값을 스토리 내부 상태로 관리해 실제 사용 흐름을 재현
-  render: function Render({ dropDownProps, ...args }) {
-    const [selected, setSelected] = useState(dropDownProps.value);
+  parameters: { layout: 'padded' },
+  args: { value: 'a', rooms: ROOMS, gender: 'male', onSelect: () => {} },
+  // 선택값을 스토리 내부 상태로 관리해 실제 사용 흐름을 재현
+  render: function Render({ value, ...args }) {
+    const [selected, setSelected] = useState(value);
 
-    return (
-      <SelectBuilding
-        {...args}
-        dropDownProps={{ ...dropDownProps, value: selected, onSelect: setSelected }}
-      />
-    );
+    return <SelectBuilding {...args} value={selected} onSelect={setSelected} />;
   },
   tags: ['autodocs'],
 };
@@ -31,33 +26,9 @@ const meta: Meta<typeof SelectBuilding> = {
 export default meta;
 type Story = StoryObj<typeof SelectBuilding>;
 
-export const Default: Story = {
-  args: {
-    dropDownProps: {
-      items: BUILDINGS,
-      onSelect: () => {},
-      value: BUILDINGS[0],
-    },
-  },
-};
+/** 제목을 누르면 아래 시트에서 세탁실을 바꾼다. 각 세탁실에는 빈 자리 수가 보인다. */
+export const Default: Story = {};
 
-// placeholder를 넘기지 않으면 common:dropDown.placeholder가 표시됨
-export const Placeholder: Story = {
-  args: {
-    dropDownProps: {
-      items: BUILDINGS,
-      onSelect: () => {},
-    },
-  },
-};
+export const Female: Story = { args: { gender: 'female' } };
 
-export const Disabled: Story = {
-  args: {
-    dropDownProps: {
-      items: BUILDINGS,
-      onSelect: () => {},
-      value: BUILDINGS[0],
-      disabled: true,
-    },
-  },
-};
+export const Disabled: Story = { args: { disabled: true } };

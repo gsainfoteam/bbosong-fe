@@ -4,9 +4,9 @@ import { useNavigate, useParams } from '@tanstack/react-router';
 
 import { useTranslation } from 'react-i18next';
 
-import { Button } from '@/common/components';
+import { Sheet } from '@/common/components';
 import { PushPermissionCard, usePushPermission } from '@/features/push-notification';
-import { MachineCompletionDialog, MachineRegisterScreen } from '@/features/user';
+import { MachineBox, MachineCompletionDialog, MachineRegisterScreen } from '@/features/user';
 import { useFindMachineByUuid, useRegisterMachine } from '@/features/user/viewmodels';
 
 export function MachineRegisterFrame() {
@@ -78,22 +78,30 @@ export function MachineRegisterFrame() {
           onClose={cancelConfirmation}
         />
       )}
-      <dialog
+      <Sheet
         ref={dialogRef}
         aria-label={t('permission.completionTitle')}
-        className="bg-bg text-text-primary fixed inset-x-0 top-auto bottom-0 mx-auto my-0 max-h-[85dvh] w-full max-w-120 overflow-y-auto rounded-t-3xl px-6 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] backdrop:bg-black/40"
         onCancel={closePermission}
       >
-        <div aria-hidden="true" className="bg-border mx-auto mb-6 h-1 w-10 rounded-full" />
-        <PushPermissionCard presentation="sheet" />
-        <Button
-          type="button"
-          onClick={closePermission}
-          className="text-text-secondary mt-3 w-full border-0 py-3 text-sm"
-        >
-          {t('permission.later')}
-        </Button>
-      </dialog>
+        <PushPermissionCard
+          presentation="sheet"
+          onLater={closePermission}
+          art={
+            // 방금 등록한 기기를 내 빨래 표식과 함께 보여 준다
+            <MachineBox
+              machine={{
+                ...machineData,
+                status: 'using',
+                mine: true,
+                elapsedMinutes: 20,
+                remainingDisplay: { kind: 'minutes', minutes: 80 },
+              }}
+              showCaption={false}
+              className="w-18"
+            />
+          }
+        />
+      </Sheet>
     </>
   );
 }

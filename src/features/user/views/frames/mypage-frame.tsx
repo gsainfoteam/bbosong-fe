@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import { SplashScreen } from '@/common/components';
+import { Button, SplashScreen } from '@/common/components';
 import { useLogout, useWithdraw } from '@/features/auth';
 
 import { useFindUserProfile } from '../../viewmodels';
@@ -19,11 +19,11 @@ export function MypageFrame() {
 
   if (isError || !user) {
     return (
-      <div className="bg-bg flex w-full flex-1 flex-col items-center justify-center">
+      <div className="bg-surface flex w-full flex-1 flex-col items-center justify-center">
         <p role="alert">{t('generic')}</p>
-        <button type="button" onClick={() => void refetch()}>
+        <Button variant="outline" size="s" onClick={() => void refetch()} className="mt-4">
           {t('refetch')}
-        </button>
+        </Button>
       </div>
     );
   }

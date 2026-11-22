@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { Bell } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { Button, Modal } from '@/common/components';
@@ -86,14 +87,15 @@ export function GetRoomNotificationButton({
     <>
       <Button
         type="button"
-        variant="minimum"
-        size="minimum"
+        variant={machineType === 'washer' ? 'soft-washer' : 'soft-dryer'}
+        size="xs"
         disabled={isPending}
         aria-pressed={active}
         onClick={onModalOpen}
         className={className}
       >
-        {active ? t('laundryRoom.cancelShort') : t('laundryRoom.requestShort')}
+        <Bell size={14} aria-hidden />
+        {active ? t('laundryRoom.cancelShort') : t('laundryRoom.requestPill')}
       </Button>
       {modalOpen && renderModal()}
     </>

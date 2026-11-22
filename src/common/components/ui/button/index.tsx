@@ -1,15 +1,17 @@
-import { cv } from '@/common/utils';
+import { cn, cv } from '@/common/utils';
 
 import { Slot } from '../slot';
 
 import type { VariantProps } from 'tailwind-variants';
 
 export function Button({
-  variant = 'default',
-  size = 'default',
+  variant = 'primary',
+  size = 'm',
   asChild = false,
+  loading = false,
   children,
   className,
+  onClick,
   ...props
 }: Button.Props & React.ComponentProps<'button'>) {
   const Comp = asChild ? Slot : 'button';
@@ -34,41 +36,99 @@ export function Button({
         }
       : {};
 
+  // 처리 중에는 색을 그대로 두고 글자만 바꾸되, 중복 제출은 막는다.
+  const busyProps = loading
+    ? {
+        'aria-busy': true,
+        onClick: (e: React.MouseEvent<HTMLButtonElement>) => e.preventDefault(),
+      }
+    : { onClick };
+
   return (
-    <Comp className={Button.styles({ variant, size, className })} {...props} {...disabledProps}>
-      {children}
+    <Comp
+      className={Button.styles({ variant, size, className })}
+      {...props}
+      {...busyProps}
+      {...disabledProps}
+    >
+      {asChild ? (
+        children
+      ) : (
+        <>
+          {loading && <Button.Spinner />}
+          {children}
+        </>
+      )}
     </Comp>
   );
 }
 
 export namespace Button {
   export type Props = {
+    /** 주 버튼은 화면당 하나, 보조/외곽선은 부가 동작, 위험은 되돌릴 수 없을 때만 쓴다. */
     variant?: NonNullable<VariantProps<typeof Button.styles>['variant']>;
+    /** l 56 · m 48 · s 36 · xs 28(알약) */
     size?: NonNullable<VariantProps<typeof Button.styles>['size']>;
+    /** 처리 중. 폭은 그대로 두고 스피너와 글자만 바뀌도록 children을 바꿔 넘긴다. */
+    loading?: boolean;
   } & (
     | { asChild?: false }
     // asChild면 실제 요소는 자식이 정하므로 HTMLButtonElement ref를 받지 않는다. ref는 자식에 직접 단다.
     | { asChild: true; ref?: never }
   );
 
+  export function Spinner({ className }: { className?: string }) {
+    return (
+      <span
+        aria-hidden
+        className={cn(
+          'size-4 shrink-0 animate-spin rounded-full border-2 border-current border-r-transparent opacity-80',
+          className,
+        )}
+      />
+    );
+  }
+
+  const disabledStyle = [
+    'disabled:bg-soft disabled:text-ink3 disabled:ring-0 disabled:inset-ring-0 disabled:cursor-not-allowed',
+    'aria-disabled:bg-soft aria-disabled:text-ink3 aria-disabled:ring-0 aria-disabled:inset-ring-0 aria-disabled:cursor-not-allowed',
+  ];
+
   export const styles = cv({
     base: [
-      'flex items-center justify-center rounded-md',
-      'disabled:cursor-not-allowed disabled:opacity-50',
-      'aria-disabled:cursor-not-allowed aria-disabled:opacity-50',
+      'inline-flex cursor-pointer items-center justify-center whitespace-nowrap select-none',
+      'transition duration-120 active:scale-[0.97]',
+      'focus-visible:outline-ink focus-visible:outline-2 focus-visible:outline-offset-2',
+      ...disabledStyle,
     ],
     variants: {
       variant: {
-        default: [
-          'w-full text-heading text-text-primary border border-border',
-          'transition-all duration-150',
-        ],
-        minimum: ['text-text-primary border border-border', 'transition-all duration-150'],
+        primary: 'bg-ink active:bg-ink-pressed text-white',
+        secondary: 'bg-soft text-ink active:bg-soft-pressed',
+        outline: 'bg-surface text-ink inset-ring-line active:bg-soft inset-ring-1',
+        danger: 'bg-danger active:bg-danger-pressed text-white',
+        // 색 있는 면(배너) 위에서는 같은 계열의 흰 버튼을 쓴다.
+        'tone-washer': 'bg-surface text-sky-ink ring-sky-ink/18 ring-1',
+        'tone-dryer': 'bg-surface text-orange-ink ring-orange-ink/18 ring-1',
+        // 기기 색 면 + 같은 계열 글자. 눌려 있으면(aria-pressed) 먹색으로 켜진다.
+        'soft-washer': 'bg-sky-tint text-sky-ink aria-pressed:bg-ink aria-pressed:text-white',
+        'soft-dryer': 'bg-orange-tint text-orange-ink aria-pressed:bg-ink aria-pressed:text-white',
+        text: 'text-ink2 bg-transparent font-medium',
+        'text-danger': 'text-danger bg-transparent',
       },
       size: {
-        default: 'p-2',
-        minimum: 'p-2',
+        l: 'rounded-button-lg text-button-lg h-14 gap-2 px-4.5',
+        m: 'rounded-button text-body-strong h-12 gap-2 px-4.5',
+        s: 'rounded-chip text-label h-9 gap-1.5 px-3',
+        /** 섹션 머리 옆 알약 버튼 */
+        xs: 'text-caption h-7 gap-1 rounded-full px-2.5 font-bold',
       },
     },
+    compoundVariants: [
+      {
+        variant: ['text', 'text-danger'],
+        class: 'px-1 disabled:bg-transparent aria-disabled:bg-transparent',
+      },
+    ],
   });
 }
