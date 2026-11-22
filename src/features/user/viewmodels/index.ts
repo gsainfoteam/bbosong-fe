@@ -5,6 +5,7 @@ export * from './use-find-machine-by-uuid';
 export * from './use-find-machines';
 export * from './use-find-map';
 export * from './use-find-my-machine';
+export * from './use-app-versions';
 export * from './use-find-user-profile';
 export * from './use-live-activity-sync';
 export * from './use-machine-views';

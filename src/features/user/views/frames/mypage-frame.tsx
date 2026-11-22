@@ -12,7 +12,7 @@ import {
   usePushPermission,
 } from '@/features/push-notification';
 
-import { useFindUserProfile } from '../../viewmodels';
+import { useAppVersions, useFindUserProfile } from '../../viewmodels';
 import { MypageScreen } from '../screens';
 
 function useNotificationSetting(): NotificationSettingRow.Props {
@@ -42,6 +42,7 @@ export function MypageFrame() {
   const navigate = useNavigate();
   const { user, isError, isLoading, refetch } = useFindUserProfile();
   const notification = useNotificationSetting();
+  const versions = useAppVersions();
 
   const { mutate: logout, isPending: isLoggingOut } = useLogout({ showToast: true });
   const { mutate: withdraw, isPending: isWithdrawing } = useWithdraw();
@@ -58,6 +59,7 @@ export function MypageFrame() {
     <MypageScreen
       user={user}
       notification={notification}
+      versions={versions}
       onBack={() => void navigate({ to: '/' })}
       onLogout={() => logout(undefined)}
       isLoggingOut={isLoggingOut}

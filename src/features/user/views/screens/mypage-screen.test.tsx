@@ -119,16 +119,27 @@ describe('MypageScreen withdraw', () => {
 });
 
 describe('MypageScreen version', () => {
-  it('shows the current app version', () => {
+  const renderWith = (versions: { app?: string; web: string }) =>
     render(
       <MypageScreen
         notification={notification}
+        versions={versions}
         onBack={() => {}}
         user={{ ...baseUser, role: 'user' }}
         onLogout={() => {}}
         onWithdraw={() => {}}
       />,
     );
-    expect(screen.getByText('version')).toBeTruthy();
+
+  it('shows app and web versions separately', () => {
+    renderWith({ app: '0.4.12', web: '0.4.16-abc1234' });
+    expect(screen.getByText('appVersion')).toBeTruthy();
+    expect(screen.getByText('webVersion')).toBeTruthy();
+  });
+
+  it('hides the app version on the web', () => {
+    renderWith({ web: '0.4.16-abc1234' });
+    expect(screen.queryByText('appVersion')).toBeNull();
+    expect(screen.getByText('webVersion')).toBeTruthy();
   });
 });

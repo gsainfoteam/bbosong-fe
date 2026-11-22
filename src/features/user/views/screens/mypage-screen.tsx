@@ -9,11 +9,12 @@ import { LanguageToggle, ListGroup, ListRow, Modal, TopBar } from '@/common/comp
 import { cn } from '@/common/utils';
 import { NotificationSettingRow } from '@/features/push-notification';
 
-import { type UserProfile } from '../../viewmodels';
+import { type AppVersions, type UserProfile } from '../../viewmodels';
 
 export function MypageScreen({
   user,
   notification,
+  versions,
   onBack,
   onLogout,
   isLoggingOut,
@@ -104,8 +105,14 @@ export function MypageScreen({
           </ListRow>
         </ListGroup>
 
-        <p className="text-ink-3 mx-1 mt-2 text-[12.5px]">
-          {t('version', { version: __APP_VERSION__ })}
+        <p className="text-ink-3 mx-1 mt-2 flex flex-wrap items-center gap-x-2 text-[12.5px]">
+          {versions.app && (
+            <>
+              <span>{t('appVersion', { version: versions.app })}</span>
+              <span aria-hidden className="bg-ink-3/40 h-2.5 w-px" />
+            </>
+          )}
+          <span>{t('webVersion', { version: versions.web })}</span>
         </p>
       </div>
 
@@ -127,6 +134,8 @@ export namespace MyPageScreen {
   export type Props = {
     user: UserProfile;
     notification: NotificationSettingRow.Props;
+    /** app: 설치된 네이티브 앱 버전(웹에서는 없음), web: 현재 실행 중인 웹 번들 버전 */
+    versions: AppVersions;
     onBack: () => void;
     onLogout: () => void;
     isLoggingOut?: boolean;

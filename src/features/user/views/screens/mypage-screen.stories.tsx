@@ -23,6 +23,7 @@ const meta = {
       onEnable: log('Enable notification'),
       onTurnOffHint: log('Turn off hint'),
     },
+    versions: { app: '0.4.12', web: '0.4.16-0794101' },
     onBack: log('Back'),
     onLogout: log('Logout'),
     onWithdraw: log('Withdraw'),
@@ -33,6 +34,10 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+
+export const WebOnly: Story = {
+  args: { versions: { web: '0.4.16-0794101' } },
+};
 
 export const Admin: Story = {
   args: { user: { ...meta.args.user, role: 'admin' } },
