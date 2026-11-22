@@ -9,9 +9,11 @@ import { QrScanScreen } from '../screens';
 import { createQrDecodeEngine } from './qr-decode-engine';
 import {
   calculateQrScanRegion,
+  nextVideoFrame,
   QR_SCAN_MAX_SCANS_PER_SECOND,
   startQrCamera,
   stopQrCamera,
+  waitForStableVideoSize,
 } from './qr-scan-settings';
 
 export function QrScanFrame() {
@@ -104,8 +106,16 @@ export function QrScanFrame() {
       try {
         await startQrCamera(video);
         if (controller.signal.aborted) return;
+        const enginePromise = createQrDecodeEngine();
+        // 중간에 화면을 떠나도 처리되지 않은 rejection이 남지 않게 한다.
+        enginePromise.catch(() => undefined);
+        await waitForStableVideoSize(video, {
+          signal: controller.signal,
+          nextFrame: nextVideoFrame(video),
+        });
+        if (controller.signal.aborted) return;
         setIsCameraReady(true);
-        const engine = await createQrDecodeEngine();
+        const engine = await enginePromise;
         if (controller.signal.aborted) return;
         rafId = requestAnimationFrame(() => {
           void scanLoop(engine);
