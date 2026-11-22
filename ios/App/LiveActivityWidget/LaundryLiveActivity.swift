@@ -380,7 +380,8 @@ private struct CompactTrailing: View {
     }
 }
 
-/// 최소. 건조기는 칩 둘레에 진행 고리를 두르고, 세탁기는 진행률이 없어 칩만 둔다
+/// 최소. 진행률을 보여줄 수 있는 건조기는 진행 고리 안에 흰 번호만 두고,
+/// 진행률이 없는 세탁기는 색칠된 원(칩) 안에 번호를 둔다.
 private struct MinimalView: View {
     let attributes: LaundryActivityAttributes
     let state: LaundryActivityAttributes.ContentState
@@ -396,11 +397,21 @@ private struct MinimalView: View {
                 )
                 .progressViewStyle(.circular)
                 .tint(attributes.color)
+                // 크기를 정해 주지 않으면 고리가 아니라 로딩 스피너처럼 그려진다
+                .frame(width: 26, height: 26)
 
-                MachineChip(attributes: attributes, state: state, size: 16)
+                // 고리가 이미 기기 색이므로 칩 없이 흰 번호만 둔다
+                if let number = attributes.machineNumber {
+                    Text(number)
+                        .font(numeral(12))
+                        .foregroundStyle(.white)
+                        .minimumScaleFactor(0.6)
+                        .lineLimit(1)
+                }
             }
+            .frame(width: 26, height: 26)
         } else {
-            MachineChip(attributes: attributes, state: state, size: 22)
+            MachineChip(attributes: attributes, state: state, size: 26)
         }
     }
 }
