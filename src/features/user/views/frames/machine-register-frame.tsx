@@ -4,9 +4,8 @@ import { useNavigate, useParams } from '@tanstack/react-router';
 
 import { useTranslation } from 'react-i18next';
 
-import { BottomSheet, Button } from '@/common/components';
-import { PushPermissionCard, usePushPermission } from '@/features/push-notification';
-import { MachineCompletionDialog, MachineRegisterScreen } from '@/features/user';
+import { PushPermissionSheet, usePermissionPrompt } from '@/features/push-notification';
+import { MachineCompletionDialog, MachineRegisterScreen, MachineVessel } from '@/features/user';
 import {
   toMachineIdentity,
   useFindMachineByUuid,
@@ -18,9 +17,9 @@ import { useRoomNames } from './use-room-selection';
 
 export function MachineRegisterFrame() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['notification', 'main']);
+  const { t } = useTranslation('main');
   const roomNames = useRoomNames();
-  const { status } = usePushPermission();
+  const prompt = usePermissionPrompt();
   const [showPermission, setShowPermission] = useState(false);
   const { machineUuid } = useParams({
     from: '/_auth-required/_user/machine-register/$machineUuid',
@@ -35,7 +34,7 @@ export function MachineRegisterFrame() {
     confirmCompletion,
     cancelConfirmation,
   } = useRegisterMachine(() => {
-    if (status === 'granted') {
+    if (prompt.status === 'granted') {
       void navigate({ to: '/' });
     } else {
       setShowPermission(true);
@@ -43,10 +42,10 @@ export function MachineRegisterFrame() {
   });
 
   useEffect(() => {
-    if (showPermission && status === 'granted') {
+    if (showPermission && prompt.status === 'granted') {
       void navigate({ to: '/' });
     }
-  }, [navigate, showPermission, status]);
+  }, [navigate, showPermission, prompt.status]);
 
   const goHome = () => {
     void navigate({ to: '/' });
@@ -68,7 +67,7 @@ export function MachineRegisterFrame() {
     <>
       <MachineRegisterScreen
         machine={view}
-        roomTitle={t('main:roomTitle', roomNames(identity.location, identity.gender))}
+        roomTitle={t('roomTitle', roomNames(identity.location, identity.gender))}
         onRegister={register}
         onBack={goHome}
         isPending={isPending}
@@ -80,20 +79,21 @@ export function MachineRegisterFrame() {
           onClose={cancelConfirmation}
         />
       )}
-      <BottomSheet
+      <PushPermissionSheet
         open={showPermission}
         onClose={goHome}
-        aria-label={t('notification:permission.completionTitle')}
-      >
-        <PushPermissionCard presentation="sheet" />
-        <Button
-          type="button"
-          onClick={goHome}
-          className="text-ink-2 mt-3 w-full border-0 py-3 text-sm"
-        >
-          {t('notification:permission.later')}
-        </Button>
-      </BottomSheet>
+        prompt={prompt}
+        art={
+          <MachineVessel
+            type={view.type}
+            id={view.id}
+            state={view.state}
+            level={view.state === 'loading' ? 0 : view.level}
+            mine
+            size={72}
+          />
+        }
+      />
     </>
   );
 }

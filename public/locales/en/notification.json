@@ -25,7 +25,7 @@
     "washer": "washer"
   },
   "permission": {
-    "completionDescription": "Your machine is registered. Turn on notifications to know when it finishes.",
+    "completionDescription": "Your machine is registered. We'll let you know as soon as it's done.",
     "completionTitle": "Want to know when your laundry is done?",
     "denied": "Notifications are blocked. Please allow notifications for this site in your browser settings.",
     "deniedNative": "Notifications are turned off. Please allow notifications for this app in your device settings.",
@@ -41,7 +41,6 @@
     "openSettings": "Allow in settings",
     "requesting": "Requesting permission...",
     "settingLabel": "Laundry done alerts",
-    "title": "Notifications",
     "turnOffGuide": "You can turn off alerts in your device settings.",
     "unsupported": "This browser does not support web push notifications.",
     "unsupportedShort": "Not supported"

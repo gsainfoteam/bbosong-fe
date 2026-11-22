@@ -341,3 +341,9 @@ export function useInstallPrompt() {
     isAndroid: isAndroid(),
   };
 }
+
+export function usePermissionPrompt() {
+  return { ...usePushPermission(), install: useInstallPrompt() };
+}
+
+export type PermissionPrompt = ReturnType<typeof usePermissionPrompt>;
