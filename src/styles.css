@@ -163,18 +163,21 @@ html {
   }
 }
 
-h1 {
-  font-size: var(--text-display);
-  font-weight: var(--text-display--font-weight);
-  line-height: var(--text-display--line-height);
-  letter-spacing: var(--text-display--letter-spacing);
-}
+/* 레이어 밖에 두면 text-[17px] 같은 유틸리티보다 강해져, 제목마다 준 크기가 무시된다. */
+@layer base {
+  h1 {
+    font-size: var(--text-display);
+    font-weight: var(--text-display--font-weight);
+    line-height: var(--text-display--line-height);
+    letter-spacing: var(--text-display--letter-spacing);
+  }
 
-h2 {
-  font-size: var(--text-heading);
-  font-weight: var(--text-heading--font-weight);
-  line-height: var(--text-heading--line-height);
-  letter-spacing: var(--text-heading--letter-spacing);
+  h2 {
+    font-size: var(--text-heading);
+    font-weight: var(--text-heading--font-weight);
+    line-height: var(--text-heading--line-height);
+    letter-spacing: var(--text-heading--letter-spacing);
+  }
 }
 
 body {
