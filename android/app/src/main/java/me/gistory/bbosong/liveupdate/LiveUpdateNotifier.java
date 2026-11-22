@@ -256,7 +256,15 @@ public final class LiveUpdateNotifier {
         String doneKey = message.state + ":" + message.startedAtMillis() / 1000;
         if (doneKey.equals(prefs.getString(message.machineUuid + ".done", null))) {
             // 알림음은 생략하되, 그 사이 다시 게시된 진행 알림이 남지 않게 치운다
-            manager.cancel(message.machineUuid, ID_PROGRESS);
+            // 같은 가동(startedAt 일치)의 알림만 치운다. 이미 시작된 새 가동의 알림은 둔다
+            StatusBarNotification active = findActive(manager, message.machineUuid, ID_PROGRESS);
+            if (
+                active != null &&
+                active.getNotification().extras.getLong(EXTRA_STARTED_AT, Long.MIN_VALUE) ==
+                message.startedAtMillis() / 1000
+            ) {
+                manager.cancel(message.machineUuid, ID_PROGRESS);
+            }
             return;
         }
         prefs.edit().putString(message.machineUuid + ".done", doneKey).apply();
