@@ -39,6 +39,7 @@ public final class LiveUpdateNotifier {
     private static final String DONE_TAG_SUFFIX = ":done";
     private static final String PREFS = "live-update-state";
     private static final String EXTRA_REQUEST_PROMOTED_ONGOING = "android.requestPromotedOngoing";
+    private static final String EXTRA_SHORT_CRITICAL_TEXT = "android.shortCriticalText";
     private static final String EXTRA_KIND = "me.gistory.bbosong.liveupdate.KIND";
     private static final String EXTRA_TITLE = "me.gistory.bbosong.liveupdate.TITLE";
     private static final String EXTRA_STARTED_AT = "me.gistory.bbosong.liveupdate.STARTED_AT";
@@ -187,6 +188,23 @@ public final class LiveUpdateNotifier {
         }
     }
 
+    /** 칩에 들어가는 7자 안팎의 문구. 건조기는 남은 분, 그 밖에는 상태 이름 */
+    private static String shortText(Context context, LiveUpdateMessage message, boolean overdue, long now) {
+        boolean running =
+            !LiveUpdateMessage.STATE_PAUSE.equals(message.state) &&
+            !LiveUpdateMessage.STATE_DETECTING.equals(message.state);
+        if (message.hasEndsAt() && running && !overdue) {
+            long minutes = Math.max(1, (message.endsAtSeconds * 1000 - now + 59_999) / 60_000);
+            return context.getString(R.string.live_update_minutes_short, minutes);
+        }
+        if (LiveUpdateMessage.KIND_WASHER.equals(message.kind)) return context.getString(R.string.live_update_washing);
+        if (overdue) return context.getString(R.string.live_update_almost_done);
+        if (LiveUpdateMessage.STATE_PAUSE.equals(message.state)) return context.getString(R.string.live_update_paused);
+        if (LiveUpdateMessage.STATE_COOLING.equals(message.state)) return context.getString(R.string.live_update_cooling);
+
+        return context.getString(R.string.live_update_drying);
+    }
+
     @RequiresApi(MIN_SDK)
     private static void postProgress(
         Context context,
@@ -207,6 +225,8 @@ public final class LiveUpdateNotifier {
         extras.putLong(EXTRA_STARTED_AT, message.startedAtMillis() / 1000);
         // API 36.1+의 `Builder.setRequestPromotedOngoing(true)`와 같다. compileSdk 36에는 상수가 없어 키를 직접 쓴다
         extras.putBoolean(EXTRA_REQUEST_PROMOTED_ONGOING, true);
+        // 상태바 칩과 삼성 Now Bar(접힌 상태)에 표시되는 짧은 문구. 없으면 Now Bar가 알림을 올리지 않는 기기가 있다
+        extras.putCharSequence(EXTRA_SHORT_CRITICAL_TEXT, shortText(context, message, overdue, now));
 
         Notification.Builder builder = new Notification.Builder(context, CHANNEL_PROGRESS)
             .setSmallIcon(R.drawable.ic_stat_notification)
