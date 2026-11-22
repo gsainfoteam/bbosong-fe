@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 
-import { ChevronLeft, QrCode, RefreshCw, UserRound } from 'lucide-react';
+import { QrCode, RefreshCw, UserRound } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/common/utils';
@@ -57,17 +57,6 @@ export const Header = ({
           <UserRound size={20} aria-hidden />
         </Link>
       </div>
-    </header>
-  );
-};
-
-export const MyPageHeader = () => {
-  const { t } = useTranslation('common');
-  return (
-    <header className="flex h-14 w-full items-center px-2">
-      <Link to="/" aria-label={t('index')} className={iconButton}>
-        <ChevronLeft size={24} aria-hidden />
-      </Link>
     </header>
   );
 };

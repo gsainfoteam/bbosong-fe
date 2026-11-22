@@ -9,9 +9,9 @@ vi.mock('@tanstack/react-router', () => ({
   Link: ({ to, ...props }: { to: string }) => <a href={to} {...props} />,
 }));
 // jsdom은 dialog.showModal을 지원하지 않으므로 Modal은 단순한 대체 구현으로 바꾼다
-vi.mock('@/common/components', () => ({
+vi.mock('@/common/components', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
   LanguageToggle: () => null,
-  MyPageHeader: () => null,
   Modal: ({
     title,
     confirmText,
@@ -34,7 +34,7 @@ vi.mock('@/common/components', () => ({
     </div>
   ),
 }));
-vi.mock('@/features/push-notification', () => ({ PushPermissionCard: () => null }));
+vi.mock('@/features/push-notification', () => ({ NotificationSettingRow: () => null }));
 // 타입만 가져오지만 verbatimModuleSyntax로 배럴 import가 남으므로 비워 둔다
 vi.mock('../../viewmodels', () => ({}));
 afterEach(cleanup);
@@ -46,10 +46,18 @@ const baseUser = {
   gender: 'male',
 } as const;
 
+const notification = {
+  status: 'granted',
+  onEnable: () => {},
+  onTurnOffHint: () => {},
+} as const;
+
 describe('MypageScreen admin link', () => {
   it('shows the admin console link to administrators', () => {
     render(
       <MypageScreen
+        notification={notification}
+        onBack={() => {}}
         user={{ ...baseUser, role: 'admin' }}
         onLogout={() => {}}
         onWithdraw={() => {}}
@@ -60,6 +68,8 @@ describe('MypageScreen admin link', () => {
   it('hides the admin console link from ordinary users', () => {
     render(
       <MypageScreen
+        notification={notification}
+        onBack={() => {}}
         user={{ ...baseUser, role: 'user' }}
         onLogout={() => {}}
         onWithdraw={() => {}}
@@ -74,6 +84,8 @@ describe('MypageScreen withdraw', () => {
     const onWithdraw = vi.fn();
     render(
       <MypageScreen
+        notification={notification}
+        onBack={() => {}}
         user={{ ...baseUser, role: 'user' }}
         onLogout={() => {}}
         onWithdraw={onWithdraw}
@@ -91,6 +103,8 @@ describe('MypageScreen withdraw', () => {
     const onWithdraw = vi.fn();
     render(
       <MypageScreen
+        notification={notification}
+        onBack={() => {}}
         user={{ ...baseUser, role: 'user' }}
         onLogout={() => {}}
         onWithdraw={onWithdraw}
@@ -108,6 +122,8 @@ describe('MypageScreen version', () => {
   it('shows the current app version', () => {
     render(
       <MypageScreen
+        notification={notification}
+        onBack={() => {}}
         user={{ ...baseUser, role: 'user' }}
         onLogout={() => {}}
         onWithdraw={() => {}}

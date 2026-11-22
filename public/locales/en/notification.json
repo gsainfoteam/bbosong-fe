@@ -38,8 +38,12 @@
     "installing": "Installing...",
     "later": "Maybe later",
     "needsInstall": "Install the app first to receive notifications. Installing means you won't miss alerts after closing the app.",
+    "openSettings": "Allow in settings",
     "requesting": "Requesting permission...",
+    "settingLabel": "Laundry done alerts",
     "title": "Notifications",
-    "unsupported": "This browser does not support web push notifications."
+    "turnOffGuide": "You can turn off alerts in your device settings.",
+    "unsupported": "This browser does not support web push notifications.",
+    "unsupportedShort": "Not supported"
   }
 }

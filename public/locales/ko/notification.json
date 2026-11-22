@@ -38,8 +38,12 @@
     "installing": "설치 중...",
     "later": "나중에",
     "needsInstall": "알림을 받으려면 먼저 앱을 설치해 주세요. 설치해야 앱을 닫아도 알림을 놓치지 않습니다.",
+    "openSettings": "설정에서 허용",
     "requesting": "권한 요청 중...",
+    "settingLabel": "세탁 완료 알림",
     "title": "알림 설정",
-    "unsupported": "이 브라우저는 웹 푸시 알림을 지원하지 않습니다."
+    "turnOffGuide": "알림은 기기 설정에서 끌 수 있어요.",
+    "unsupported": "이 브라우저는 웹 푸시 알림을 지원하지 않습니다.",
+    "unsupportedShort": "지원 안 됨"
   }
 }
