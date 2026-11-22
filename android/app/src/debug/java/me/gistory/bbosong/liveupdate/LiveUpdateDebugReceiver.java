@@ -33,15 +33,19 @@ public class LiveUpdateDebugReceiver extends BroadcastReceiver {
             Object value = extras.get(key);
             if (value != null) data.put(key, value.toString());
         }
-        if (data.containsKey("startedAgoSec")) {
-            data.put("startedAt", Long.toString(nowSeconds - Long.parseLong(data.get("startedAgoSec"))));
-        }
-        if (data.containsKey("endsInSec")) {
-            data.put("endsAt", Long.toString(nowSeconds + Long.parseLong(data.get("endsInSec"))));
+        try {
+            if (data.containsKey("startedAgoSec")) {
+                data.put("startedAt", Long.toString(nowSeconds - Long.parseLong(data.get("startedAgoSec"))));
+            }
+            if (data.containsKey("endsInSec")) {
+                data.put("endsAt", Long.toString(nowSeconds + Long.parseLong(data.get("endsInSec"))));
+            }
+        } catch (NumberFormatException e) {
+            android.util.Log.w("LiveUpdateDebug", "startedAgoSec/endsInSec must be integers", e);
+            return;
         }
 
         LiveUpdateMessage message = LiveUpdateMessage.fromData(data);
-        android.util.Log.d("LiveUpdateDebug", "data=" + data + " message=" + message + " supported=" + LiveUpdateNotifier.isSupported(context));
         if (message != null) LiveUpdateNotifier.show(context, message, true);
     }
 }

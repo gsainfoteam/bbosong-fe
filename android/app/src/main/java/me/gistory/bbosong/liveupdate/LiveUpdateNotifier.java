@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
@@ -36,6 +37,7 @@ public final class LiveUpdateNotifier {
     private static final int ID_PROGRESS = 0x4c55;
     private static final int ID_DONE = 0x4c56;
     private static final String DONE_TAG_SUFFIX = ":done";
+    private static final String PREFS = "live-update-state";
     private static final String EXTRA_REQUEST_PROMOTED_ONGOING = "android.requestPromotedOngoing";
     private static final String EXTRA_KIND = "me.gistory.bbosong.liveupdate.KIND";
     private static final String EXTRA_TITLE = "me.gistory.bbosong.liveupdate.TITLE";
@@ -63,6 +65,13 @@ public final class LiveUpdateNotifier {
         Context app = context.getApplicationContext();
         NotificationManager manager = app.getSystemService(NotificationManager.class);
         long now = System.currentTimeMillis();
+
+        // FCM은 순서를 보장하지 않는다. 이미 반영한 것보다 오래된 서버 메시지는 알림이 사라진 뒤에도 무시한다
+        SharedPreferences prefs = app.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        if (fromServer) {
+            if (message.updatedAtSeconds < prefs.getLong(message.machineUuid + ".updatedAt", Long.MIN_VALUE)) return;
+            prefs.edit().putLong(message.machineUuid + ".updatedAt", message.updatedAtSeconds).apply();
+        }
 
         if (message.isFinished()) {
             boolean hadProgress = findActive(manager, message.machineUuid, ID_PROGRESS) != null;
@@ -242,6 +251,12 @@ public final class LiveUpdateNotifier {
         LiveUpdateMessage message,
         long now
     ) {
+        // 같은 가동의 같은 종료 이벤트가 재전송되면(완료 알림을 이미 치웠어도) 다시 울리지 않는다
+        SharedPreferences prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        String doneKey = message.state + ":" + message.startedAtMillis() / 1000;
+        if (doneKey.equals(prefs.getString(message.machineUuid + ".done", null))) return;
+        prefs.edit().putString(message.machineUuid + ".done", doneKey).apply();
+
         ensureChannels(context, manager);
 
         boolean washer = LiveUpdateMessage.KIND_WASHER.equals(message.kind);
