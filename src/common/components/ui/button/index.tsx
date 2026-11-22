@@ -51,8 +51,14 @@ export function Button({
       {...busyProps}
       {...disabledProps}
     >
-      {loading && !asChild && <Button.Spinner />}
-      {children}
+      {asChild ? (
+        children
+      ) : (
+        <>
+          {loading && <Button.Spinner />}
+          {children}
+        </>
+      )}
     </Comp>
   );
 }

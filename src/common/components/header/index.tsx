@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/common/utils';
 
+import { IconButton } from '../ui';
+
 export const Header = ({ onRefresh, isRefreshing = false, className, ...props }: Header.Props) => {
   const { t } = useTranslation('common');
 
@@ -13,16 +15,15 @@ export const Header = ({ onRefresh, isRefreshing = false, className, ...props }:
       <h1>{t('bbosong')}</h1>
       <div className="flex items-center gap-3">
         {onRefresh && (
-          <button
-            type="button"
-            aria-label={t('refresh')}
+          <IconButton
+            label={t('refresh')}
             aria-busy={isRefreshing}
             disabled={isRefreshing}
             onClick={onRefresh}
-            className="disabled:cursor-not-allowed"
+            className="-my-2"
           >
-            <RefreshCw className={cn(isRefreshing && 'animate-spin')} />
-          </button>
+            <RefreshCw className={cn(isRefreshing && 'animate-spin')} aria-hidden />
+          </IconButton>
         )}
         <Link to="/mypage" aria-label={t('myPage')}>
           <Menu />

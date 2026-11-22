@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/common/utils';
 import { useLanguage } from '@/common/viewmodels';
 
+import { Button } from '../ui';
+
 export function LanguageToggle() {
   const { toggleLanguage, currentLanguage } = useLanguage();
   const { t } = useTranslation('common');
@@ -11,33 +13,35 @@ export function LanguageToggle() {
 
   return (
     <div className="flex items-center justify-center gap-1.5 rounded-lg">
-      <button
-        type="button"
+      <Button
+        variant="text"
+        size="s"
         onClick={toggleLanguage}
         disabled={isKorean}
         aria-pressed={isKorean}
         className={cn(
-          'text-body-lg uppercase transition-colors',
+          'text-body-lg disabled:text-ink uppercase',
           isKorean ? 'text-ink font-bold' : 'text-ink2',
         )}
         aria-label={isKorean ? undefined : t('switchToKorean')}
       >
         KOR
-      </button>
+      </Button>
       <div className="bg-ink h-4 w-0.5" />
-      <button
-        type="button"
+      <Button
+        variant="text"
+        size="s"
         onClick={toggleLanguage}
         disabled={!isKorean}
         aria-pressed={!isKorean}
         className={cn(
-          'text-body-lg uppercase transition-colors',
+          'text-body-lg disabled:text-ink uppercase',
           !isKorean ? 'text-ink font-bold' : 'text-ink2',
         )}
         aria-label={isKorean ? t('switchToEnglish') : undefined}
       >
         ENG
-      </button>
+      </Button>
     </div>
   );
 }

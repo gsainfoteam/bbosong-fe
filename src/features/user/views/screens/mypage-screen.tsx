@@ -5,6 +5,7 @@ import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 import { LanguageToggle, Modal, MyPageHeader } from '@/common/components';
+import { Button } from '@/common/components/ui/button';
 import { cn } from '@/common/utils';
 import { PushPermissionCard } from '@/features/push-notification';
 
@@ -55,37 +56,31 @@ export function MypageScreen({
 
         <div className="mt-auto flex flex-col gap-3">
           {user.role === 'admin' && (
-            <Link
-              to="/admin"
-              className="bg-soft text-ink w-full rounded-md py-3.5 text-center font-medium"
-            >
-              {t('toAdmin')}
-            </Link>
+            <Button asChild variant="secondary" className="w-full">
+              <Link to="/admin">{t('toAdmin')}</Link>
+            </Button>
           )}
-          <a
-            href={`https://cs.gistory.me/?service=bbosong&email=${encodeURIComponent(user.email)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-soft text-ink w-full rounded-md py-3.5 text-center font-medium"
-          >
-            {t('feedback')}
-          </a>
-          <button
-            type="button"
-            onClick={onLogout}
-            disabled={isLoggingOut}
-            className="bg-soft text-ink w-full rounded-md py-3.5 text-center font-medium disabled:opacity-50"
-          >
+          <Button asChild variant="secondary" className="w-full">
+            <a
+              href={`https://cs.gistory.me/?service=bbosong&email=${encodeURIComponent(user.email)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t('feedback')}
+            </a>
+          </Button>
+          <Button variant="secondary" onClick={onLogout} loading={isLoggingOut} className="w-full">
             {isLoggingOut ? t('loggingOut') : t('logout')}
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="text-danger"
+            size="s"
             onClick={() => setWithdrawModalOpen(true)}
             disabled={isWithdrawing}
-            className="text-ink2 mx-auto text-sm underline underline-offset-4 disabled:opacity-50"
+            className="mx-auto"
           >
             {t('withdraw')}
-          </button>
+          </Button>
         </div>
 
         <p className="text-ink2 mt-4 text-center text-sm">

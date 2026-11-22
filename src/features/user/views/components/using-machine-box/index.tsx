@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Bell, BellOff, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { Modal } from '@/common/components';
+import { IconButton, Modal } from '@/common/components';
 import { cn } from '@/common/utils';
 
 const MACHINE_KEYS = {
@@ -57,18 +57,18 @@ export function UsingMachineBox({
       <p>
         {t(`location:${location}`)} {t('machine:count', { id: String(machine.id) })}
       </p>
-      <p className="mb-0.5">{t(MACHINE_KEYS[machine.type])}</p>
-      <button
-        type="button"
-        aria-label={t('machineRegister:unregister.confirmation.title')}
+      <p>{t(MACHINE_KEYS[machine.type])}</p>
+      <IconButton
+        label={t('machineRegister:unregister.confirmation.title')}
         onClick={() => setIsConfirmOpen(true)}
+        className="size-9"
       >
         {isNotificationEnabled ? (
           <Bell className={cn(notification && 'text-ink')} aria-hidden />
         ) : (
           <BellOff aria-hidden />
         )}
-      </button>
+      </IconButton>
       {isConfirmOpen && (
         <Modal
           title={t('machineRegister:unregister.confirmation.title')}
@@ -97,14 +97,9 @@ export function AddUsingMachineBox({ onAdd }: AddUsingMachineBox.Props) {
   const { t } = useTranslation('mypage');
 
   return (
-    <button
-      type="button"
-      aria-label={t('addMachine')}
-      className="flex min-h-20 w-20 shrink-0 items-center justify-center"
-      onClick={onAdd}
-    >
+    <IconButton label={t('addMachine')} className="rounded-tile min-h-20 w-20" onClick={onAdd}>
       <Plus size={32} strokeWidth={1.5} aria-hidden />
-    </button>
+    </IconButton>
   );
 }
 

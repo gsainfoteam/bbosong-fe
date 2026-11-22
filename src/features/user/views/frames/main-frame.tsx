@@ -4,7 +4,7 @@ import { AnimatePresence, motion, type PanInfo } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
-import { SplashScreen } from '@/common/components';
+import { Button, SplashScreen } from '@/common/components';
 import { type Gender } from '@/features/auth';
 import {
   AlertGender,
@@ -265,9 +265,9 @@ export function MainFrame() {
     return (
       <div className="bg-surface flex w-full flex-1 flex-col items-center justify-center">
         <p role="alert">{t('generic')}</p>
-        <button type="button" onClick={onRetry}>
+        <Button variant="outline" size="s" onClick={onRetry} className="mt-4">
           {t('refetch')}
-        </button>
+        </Button>
       </div>
     );
   }

@@ -1,6 +1,8 @@
 import { ChevronLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+import { IconButton } from '@/common/components';
+
 export function TermsDetailScreen({ title, termsUrl, onBack }: TermsDetailScreen.Props) {
   const { t } = useTranslation('auth');
 
@@ -8,14 +10,9 @@ export function TermsDetailScreen({ title, termsUrl, onBack }: TermsDetailScreen
     <div className="bg-surface flex h-dvh flex-col px-4 pt-4 pb-5">
       <div className="mx-auto flex h-full w-full max-w-md flex-col gap-3">
         <div className="border-line relative flex items-center justify-center rounded-xl border px-4 py-3">
-          <button
-            type="button"
-            onClick={onBack}
-            className="absolute left-2 flex items-center rounded-md p-1"
-            aria-label={t('consent.back')}
-          >
-            <ChevronLeft size={24} className="text-icon" />
-          </button>
+          <IconButton label={t('consent.back')} onClick={onBack} className="absolute left-1">
+            <ChevronLeft size={24} aria-hidden />
+          </IconButton>
           <h2 className="text-body-lg text-ink text-center font-semibold">{title}</h2>
         </div>
 

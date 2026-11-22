@@ -3,7 +3,7 @@ import type { SubmitEventHandler } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Checkbox, LanguageToggle } from '@/common/components';
+import { Button, Checkbox, IconButton, LanguageToggle } from '@/common/components';
 import { cn } from '@/common/utils';
 
 export function ConsentScreen({
@@ -55,14 +55,13 @@ export function ConsentScreen({
                   {t('consent.privacyPolicy')}
                   <span className="text-danger ml-1">*</span>
                 </span>
-                <button
-                  type="button"
+                <IconButton
+                  label={t('consent.viewPrivacyPolicy')}
                   onClick={onPrivacyTermsClick}
-                  className="flex items-center"
-                  aria-label={t('consent.viewPrivacyPolicy')}
+                  className="text-ink2 -my-2 -mr-2"
                 >
-                  <ChevronRight size={20} className="text-icon" />
-                </button>
+                  <ChevronRight size={20} aria-hidden />
+                </IconButton>
               </label>
 
               <label className="flex cursor-pointer items-center gap-3 rounded-lg px-1 py-1">
@@ -71,14 +70,13 @@ export function ConsentScreen({
                   {t('consent.termsOfService')}
                   <span className="text-danger ml-1">*</span>
                 </span>
-                <button
-                  type="button"
+                <IconButton
+                  label={t('consent.viewTermsOfService')}
                   onClick={onTosTermsClick}
-                  className="flex items-center"
-                  aria-label={t('consent.viewTermsOfService')}
+                  className="text-ink2 -my-2 -mr-2"
                 >
-                  <ChevronRight size={20} className="text-icon" />
-                </button>
+                  <ChevronRight size={20} aria-hidden />
+                </IconButton>
               </label>
             </div>
           </div>
