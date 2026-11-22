@@ -29,7 +29,7 @@ export function PushPermissionCard({
       )}
       {...props}
     >
-      <h2 className={presentation === 'sheet' ? 'text-2xl font-semibold' : 'text-lg font-semibold'}>
+      <h2 className={presentation === 'sheet' ? 'text-heading' : 'text-body-strong'}>
         {presentation === 'sheet' ? t('permission.completionTitle') : t('permission.title')}
       </h2>
 

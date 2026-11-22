@@ -1,7 +1,3 @@
-import { useState } from 'react';
-
-import type { DropDown } from '@/common/components';
-
 import { MainScreen } from './main-screen';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -24,24 +20,35 @@ export const Default: Story = {
           machine: { type: 'washer', id: 3 },
           location: 'a',
           notification: true,
+          state: {
+            status: 'using',
+            elapsedMinutes: 17,
+            remainingDisplay: { kind: 'minutes', minutes: 23 },
+          },
           onUnregister: () => console.log('Unregister'),
         },
         {
           machine: { type: 'dryer', id: 1 },
           location: 'b',
           notification: false,
+          state: {
+            status: 'using',
+            elapsedMinutes: 9,
+            remainingDisplay: { kind: 'minutes', minutes: 63 },
+          },
           onUnregister: () => console.log('Unregister'),
         },
       ],
       isNotificationEnabled: true,
-      onAdd: () => console.log('Add using machine'),
     },
     selectBuilding: {
-      dropDownProps: {
-        items: ['a', 'b'],
-        value: 'a',
-        onSelect: (item) => console.log(`Select ${item}`),
-      },
+      value: 'a',
+      gender: 'male',
+      rooms: [
+        { value: 'a', washerFree: 2, dryerFree: 1 },
+        { value: 'b', washerFree: 0, dryerFree: 1 },
+      ],
+      onSelect: (location) => console.log(`Select ${location}`),
     },
     machines: {
       machines: [
@@ -53,6 +60,7 @@ export const Default: Story = {
         { type: 'dryer', id: 3, status: 'disabled' },
       ],
     },
+    onRegister: () => console.log('Register'),
     roomNotification: {
       washer: {
         machineType: 'washer',
@@ -63,25 +71,6 @@ export const Default: Story = {
     },
   },
   // 생활관 선택을 스토리 내부 상태로 관리해 실제 사용 흐름을 재현
-  render: function Render({ selectBuilding, ...args }) {
-    const [building, setBuilding] = useState<DropDown.Props['value']>(
-      selectBuilding.dropDownProps.value,
-    );
-
-    return (
-      <MainScreen
-        {...args}
-        selectBuilding={{
-          ...selectBuilding,
-          dropDownProps: {
-            ...selectBuilding.dropDownProps,
-            value: building,
-            onSelect: setBuilding,
-          },
-        }}
-      />
-    );
-  },
 };
 
 export const NoUsingMachine: Story = {
@@ -90,7 +79,6 @@ export const NoUsingMachine: Story = {
     usingMachineList: {
       machineList: [],
       isNotificationEnabled: true,
-      onAdd: () => console.log('Add using machine'),
     },
   },
 };

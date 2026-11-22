@@ -2,53 +2,53 @@ import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/common/utils';
 
-import { AddUsingMachineBox, UsingMachineBox } from '../';
+import { UsingMachineBox } from '../';
 
+/** 내 빨래 카드. 한 대면 한 줄, 두 대 이상이면 두 줄 열로 놓고, 없으면 자리를 접는다. */
 export function UsingMachineList({
   machineList,
   isNotificationEnabled,
   notificationBlocker,
-  onAdd,
   className,
   ...props
 }: UsingMachineList.Props) {
   const { t } = useTranslation('main');
 
+  if (machineList.length === 0) return null;
+
   return (
-    <div className={cn('', className)} {...props}>
-      <p className="mb-3">{t('usingMachineTitle')}</p>
-      {/*{machineList.length !== 0 ? (*/}
-      <div className="border-line flex w-full gap-2 overflow-x-auto rounded-lg border p-1.5">
-        {machineList.map((item) => (
-          <UsingMachineBox
-            key={`${item.location}-${item.machine.type}-${item.machine.id}`}
-            machine={item.machine}
-            location={item.location}
-            notification={item.notification}
-            isNotificationEnabled={isNotificationEnabled}
-            notificationBlocker={notificationBlocker}
-            onUnregister={item.onUnregister}
-            isUnregistering={item.isUnregistering}
-          />
-        ))}
-        <AddUsingMachineBox onAdd={onAdd} />
-      </div>
-      {/*) : (*/}
-      {/*  <div className="bg-soft flex w-full justify-center rounded-lg py-10">*/}
-      {/*    {t('noUsingMachine')}*/}
-      {/*  </div>*/}
-      {/*)}*/}
-    </div>
+    <section
+      aria-label={t('usingMachineTitle')}
+      className={cn(
+        'grid gap-2.5',
+        machineList.length === 1 ? 'grid-cols-1' : 'grid-cols-2',
+        className,
+      )}
+      {...props}
+    >
+      {machineList.map((item) => (
+        <UsingMachineBox
+          key={`${item.location}-${item.machine.type}-${item.machine.id}`}
+          machine={item.machine}
+          location={item.location}
+          notification={item.notification}
+          state={item.state}
+          isNotificationEnabled={isNotificationEnabled}
+          notificationBlocker={notificationBlocker}
+          onUnregister={item.onUnregister}
+          isUnregistering={item.isUnregistering}
+        />
+      ))}
+    </section>
   );
 }
 
 export namespace UsingMachineList {
   export type Props = {
     machineList: UsingMachineBox.Props[];
-    /** 브라우저 알림 권한 허용 여부. false면 모든 박스에 BellOff를 보여준다. */
+    /** 브라우저 알림 권한 허용 여부. false면 모든 카드에 BellOff를 보여준다. */
     isNotificationEnabled: boolean;
     notificationBlocker?: UsingMachineBox.NotificationBlocker;
-    onAdd: () => void;
     className?: string;
   };
 }

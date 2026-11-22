@@ -94,6 +94,7 @@ export function MypageScreen({
           description={t('withdrawConfirmDescription')}
           confirmText={isWithdrawing ? t('withdrawing') : t('withdrawConfirm')}
           isPending={isWithdrawing}
+          confirmVariant="danger"
           onConfirm={onWithdraw}
           onClose={() => setWithdrawModalOpen(false)}
         />

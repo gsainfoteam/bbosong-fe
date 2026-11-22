@@ -4,7 +4,7 @@ import { useNavigate, useParams } from '@tanstack/react-router';
 
 import { useTranslation } from 'react-i18next';
 
-import { Button } from '@/common/components';
+import { Button, Sheet } from '@/common/components';
 import { PushPermissionCard, usePushPermission } from '@/features/push-notification';
 import { MachineCompletionDialog, MachineRegisterScreen } from '@/features/user';
 import { useFindMachineByUuid, useRegisterMachine } from '@/features/user/viewmodels';
@@ -78,18 +78,16 @@ export function MachineRegisterFrame() {
           onClose={cancelConfirmation}
         />
       )}
-      <dialog
+      <Sheet
         ref={dialogRef}
         aria-label={t('permission.completionTitle')}
-        className="bg-surface text-ink fixed inset-x-0 top-auto bottom-0 mx-auto my-0 max-h-[85dvh] w-full max-w-120 overflow-y-auto rounded-t-3xl px-6 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] backdrop:bg-black/40"
         onCancel={closePermission}
       >
-        <div aria-hidden="true" className="bg-line mx-auto mb-6 h-1 w-10 rounded-full" />
         <PushPermissionCard presentation="sheet" />
         <Button type="button" onClick={closePermission} variant="text" className="mt-3 w-full">
           {t('permission.later')}
         </Button>
-      </dialog>
+      </Sheet>
     </>
   );
 }

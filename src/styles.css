@@ -66,6 +66,16 @@ html {
   --text-heading--line-height: 1.35;
   --text-heading--letter-spacing: -0.025em;
 
+  --text-title: 21px; /* 세탁실 이름 */
+  --text-title--font-weight: 800;
+  --text-title--line-height: 1.25;
+  --text-title--letter-spacing: -0.03em;
+
+  --text-numeral: 24px; /* 카드 속 큰 숫자 */
+  --text-numeral--font-weight: 700;
+  --text-numeral--line-height: 1;
+  --text-numeral--letter-spacing: -0.01em;
+
   --text-section: 16px; /* 목록 섹션 머리 */
   --text-section--font-weight: 800;
   --text-section--line-height: 1.4;
@@ -162,6 +172,9 @@ html {
   --animate-blink: blink 1.4s ease-in-out infinite;
 
   /* 그림자 */
+  --shadow-dialog: 0 24px 60px -20px rgb(27 29 33 / 0.45); /* 다이얼로그 */
+  --shadow-sheet: 0 -12px 40px -16px rgb(27 29 33 / 0.3); /* 아래 시트 */
+  --shadow-float: 0 14px 26px -14px rgb(27 29 33 / 0.7); /* 떠 있는 버튼 */
   --shadow-knob: 0 1px 3px rgb(27 29 33 / 0.25); /* 스위치 손잡이 */
   --shadow-segment: 0 1px 3px rgb(27 29 33 / 0.12); /* 세그먼트 선택 칸 */
 }

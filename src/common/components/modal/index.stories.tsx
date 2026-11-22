@@ -29,6 +29,16 @@ export const WithChildren: Story = {
   },
 };
 
+// 되돌릴 수 없는 동작은 위험 버튼으로 확인받는다
+export const Danger: Story = {
+  args: {
+    title: '정말 탈퇴하시겠어요?',
+    description: '탈퇴하면 이 계정으로 로그인할 수 없고 푸시 알림도 더 이상 받을 수 없습니다.',
+    confirmText: '탈퇴하기',
+    confirmVariant: 'danger',
+  },
+};
+
 export const Pending: Story = { args: { isPending: true } };
 
 // 안내만 하는 모달은 확인 버튼 하나만 보여줌

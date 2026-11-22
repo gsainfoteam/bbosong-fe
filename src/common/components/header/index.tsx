@@ -11,23 +11,27 @@ export const Header = ({ onRefresh, isRefreshing = false, className, ...props }:
   const { t } = useTranslation('common');
 
   return (
-    <header className={cn(className, 'text-ink flex w-full justify-between px-4 py-2')} {...props}>
-      <h1>{t('bbosong')}</h1>
-      <div className="flex items-center gap-3">
+    <header
+      className={cn(className, 'text-ink flex h-12 w-full items-center justify-between')}
+      {...props}
+    >
+      <h1 className="text-heading">{t('bbosong')}</h1>
+      <div className="-mr-2.5 flex items-center">
         {onRefresh && (
           <IconButton
             label={t('refresh')}
             aria-busy={isRefreshing}
             disabled={isRefreshing}
             onClick={onRefresh}
-            className="-my-2"
           >
-            <RefreshCw className={cn(isRefreshing && 'animate-spin')} aria-hidden />
+            <RefreshCw size={22} className={cn(isRefreshing && 'animate-spin')} aria-hidden />
           </IconButton>
         )}
-        <Link to="/mypage" aria-label={t('myPage')}>
-          <Menu />
-        </Link>
+        <IconButton asChild label={t('myPage')}>
+          <Link to="/mypage">
+            <Menu size={22} aria-hidden />
+          </Link>
+        </IconButton>
       </div>
     </header>
   );
@@ -37,9 +41,11 @@ export const MyPageHeader = () => {
   const { t } = useTranslation('common');
   return (
     <header className="text-ink flex w-full flex-row-reverse px-4 py-2">
-      <Link to="/" aria-label={t('index')}>
-        <X />
-      </Link>
+      <IconButton asChild label={t('index')}>
+        <Link to="/">
+          <X aria-hidden />
+        </Link>
+      </IconButton>
     </header>
   );
 };

@@ -26,7 +26,11 @@ import {
   useRefreshMainData,
 } from '@/features/user/viewmodels';
 
-import { type GetRoomNotificationButton, type MachineBox } from '../components';
+import {
+  type GetRoomNotificationButton,
+  type MachineBox,
+  type SelectBuilding,
+} from '../components';
 import { MainScreen } from '../screens';
 import { QrScanFrame } from './qr-scan-frame';
 
@@ -142,9 +146,7 @@ export function MainFrame() {
   const isLoading = isUserLoading || isUsingMachinesLoading || isAllMachinesLoading;
   const isError = isUserError || isUsingMachinesError || isAllMachinesError;
 
-  const onSelectLocation = (item: string) => {
-    if (isLocation(item)) setCurrentLocation(item);
-  };
+  const onSelectLocation = (item: Location) => setCurrentLocation(item);
 
   const machines = useMemo<MachineBox.Props['machine'][]>(() => {
     if (!allMachines) return [];
@@ -179,23 +181,56 @@ export function MainFrame() {
       .sort((a, b) => a.id - b.id);
   }, [allMachines, currentLocation, now, user?.gender, usingMachines]);
 
+  // 내 성별의 모든 세탁실 기기 상태. 내 빨래 카드의 시간과 세탁실별 빈 자리 수에 쓴다.
+  const { machineStates, rooms } = useMemo(() => {
+    const states = new Map<string, Omit<MachineBox.Props['machine'], 'type' | 'id' | 'mine'>>();
+    const free = new Map<string, number>();
+
+    for (const machine of allMachines ?? []) {
+      if (machine.gender.toLowerCase() !== user?.gender) continue;
+
+      const location = machine.location.toLowerCase();
+      const type = machine.type === 'DRYER' ? 'dryer' : 'washer';
+      const status = toMachineStatus(machine.isAvailable, machine.status);
+
+      states.set(`${location}-${type}-${machine.index}`, {
+        status,
+        elapsedMinutes: getMachineElapsedMinutes(machine.currentUsage?.startedAt, now),
+        remainingDisplay: getMachineRemainingDisplay(machine),
+      });
+      if (status === 'idle')
+        free.set(`${location}-${type}`, (free.get(`${location}-${type}`) ?? 0) + 1);
+    }
+
+    return {
+      machineStates: states,
+      rooms: LOCATIONS.map((location) => ({
+        value: location,
+        washerFree: free.get(`${location}-washer`) ?? 0,
+        dryerFree: free.get(`${location}-dryer`) ?? 0,
+      })),
+    };
+  }, [allMachines, now, user?.gender]);
+
+  // 내 빨래 카드에 보여 줄 시간·상태. 전체 기기 목록에서 같은 기기를 찾아 온다.
   const usingMachineList = {
-    machineList: usingMachines,
+    machineList: usingMachines.map((using) => ({
+      ...using,
+      state: machineStates.get(`${using.location}-${using.machine.type}-${using.machine.id}`),
+    })),
     isNotificationEnabled: pushPermissionStatus === 'granted',
     notificationBlocker:
       pushPermissionStatus === 'needs-install' || pushPermissionStatus === 'unsupported'
         ? pushPermissionStatus
         : undefined,
-    onAdd: onOpenQrScan,
   };
 
-  const selectBuilding = {
-    dropDownProps: {
-      items: [...LOCATIONS],
-      value: currentLocation,
-      onSelect: onSelectLocation,
-      disabled: isLoading,
-    },
+  const selectBuilding: SelectBuilding.Props = {
+    value: currentLocation,
+    rooms,
+    gender: user?.gender ?? undefined,
+    onSelect: onSelectLocation,
+    disabled: isLoading,
   };
 
   const header = {
@@ -287,6 +322,7 @@ export function MainFrame() {
         usingMachineList={usingMachineList}
         selectBuilding={selectBuilding}
         machines={machineList}
+        onRegister={onOpenQrScan}
         roomNotification={roomNotification}
       />
       <AnimatePresence>
@@ -294,7 +330,7 @@ export function MainFrame() {
           <>
             {/* 배경 클릭 시 닫기 */}
             <motion.div
-              className="fixed inset-0 bg-black/40"
+              className="bg-ink/44 fixed inset-0"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -312,7 +348,7 @@ export function MainFrame() {
               dragElastic={{ top: 0, bottom: 1 }}
               onDragEnd={onDragEndQrScan}
             >
-              <div className="bg-line absolute top-5 left-1/2 h-1.5 w-12 -translate-x-1/2 rounded-full" />
+              <div className="bg-track absolute top-2.5 left-1/2 h-1.25 w-9 -translate-x-1/2 rounded-full" />
               <QrScanFrame />
             </motion.div>
           </>

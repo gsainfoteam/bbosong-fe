@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 import { useTranslation } from 'react-i18next';
 
-import { Button } from '@/common/components';
+import { Button, Sheet } from '@/common/components';
 
 import { usePostInstallPermission } from '../../viewmodels';
 import { PushPermissionCard } from '../push-permission-card';
@@ -27,17 +27,11 @@ export function PostInstallPermissionSheet() {
   }, [isOpen]);
 
   return (
-    <dialog
-      ref={dialogRef}
-      aria-label={t('permission.completionTitle')}
-      className="bg-surface text-ink fixed inset-x-0 top-auto bottom-0 mx-auto my-0 max-h-[85dvh] w-full max-w-120 overflow-y-auto rounded-t-3xl px-6 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] backdrop:bg-black/40"
-      onCancel={dismiss}
-    >
-      <div aria-hidden="true" className="bg-line mx-auto mb-6 h-1 w-10 rounded-full" />
+    <Sheet ref={dialogRef} aria-label={t('permission.completionTitle')} onCancel={dismiss}>
       <PushPermissionCard presentation="sheet" afterInstall />
       <Button type="button" onClick={dismiss} variant="text" className="mt-3 w-full">
         {t('permission.later')}
       </Button>
-    </dialog>
+    </Sheet>
   );
 }

@@ -15,8 +15,8 @@ export function QrScanScreen({
     <div
       className={cn(
         className,
-        'bg-surface flex h-[80dvh] w-full flex-col items-center rounded-t-[4rem] pt-16',
-        'shadow-[0px_4px_10px_10px_rgba(0,0,0,0.1)]',
+        'bg-surface rounded-t-sheet flex h-[80dvh] w-full flex-col items-center pt-16',
+        'shadow-sheet',
       )}
       {...props}
     >

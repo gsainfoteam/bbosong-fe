@@ -6,6 +6,8 @@ const tokens = [
   'text-display',
   'text-heading',
   'text-section',
+  'text-title',
+  'text-numeral',
   'text-body-strong',
   'text-body-lg',
   'text-body',
