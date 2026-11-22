@@ -18,7 +18,7 @@ export function UsingMachineList({
     <div className={cn('', className)} {...props}>
       <p className="mb-3">{t('usingMachineTitle')}</p>
       {/*{machineList.length !== 0 ? (*/}
-      <div className="border-border flex w-full gap-2 overflow-x-auto rounded-lg border p-1.5">
+      <div className="border-line flex w-full gap-2 overflow-x-auto rounded-lg border p-1.5">
         {machineList.map((item) => (
           <UsingMachineBox
             key={`${item.location}-${item.machine.type}-${item.machine.id}`}
@@ -34,7 +34,7 @@ export function UsingMachineList({
         <AddUsingMachineBox onAdd={onAdd} />
       </div>
       {/*) : (*/}
-      {/*  <div className="bg-bg-surface flex w-full justify-center rounded-lg py-10">*/}
+      {/*  <div className="bg-soft flex w-full justify-center rounded-lg py-10">*/}
       {/*    {t('noUsingMachine')}*/}
       {/*  </div>*/}
       {/*)}*/}

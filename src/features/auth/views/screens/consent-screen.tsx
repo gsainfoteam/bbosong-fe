@@ -21,7 +21,7 @@ export function ConsentScreen({
   const { t } = useTranslation('auth');
 
   return (
-    <form onSubmit={onSubmit} className="bg-bg relative flex h-dvh flex-col px-6 pt-8 pb-8">
+    <form onSubmit={onSubmit} className="bg-surface relative flex h-dvh flex-col px-6 pt-8 pb-8">
       <div className="absolute top-4 right-4">
         <LanguageToggle />
       </div>
@@ -38,7 +38,7 @@ export function ConsentScreen({
             <label
               className={cn(
                 'flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition-colors',
-                allChecked ? 'border-primary' : 'border-border',
+                allChecked ? 'border-ink' : 'border-line',
               )}
             >
               <Checkbox checked={allChecked} onChange={(e) => onAllChange(e.target.checked)} />
@@ -53,7 +53,7 @@ export function ConsentScreen({
                 />
                 <span className="text-body-lg flex-1 font-medium">
                   {t('consent.privacyPolicy')}
-                  <span className="text-primary ml-1">*</span>
+                  <span className="text-danger ml-1">*</span>
                 </span>
                 <button
                   type="button"
@@ -69,7 +69,7 @@ export function ConsentScreen({
                 <Checkbox checked={tosChecked} onChange={(e) => onTosChange(e.target.checked)} />
                 <span className="text-body-lg flex-1 font-medium">
                   {t('consent.termsOfService')}
-                  <span className="text-primary ml-1">*</span>
+                  <span className="text-danger ml-1">*</span>
                 </span>
                 <button
                   type="button"

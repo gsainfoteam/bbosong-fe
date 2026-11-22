@@ -63,13 +63,13 @@ export function DropDown({
         aria-controls={open ? listId : undefined}
         onClick={() => setOpen((prev) => !prev)}
         className={cn(
-          // 'border-border bg-bg rounded-lg border',
+          // 'border-line bg-surface rounded-lg border',
           'bg-white',
-          'text-body-lg text-text-primary flex w-full items-center justify-between gap-2 rounded-lg px-4 py-2 transition-colors',
-          disabled && 'text-text-secondary cursor-not-allowed opacity-50',
+          'text-body-lg text-ink flex w-full items-center justify-between gap-2 rounded-lg px-4 py-2 transition-colors',
+          disabled && 'text-ink2 cursor-not-allowed opacity-50',
         )}
       >
-        <span className={cn('truncate', value === undefined && 'text-text-secondary')}>
+        <span className={cn('truncate', value === undefined && 'text-ink2')}>
           {value
             ? t(`location:${value}`, { context: labelContext })
             : (placeholder ?? t('common:dropDown.placeholder'))}
@@ -84,7 +84,7 @@ export function DropDown({
         <ul
           id={listId}
           role="listbox"
-          className="border-border bg-bg absolute top-full right-0 left-0 z-50 mt-1 overflow-hidden rounded-lg border py-1 shadow-md"
+          className="border-line bg-surface absolute top-full right-0 left-0 z-50 mt-1 overflow-hidden rounded-lg border py-1 shadow-md"
         >
           {items.map((item) => {
             const isSelected = item === value;
@@ -99,7 +99,7 @@ export function DropDown({
                     onSelect(item);
                     setOpen(false);
                   }}
-                  className="text-body-lg text-text-primary hover:bg-bg-surface flex w-full items-center gap-2 px-4 py-2 text-left transition-colors"
+                  className="text-body-lg text-ink hover:bg-soft flex w-full items-center gap-2 px-4 py-2 text-left transition-colors"
                 >
                   <Check
                     aria-hidden

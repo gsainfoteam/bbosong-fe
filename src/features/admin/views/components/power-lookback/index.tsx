@@ -13,7 +13,7 @@ export function PowerLookbackButtons({ disabled, onLookback }: PowerLookbackButt
   } as const;
   return (
     <div className="flex flex-wrap items-center gap-2" role="group" aria-label={t('lookback')}>
-      <span className="text-text-secondary text-sm dark:text-slate-400">{t('lookback')}</span>
+      <span className="text-ink2 text-sm dark:text-slate-400">{t('lookback')}</span>
       {LOOKBACK_MINUTES.map((minutes) => (
         <button
           key={minutes}

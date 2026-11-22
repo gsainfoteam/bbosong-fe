@@ -25,13 +25,13 @@ export function MypageScreen({
   //t('female');
 
   return (
-    <div className={cn('bg-bg flex w-full flex-1 flex-col', className)} {...props}>
+    <div className={cn('bg-surface flex w-full flex-1 flex-col', className)} {...props}>
       <MyPageHeader />
 
       <div className="flex flex-1 flex-col px-6 pb-6">
         <h1 className="mb-5">{t('account')}</h1>
         {/* data-amp-mask: Amplitude 자동 수집 시 이름·학번·이메일 텍스트를 가린다 */}
-        <div data-amp-mask className="text-text-secondary flex flex-col gap-1 px-2.5">
+        <div data-amp-mask className="text-ink2 flex flex-col gap-1 px-2.5">
           <p>
             {t('name')}: {user.name}
           </p>
@@ -57,7 +57,7 @@ export function MypageScreen({
           {user.role === 'admin' && (
             <Link
               to="/admin"
-              className="bg-bg-surface text-text-primary w-full rounded-md py-3.5 text-center font-medium"
+              className="bg-soft text-ink w-full rounded-md py-3.5 text-center font-medium"
             >
               {t('toAdmin')}
             </Link>
@@ -66,7 +66,7 @@ export function MypageScreen({
             href={`https://cs.gistory.me/?service=bbosong&email=${encodeURIComponent(user.email)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-bg-surface text-text-primary w-full rounded-md py-3.5 text-center font-medium"
+            className="bg-soft text-ink w-full rounded-md py-3.5 text-center font-medium"
           >
             {t('feedback')}
           </a>
@@ -74,7 +74,7 @@ export function MypageScreen({
             type="button"
             onClick={onLogout}
             disabled={isLoggingOut}
-            className="bg-bg-surface text-text-primary w-full rounded-md py-3.5 text-center font-medium disabled:opacity-50"
+            className="bg-soft text-ink w-full rounded-md py-3.5 text-center font-medium disabled:opacity-50"
           >
             {isLoggingOut ? t('loggingOut') : t('logout')}
           </button>
@@ -82,13 +82,13 @@ export function MypageScreen({
             type="button"
             onClick={() => setWithdrawModalOpen(true)}
             disabled={isWithdrawing}
-            className="text-text-secondary mx-auto text-sm underline underline-offset-4 disabled:opacity-50"
+            className="text-ink2 mx-auto text-sm underline underline-offset-4 disabled:opacity-50"
           >
             {t('withdraw')}
           </button>
         </div>
 
-        <p className="text-text-secondary mt-4 text-center text-sm">
+        <p className="text-ink2 mt-4 text-center text-sm">
           {t('version', { version: __APP_VERSION__ })}
         </p>
       </div>

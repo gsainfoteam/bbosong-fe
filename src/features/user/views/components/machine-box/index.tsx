@@ -92,14 +92,14 @@ const SHAPE: Record<
 
 const SURFACE: Record<MachineBox.Type, Record<MachineBox.Status, string>> = {
   washer: {
-    idle: 'fill-washer',
-    using: 'fill-disabled',
-    disabled: 'fill-disabled',
+    idle: 'fill-sky-water',
+    using: 'fill-track',
+    disabled: 'fill-track',
   },
   dryer: {
-    idle: 'fill-dryer',
-    using: 'fill-disabled',
-    disabled: 'fill-disabled',
+    idle: 'fill-orange-water',
+    using: 'fill-track',
+    disabled: 'fill-track',
   },
 };
 
@@ -221,7 +221,7 @@ export function MachineBox({ machine, className, ...props }: MachineBox.Props) {
         className="stroke-white"
       />
 
-      <g className="fill-text-primary">
+      <g className="fill-ink">
         {labels}
         <text
           x={CENTER}

@@ -34,7 +34,7 @@ export function ToggleBoolean({
       className={cn(
         'relative inline-flex shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none',
         sizeClasses[size].track,
-        state ? 'bg-primary' : 'bg-border-strong',
+        state ? 'bg-ink' : 'bg-track',
         !available && 'pointer-events-none cursor-not-allowed opacity-50',
         className,
       )}

@@ -18,7 +18,7 @@ export function ToggleSelect({
   return (
     <div
       className={cn(
-        'bg-bg-surface relative inline-flex w-full max-w-sm rounded-full p-1 select-none',
+        'bg-soft relative inline-flex w-full max-w-sm rounded-full p-1 select-none',
         !available && 'opacity-50',
         className,
       )}

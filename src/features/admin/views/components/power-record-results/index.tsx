@@ -31,9 +31,7 @@ export function PowerRecordResults({
     });
   if (!uuid) {
     return (
-      <div
-        className={`${panelClass} text-text-secondary py-12 text-center text-sm dark:text-slate-400`}
-      >
+      <div className={`${panelClass} text-ink2 py-12 text-center text-sm dark:text-slate-400`}>
         {t('selectMachineHint')}
       </div>
     );
@@ -57,9 +55,7 @@ export function PowerRecordResults({
   }
   if (!sorted.length) {
     return (
-      <div
-        className={`${panelClass} text-text-secondary py-12 text-center text-sm dark:text-slate-400`}
-      >
+      <div className={`${panelClass} text-ink2 py-12 text-center text-sm dark:text-slate-400`}>
         {t('noRecords')}
       </div>
     );
@@ -76,7 +72,7 @@ export function PowerRecordResults({
                 power: record.power,
               }))}
             >
-              <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-track)" vertical={false} />
               <XAxis
                 dataKey="time"
                 type="number"
@@ -95,7 +91,7 @@ export function PowerRecordResults({
                 name={t('powerValue')}
                 type="monotone"
                 dataKey="power"
-                stroke="#4f7df3"
+                stroke="var(--color-sky-ring)"
                 strokeWidth={2}
                 dot={sorted.length < 30}
                 isAnimationActive={false}
@@ -108,9 +104,7 @@ export function PowerRecordResults({
         <h2 className="mb-4 text-base font-semibold">
           {t('recordCount', { count: sorted.length })}
         </h2>
-        <p className="text-text-secondary mb-4 text-sm dark:text-slate-400">
-          {t('recentRecordsHint')}
-        </p>
+        <p className="text-ink2 mb-4 text-sm dark:text-slate-400">{t('recentRecordsHint')}</p>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
@@ -128,7 +122,7 @@ export function PowerRecordResults({
                 .slice(-100)
                 .reverse()
                 .map((record) => (
-                  <tr key={record.uuid} className="border-border border-t dark:border-slate-800">
+                  <tr key={record.uuid} className="border-line border-t dark:border-slate-800">
                     <td className="px-3 py-3">{formatDate(record.recordedAt)}</td>
                     <td className="px-3 py-3 tabular-nums">
                       {record.power.toLocaleString(i18n.resolvedLanguage)}

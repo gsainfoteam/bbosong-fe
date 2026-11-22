@@ -71,9 +71,7 @@ export function UsageStatsPanel({
         role="group"
         aria-label={t('dailySessionStatsRange')}
       >
-        <span className="text-text-secondary text-sm dark:text-slate-400">
-          {t('dailySessionStatsRange')}
-        </span>
+        <span className="text-ink2 text-sm dark:text-slate-400">{t('dailySessionStatsRange')}</span>
         {RANGES.map((range) => (
           <button
             key={range}
@@ -159,7 +157,7 @@ export function UsageStatsPanel({
         <div className="h-72 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-track)" vertical={false} />
               <XAxis
                 dataKey="label"
                 tick={{ fontSize: 12 }}
@@ -170,7 +168,7 @@ export function UsageStatsPanel({
               <Bar
                 name={t('sessionCount')}
                 dataKey="sessionCount"
-                fill="#4f7df3"
+                fill="var(--color-sky-ring)"
                 radius={[4, 4, 0, 0]}
                 isAnimationActive={false}
               />

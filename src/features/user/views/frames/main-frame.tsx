@@ -263,7 +263,7 @@ export function MainFrame() {
 
   if (isError) {
     return (
-      <div className="bg-bg flex w-full flex-1 flex-col items-center justify-center">
+      <div className="bg-surface flex w-full flex-1 flex-col items-center justify-center">
         <p role="alert">{t('generic')}</p>
         <button type="button" onClick={onRetry}>
           {t('refetch')}
@@ -304,7 +304,7 @@ export function MainFrame() {
               dragElastic={{ top: 0, bottom: 1 }}
               onDragEnd={onDragEndQrScan}
             >
-              <div className="bg-border absolute top-5 left-1/2 h-1.5 w-12 -translate-x-1/2 rounded-full" />
+              <div className="bg-line absolute top-5 left-1/2 h-1.5 w-12 -translate-x-1/2 rounded-full" />
               <QrScanFrame />
             </motion.div>
           </>

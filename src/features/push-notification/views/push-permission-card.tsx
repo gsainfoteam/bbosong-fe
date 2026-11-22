@@ -23,7 +23,7 @@ export function PushPermissionCard({
   return (
     <section
       className={cn(
-        'text-text-primary flex flex-col gap-3',
+        'text-ink flex flex-col gap-3',
         presentation === 'card' ? 'rounded-lg' : 'gap-5',
         className,
       )}
@@ -51,9 +51,7 @@ export function PushPermissionCard({
               type="button"
               onClick={() => void promptInstall()}
               disabled={isPrompting}
-              className={
-                presentation === 'sheet' ? 'bg-primary border-0 py-4 text-white' : undefined
-              }
+              className={presentation === 'sheet' ? 'bg-ink border-0 py-4 text-white' : undefined}
             >
               {isPrompting ? t('permission.installing') : t('permission.install')}
             </Button>
@@ -81,7 +79,7 @@ export function PushPermissionCard({
             type="button"
             onClick={() => void requestPermission()}
             disabled={isRequesting}
-            className={presentation === 'sheet' ? 'bg-primary border-0 py-4 text-white' : undefined}
+            className={presentation === 'sheet' ? 'bg-ink border-0 py-4 text-white' : undefined}
           >
             {isRequesting ? t('permission.requesting') : t('permission.enable')}
           </Button>

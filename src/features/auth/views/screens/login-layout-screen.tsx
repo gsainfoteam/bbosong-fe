@@ -10,10 +10,13 @@ export function LoginLayoutScreen({ className, children, ...props }: LoginLayout
 
   return (
     <div
-      className={cn('bg-bg mx-auto flex h-dvh w-full max-w-100 flex-col items-center', className)}
+      className={cn(
+        'bg-surface mx-auto flex h-dvh w-full max-w-100 flex-col items-center',
+        className,
+      )}
       {...props}
     >
-      <div className="text-text-primary flex h-1/2 flex-col items-center justify-center gap-4">
+      <div className="text-ink flex h-1/2 flex-col items-center justify-center gap-4">
         {/* 네이티브 앱에서는 "웹 서비스"가 아니므로 웹 표기를 뺀 문구를 쓴다 */}
         <span className="text-center text-3xl font-medium">
           {t(isNativeApp() ? 'descriptionNative' : 'description')}

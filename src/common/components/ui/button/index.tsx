@@ -59,11 +59,8 @@ export namespace Button {
     ],
     variants: {
       variant: {
-        default: [
-          'w-full text-heading text-text-primary border border-border',
-          'transition-all duration-150',
-        ],
-        minimum: ['text-text-primary border border-border', 'transition-all duration-150'],
+        default: ['w-full text-heading text-ink border border-line', 'transition-all duration-150'],
+        minimum: ['text-ink border border-line', 'transition-all duration-150'],
       },
       size: {
         default: 'p-2',

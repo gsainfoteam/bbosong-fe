@@ -18,13 +18,13 @@ export function LanguageToggle() {
         aria-pressed={isKorean}
         className={cn(
           'text-body-lg uppercase transition-colors',
-          isKorean ? 'text-primary font-bold' : 'text-text-secondary',
+          isKorean ? 'text-ink font-bold' : 'text-ink2',
         )}
         aria-label={isKorean ? undefined : t('switchToKorean')}
       >
         KOR
       </button>
-      <div className="bg-primary h-4 w-0.5" />
+      <div className="bg-ink h-4 w-0.5" />
       <button
         type="button"
         onClick={toggleLanguage}
@@ -32,7 +32,7 @@ export function LanguageToggle() {
         aria-pressed={!isKorean}
         className={cn(
           'text-body-lg uppercase transition-colors',
-          !isKorean ? 'text-primary font-bold' : 'text-text-secondary',
+          !isKorean ? 'text-ink font-bold' : 'text-ink2',
         )}
         aria-label={isKorean ? t('switchToEnglish') : undefined}
       >

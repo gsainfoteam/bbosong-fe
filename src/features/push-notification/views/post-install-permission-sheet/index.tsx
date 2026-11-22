@@ -30,15 +30,15 @@ export function PostInstallPermissionSheet() {
     <dialog
       ref={dialogRef}
       aria-label={t('permission.completionTitle')}
-      className="bg-bg text-text-primary fixed inset-x-0 top-auto bottom-0 mx-auto my-0 max-h-[85dvh] w-full max-w-120 overflow-y-auto rounded-t-3xl px-6 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] backdrop:bg-black/40"
+      className="bg-surface text-ink fixed inset-x-0 top-auto bottom-0 mx-auto my-0 max-h-[85dvh] w-full max-w-120 overflow-y-auto rounded-t-3xl px-6 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] backdrop:bg-black/40"
       onCancel={dismiss}
     >
-      <div aria-hidden="true" className="bg-border mx-auto mb-6 h-1 w-10 rounded-full" />
+      <div aria-hidden="true" className="bg-line mx-auto mb-6 h-1 w-10 rounded-full" />
       <PushPermissionCard presentation="sheet" afterInstall />
       <Button
         type="button"
         onClick={dismiss}
-        className="text-text-secondary mt-3 w-full border-0 py-3 text-sm"
+        className="text-ink2 mt-3 w-full border-0 py-3 text-sm"
       >
         {t('permission.later')}
       </Button>

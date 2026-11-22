@@ -13,7 +13,7 @@ export function SelectBuilding({ dropDownProps, className, ...props }: SelectBui
         disabled={dropDownProps.disabled}
         className={dropDownProps.className}
       />
-      {/*<Map className="text-text-primary" onClick={() => onOpenMap(dropDownProps.value!)} />*/}
+      {/*<Map className="text-ink" onClick={() => onOpenMap(dropDownProps.value!)} />*/}
     </div>
   );
 }

@@ -9,10 +9,7 @@ export const Header = ({ onRefresh, isRefreshing = false, className, ...props }:
   const { t } = useTranslation('common');
 
   return (
-    <header
-      className={cn(className, 'text-text-primary flex w-full justify-between px-4 py-2')}
-      {...props}
-    >
+    <header className={cn(className, 'text-ink flex w-full justify-between px-4 py-2')} {...props}>
       <h1>{t('bbosong')}</h1>
       <div className="flex items-center gap-3">
         {onRefresh && (
@@ -38,7 +35,7 @@ export const Header = ({ onRefresh, isRefreshing = false, className, ...props }:
 export const MyPageHeader = () => {
   const { t } = useTranslation('common');
   return (
-    <header className="text-text-primary flex w-full flex-row-reverse px-4 py-2">
+    <header className="text-ink flex w-full flex-row-reverse px-4 py-2">
       <Link to="/" aria-label={t('index')}>
         <X />
       </Link>

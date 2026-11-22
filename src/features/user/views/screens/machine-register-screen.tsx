@@ -18,7 +18,7 @@ export function MachineRegisterScreen({
   return (
     <div className="h-dvh">
       <div className="h-1/2 content-center p-10">
-        <div className="bg-bg-surface flex aspect-square w-full flex-col justify-end p-5">
+        <div className="bg-soft flex aspect-square w-full flex-col justify-end p-5">
           <img src={machineRegister} alt="machineRegister" />
         </div>
       </div>

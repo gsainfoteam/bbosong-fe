@@ -24,7 +24,7 @@ export function MainScreen({
   const dryers = machines.machines.filter((machine) => machine.type === 'dryer');
 
   return (
-    <div className={cn(className, 'bg-bg w-full')} {...props}>
+    <div className={cn(className, 'bg-surface w-full')} {...props}>
       <Header {...header} className={cn('mb-6', header?.className)} />
       <div className="flex flex-col gap-6 px-3">
         <UsingMachineList

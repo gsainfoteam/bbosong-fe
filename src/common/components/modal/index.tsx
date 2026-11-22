@@ -61,7 +61,7 @@ export function Modal({
         if (!isPending) onClose();
       }}
       className={cn(
-        'bg-bg border-border text-text-primary fixed inset-0 m-auto w-[calc(100%-2rem)] max-w-120 rounded-2xl border p-6 shadow-xl backdrop:bg-black/40',
+        'bg-surface border-line text-ink fixed inset-0 m-auto w-[calc(100%-2rem)] max-w-120 rounded-2xl border p-6 shadow-xl backdrop:bg-black/40',
         className,
       )}
     >
@@ -69,7 +69,7 @@ export function Modal({
         {title}
       </h2>
       {description && (
-        <p id={descriptionId} className="text-text-secondary mt-3 text-sm">
+        <p id={descriptionId} className="text-ink2 mt-3 text-sm">
           {description}
         </p>
       )}

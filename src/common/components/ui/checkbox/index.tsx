@@ -19,8 +19,8 @@ export const Checkbox = forwardRef<
       aria-hidden
       className={cn(
         'flex size-5 shrink-0 items-center justify-center rounded-md border-2 transition-colors',
-        'border-border peer-checked:border-primary peer-checked:bg-primary',
-        'peer-focus-visible:ring-primary peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2',
+        'border-line peer-checked:border-ink peer-checked:bg-ink',
+        'peer-focus-visible:ring-ink peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2',
         'pointer-events-none',
       )}
     >

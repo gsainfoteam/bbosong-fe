@@ -50,7 +50,7 @@ export function UsingMachineBox({
     <div
       className={cn(
         className,
-        'text-text-primary border-border flex min-h-20 min-w-20 shrink-0 flex-col items-center justify-center gap-0.5 rounded-lg border px-2',
+        'text-ink border-line flex min-h-20 min-w-20 shrink-0 flex-col items-center justify-center gap-0.5 rounded-lg border px-2',
       )}
       {...props}
     >
@@ -64,7 +64,7 @@ export function UsingMachineBox({
         onClick={() => setIsConfirmOpen(true)}
       >
         {isNotificationEnabled ? (
-          <Bell className={cn(notification && 'text-primary')} aria-hidden />
+          <Bell className={cn(notification && 'text-ink')} aria-hidden />
         ) : (
           <BellOff aria-hidden />
         )}
@@ -83,7 +83,7 @@ export function UsingMachineBox({
           onClose={() => setIsConfirmOpen(false)}
         >
           {!isNotificationEnabled && (
-            <p role="note" className="text-text-error">
+            <p role="note" className="text-danger">
               {t(NOTIFICATION_DISABLED_KEYS[notificationBlocker ?? 'default'])}
             </p>
           )}
