@@ -78,7 +78,7 @@ export function PushPermissionSheet({
       <h2 className="text-center text-[19px] leading-[1.35] font-extrabold tracking-[-0.025em] text-balance">
         {t('permission.completionTitle')}
       </h2>
-      <div className="text-ink-2 mt-1.5 flex flex-col gap-2 text-center text-[13px] leading-[1.6] break-keep">
+      <div className="text-ink-2 mt-1.5 flex flex-col gap-2 text-center text-[13px] leading-[1.6]">
         {messages.map((message) => (
           <p key={String(message)}>{message}</p>
         ))}

@@ -27,6 +27,9 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scrollbar-width: none;
+  /* 한국어는 기본값이면 음절마다 줄이 바뀐다. keep-all만 두면 띄어쓰기 없는 긴 주소가 칸을 넘으므로, 넘칠 때만 끊는다. */
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 html::-webkit-scrollbar {

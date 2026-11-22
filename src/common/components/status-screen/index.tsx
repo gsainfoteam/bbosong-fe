@@ -25,9 +25,7 @@ export function StatusScreen({
         <h1 className="mt-6 text-[23px] leading-[1.38] font-extrabold tracking-[-0.03em] text-balance">
           {title}
         </h1>
-        {description && (
-          <p className="text-ink-2 mt-2 text-[15px] leading-[1.6] break-keep">{description}</p>
-        )}
+        {description && <p className="text-ink-2 mt-2 text-[15px] leading-[1.6]">{description}</p>}
         {detail && <p className="text-ink-3 mt-3 text-[12.5px] break-all">{detail}</p>}
       </div>
       {children && (
