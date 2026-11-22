@@ -20,6 +20,7 @@ import {
   useLiveActivitySync,
   useMachineViews,
   useRefreshMainData,
+  type MachineView,
 } from '@/features/user/viewmodels';
 
 import { type GetRoomNotificationButton, RoomSheet } from '../components';
@@ -127,6 +128,14 @@ export function MainFrame() {
     isRefreshing,
   };
 
+  const onMachineLongPress =
+    user?.role === 'admin'
+      ? ({ uuid }: MachineView) => {
+          navigator.vibrate?.(15);
+          void navigate({ to: '/machine-register/$machineUuid', params: { machineUuid: uuid } });
+        }
+      : undefined;
+
   const toRoomNotification = (
     machineType: GetRoomNotificationButton.MachineType,
   ): GetRoomNotificationButton.Props => {
@@ -191,7 +200,7 @@ export function MainFrame() {
 
   if (isError) {
     return (
-      <div className="bg-bg flex w-full flex-1 flex-col items-center justify-center">
+      <div className="bg-surface flex w-full flex-1 flex-col items-center justify-center">
         <p role="alert">{t('generic')}</p>
         <button type="button" onClick={onRetry}>
           {t('refetch')}
@@ -209,6 +218,7 @@ export function MainFrame() {
         washers={current.filter((view) => view.type === 'washer')}
         dryers={current.filter((view) => view.type === 'dryer')}
         roomNotification={roomNotification}
+        onMachineLongPress={onMachineLongPress}
         onRegister={onOpenQrScan}
       />
       <RoomSheet {...roomSheet} />

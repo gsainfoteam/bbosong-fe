@@ -59,7 +59,7 @@ export function DailySessionStatsPanel({
           role="group"
           aria-label={t('dailySessionStatsRange')}
         >
-          <span className="text-text-secondary text-sm dark:text-slate-400">
+          <span className="text-ink-2 text-sm dark:text-slate-400">
             {t('dailySessionStatsRange')}
           </span>
           {RANGES.map((range) => (
@@ -133,7 +133,7 @@ export function DailySessionStatsPanel({
         <div className="h-72 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-track)" vertical={false} />
               <XAxis dataKey="date" tick={{ fontSize: 12 }} />
               <YAxis yAxisId="count" allowDecimals={false} tick={{ fontSize: 12 }} />
               <YAxis
@@ -159,7 +159,7 @@ export function DailySessionStatsPanel({
                 name={t('registeredSessions')}
                 type="monotone"
                 dataKey="registeredCount"
-                stroke="#4f7df3"
+                stroke="var(--color-sky-ring)"
                 strokeWidth={2}
                 dot={showDots}
                 isAnimationActive={false}
@@ -169,7 +169,7 @@ export function DailySessionStatsPanel({
                 name={t('unregisteredSessions')}
                 type="monotone"
                 dataKey="unregisteredCount"
-                stroke="#f59e0b"
+                stroke="var(--color-orange-ring)"
                 strokeWidth={2}
                 dot={showDots}
                 isAnimationActive={false}
@@ -179,7 +179,7 @@ export function DailySessionStatsPanel({
                 name={t('registeredSessionRatio')}
                 type="monotone"
                 dataKey="registeredRatio"
-                stroke="#10b981"
+                stroke="var(--color-live)"
                 strokeWidth={2}
                 strokeDasharray="4 4"
                 connectNulls={false}

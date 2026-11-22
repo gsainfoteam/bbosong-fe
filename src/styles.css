@@ -49,7 +49,7 @@ html::-webkit-scrollbar {
   --font-sans:
     'Pretendard GOV Variable', -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo',
     'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
-  /* 그릇 번호, 남은 시간처럼 혼자 서거나 강조되는 숫자에만 쓴다. 문장 속 숫자는 Pretendard 그대로 둔다. */
+  /* 기기 번호, 남은 시간처럼 혼자 서거나 강조되는 숫자에만 쓴다. 문장 속 숫자는 Pretendard 그대로 둔다. */
   --font-num: 'Allo', 'Pretendard GOV Variable', sans-serif;
   /* allo.css의 가변 글꼴은 둥근 정도(ROND) 축을 갖고 있고 기본값은 50이라, 100을 명시해야 확정한 둥근 숫자가 나온다. */
   --font-num--font-variation-settings: 'ROND' 100;
@@ -66,6 +66,11 @@ html::-webkit-scrollbar {
 
   --text-body-lg: 15px;
   --text-body-lg--line-height: 1.5;
+
+  --text-body-strong: 15px;
+  --text-body-strong--font-weight: 700;
+  --text-body-strong--line-height: 1.6;
+  --text-body-strong--letter-spacing: -0.01em;
 
   --text-body: 14px;
   --text-body--line-height: 1.6;
@@ -114,29 +119,20 @@ html::-webkit-scrollbar {
   --color-danger: #d2382f;
   --color-danger-tint: #fdeeec;
 
-  /* 기기 그릇 전용 회색. 돌고 있는 그릇은 회색 유리, 빈 그릇은 흰 유리로 구분한다. */
+  --color-ink-pressed: #34373d;
+  --color-soft-pressed: #eaebee;
+  --color-danger-pressed: #b82e26;
+
+  /* 기기 아이콘 전용 회색. 돌고 있는 기기는 회색 유리, 빈 기기는 흰 유리로 구분한다. */
   --color-glass: #f3f4f6;
   --color-glass-rim: #dfe1e5;
   --color-idle-rim: #cfd1d6;
   --color-off-rim: #c4c6cb;
   --color-skeleton: #eeeff2;
 
-  /* 어드민 화면을 새 시스템으로 옮기기 전까지 남겨 두는 옛 이름. 새 코드에서는 쓰지 않는다. */
-  --color-primary: var(--color-ink);
-  --color-primary-light: var(--color-soft);
-  --color-available: var(--color-sky-ring);
-  --color-washer: var(--color-sky-water);
-  --color-dryer: var(--color-orange-water);
-  --color-unavailable: var(--color-danger);
-  --color-disabled: var(--color-soft);
-  --color-text-primary: var(--color-ink);
-  --color-text-secondary: var(--color-ink-2);
-  --color-text-error: var(--color-danger);
-  --color-bg: var(--color-surface);
-  --color-bg-surface: var(--color-soft);
-  --color-border: var(--color-line);
-
+  --radius-chip: 12px;
   --radius-tile: 14px;
+  --radius-button: 16px;
   --radius-cta: 18px;
   --radius-banner: 20px;
   --radius-card: 22px;
@@ -145,6 +141,7 @@ html::-webkit-scrollbar {
   /* 그림자는 화면 위에 떠 있는 것(고정 버튼 · 토스트 · 시트 · 다이얼로그)에만 준다. */
   --shadow-float: 0 14px 26px -14px rgb(27 29 33 / 0.7);
   --shadow-overlay: 0 24px 60px -20px rgb(27 29 33 / 0.45);
+  --shadow-toast: 0 12px 28px -12px rgb(27 29 33 / 0.6);
   --shadow-knob: 0 1px 3px rgb(27 29 33 / 0.25);
 
   --animate-wave: wave 3.2s linear infinite;
@@ -159,7 +156,7 @@ html::-webkit-scrollbar {
   padding-bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 6px));
 }
 
-/* 물결 한 주기(22)만큼 옮겨야 반복이 이어 붙는다. 기기 그릇의 물결 파장과 같아야 한다. */
+/* 물결 한 주기(22)만큼 옮겨야 반복이 이어 붙는다. 기기 아이콘의 물결 파장과 같아야 한다. */
 @keyframes wave {
   to {
     transform: translateX(-22px);

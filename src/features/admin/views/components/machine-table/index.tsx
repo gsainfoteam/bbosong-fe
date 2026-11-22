@@ -39,9 +39,9 @@ export function MachineTable({
     thinqDetecting: isMachineThinqRemainingDetecting(machine),
   }));
   return (
-    <div className="border-border overflow-x-auto rounded-xl border bg-white dark:border-slate-800 dark:bg-slate-900">
+    <div className="border-line overflow-x-auto rounded-xl border bg-white dark:border-slate-800 dark:bg-slate-900">
       <table className="w-full text-left text-sm">
-        <thead className="bg-bg text-text-secondary dark:bg-slate-800 dark:text-slate-400">
+        <thead className="bg-surface text-ink-2 dark:bg-slate-800 dark:text-slate-400">
           <tr>
             {[
               t('machine'),
@@ -58,7 +58,7 @@ export function MachineTable({
             ))}
           </tr>
         </thead>
-        <tbody className="divide-border divide-y dark:divide-slate-800">
+        <tbody className="divide-line divide-y dark:divide-slate-800">
           {rows.map(
             ({
               machine,
@@ -76,7 +76,7 @@ export function MachineTable({
                   >
                     {formatMachineCode(machine)}
                   </div>
-                  <div className="text-text-secondary mt-1 font-mono text-xs dark:text-slate-400">
+                  <div className="text-ink-2 mt-1 font-mono text-xs dark:text-slate-400">
                     {machine.uuid}
                   </div>
                 </td>
@@ -92,7 +92,7 @@ export function MachineTable({
                       {lastSeen ? (
                         <time dateTime={lastSeen.dateTime} title={lastSeen.absolute}>
                           {lastSeen.relative}
-                          <span className="text-text-secondary mt-1 block text-xs dark:text-slate-400">
+                          <span className="text-ink-2 mt-1 block text-xs dark:text-slate-400">
                             {lastSeen.absolute}
                           </span>
                         </time>
@@ -119,19 +119,19 @@ export function MachineTable({
                             ? t('thinqStateDetecting')
                             : (machine.thinqCurrentState ?? t('thinqStateUnknown'))}
                         </div>
-                        <div className="text-text-secondary text-xs dark:text-slate-400">
+                        <div className="text-ink-2 text-xs dark:text-slate-400">
                           <ThinqRemaining remaining={thinqRemaining} isDetecting={thinqDetecting} />
                         </div>
                         {thinqUpdated ? (
                           <time
-                            className="text-text-secondary block text-xs dark:text-slate-400"
+                            className="text-ink-2 block text-xs dark:text-slate-400"
                             dateTime={thinqUpdated.dateTime}
                             title={thinqUpdated.absolute}
                           >
                             {t('thinqUpdatedAt')}: {thinqUpdated.relative}
                           </time>
                         ) : (
-                          <div className="text-text-secondary text-xs dark:text-slate-400">
+                          <div className="text-ink-2 text-xs dark:text-slate-400">
                             {t('thinqUpdatedAt')}: -
                           </div>
                         )}
@@ -145,7 +145,7 @@ export function MachineTable({
                   <td className="px-5 py-4">
                     {machine.shortUrl ? (
                       <a
-                        className="text-primary break-all underline underline-offset-4"
+                        className="text-ink break-all underline underline-offset-4"
                         href={machine.shortUrl}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -175,7 +175,7 @@ export function MachineTable({
                   Number(showLinks) +
                   Number(!!renderActions)
                 }
-                className="text-text-secondary px-5 py-12 text-center dark:text-slate-400"
+                className="text-ink-2 px-5 py-12 text-center dark:text-slate-400"
               >
                 {t('noMachines')}
               </td>

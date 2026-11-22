@@ -12,10 +12,12 @@ function MachineSection({
   type,
   machines,
   notification,
+  onMachineLongPress,
 }: {
   type: MachineType;
   machines: MachineView[];
   notification: GetRoomNotificationButton.Props;
+  onMachineLongPress?: MachineList.Props['onMachineLongPress'];
 }) {
   const { t } = useTranslation('machine');
   const free = machines.filter((machine) => machine.state === 'idle').length;
@@ -42,7 +44,7 @@ function MachineSection({
         )}
       </div>
       {machines.length > 0 ? (
-        <MachineList machines={machines} />
+        <MachineList machines={machines} onMachineLongPress={onMachineLongPress} />
       ) : (
         <p className="bg-soft rounded-banner text-ink-3 py-7.5 text-center text-[13.5px] font-medium">
           {type === 'washer' ? t('emptyWasher') : t('emptyDryer')}
@@ -59,6 +61,7 @@ export function MainScreen({
   washers,
   dryers,
   roomNotification,
+  onMachineLongPress,
   onRegister,
   className,
 }: MainScreen.Props) {
@@ -99,8 +102,18 @@ export function MainScreen({
           {room.title}
           <ChevronDown size={20} className="text-ink-3 mt-0.75" aria-hidden />
         </button>
-        <MachineSection type="washer" machines={washers} notification={roomNotification.washer} />
-        <MachineSection type="dryer" machines={dryers} notification={roomNotification.dryer} />
+        <MachineSection
+          type="washer"
+          machines={washers}
+          notification={roomNotification.washer}
+          onMachineLongPress={onMachineLongPress}
+        />
+        <MachineSection
+          type="dryer"
+          machines={dryers}
+          notification={roomNotification.dryer}
+          onMachineLongPress={onMachineLongPress}
+        />
       </div>
       <div className="pb-cta from-surface pointer-events-none fixed inset-x-0 bottom-0 mx-auto w-full max-w-120 bg-linear-to-t from-55% to-transparent px-5 pt-10">
         <Button
@@ -140,6 +153,7 @@ export namespace MainScreen {
     washers: MachineView[];
     dryers: MachineView[];
     roomNotification: Record<MachineType, GetRoomNotificationButton.Props>;
+    onMachineLongPress?: MachineList.Props['onMachineLongPress'];
     onRegister: () => void;
     className?: string;
   };

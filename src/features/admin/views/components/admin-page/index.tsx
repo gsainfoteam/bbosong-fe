@@ -20,7 +20,7 @@ export function AdminPage({
     if (isLoading) {
       return (
         <div
-          className="border-border rounded-xl border p-12 text-center text-sm dark:border-slate-800"
+          className="border-line rounded-xl border p-12 text-center text-sm dark:border-slate-800"
           role="status"
         >
           {t('loading')}
@@ -45,9 +45,7 @@ export function AdminPage({
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">{title}</h1>
-          <p className="text-text-secondary mt-2 text-sm leading-6 dark:text-slate-400">
-            {description}
-          </p>
+          <p className="text-ink-2 mt-2 text-sm leading-6 dark:text-slate-400">{description}</p>
         </div>
         {onRefresh && (
           <button

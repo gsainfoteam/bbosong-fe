@@ -1,4 +1,4 @@
-import { cv } from '@/common/utils';
+import { cn, cv } from '@/common/utils';
 
 import { Slot } from '../slot';
 
@@ -10,8 +10,10 @@ export function Button({
   wide,
   float,
   asChild = false,
+  loading = false,
   children,
   className,
+  onClick,
   ...props
 }: Button.Props & React.ComponentProps<'button'>) {
   const Comp = asChild ? Slot : 'button';
@@ -36,13 +38,25 @@ export function Button({
         }
       : {};
 
+  const busyProps = loading
+    ? { 'aria-busy': true, onClick: (e: React.MouseEvent<HTMLButtonElement>) => e.preventDefault() }
+    : { onClick };
+
   return (
     <Comp
       className={Button.styles({ variant, size, wide, float, className })}
       {...props}
+      {...busyProps}
       {...disabledProps}
     >
-      {children}
+      {asChild ? (
+        children
+      ) : (
+        <>
+          {loading && <Button.Spinner />}
+          {children}
+        </>
+      )}
     </Comp>
   );
 }
@@ -53,11 +67,24 @@ export namespace Button {
     size?: NonNullable<VariantProps<typeof Button.styles>['size']>;
     wide?: boolean;
     float?: boolean;
+    loading?: boolean;
   } & (
     | { asChild?: false }
     // asChild면 실제 요소는 자식이 정하므로 HTMLButtonElement ref를 받지 않는다. ref는 자식에 직접 단다.
     | { asChild: true; ref?: never }
   );
+
+  export function Spinner({ className }: { className?: string }) {
+    return (
+      <span
+        aria-hidden
+        className={cn(
+          'size-4 shrink-0 animate-spin rounded-full border-2 border-current border-r-transparent opacity-80',
+          className,
+        )}
+      />
+    );
+  }
 
   export const styles = cv({
     base: [
@@ -70,10 +97,10 @@ export namespace Button {
     ],
     variants: {
       variant: {
-        primary: 'bg-ink text-white active:bg-[#34373d]',
-        secondary: 'bg-soft text-ink active:bg-[#eaebee]',
+        primary: 'bg-ink text-white active:bg-ink-pressed',
+        secondary: 'bg-soft text-ink active:bg-soft-pressed',
         outline: 'bg-surface text-ink shadow-[inset_0_0_0_1px_var(--color-line)] active:bg-soft',
-        danger: 'bg-danger text-white active:bg-[#b82e26]',
+        danger: 'bg-danger text-white active:bg-danger-pressed',
         // 색이 들어간 면 위에서는 먹색 대신 그 면과 같은 계열의 흰 버튼을 쓴다.
         'tone-sky': 'bg-white text-sky-ink shadow-[0_0_0_1px_rgb(11_111_147/0.18)]',
         'tone-orange': 'bg-white text-orange-ink shadow-[0_0_0_1px_rgb(168_86_15/0.18)]',
@@ -82,8 +109,8 @@ export namespace Button {
       },
       size: {
         l: 'h-14 rounded-cta px-5 text-base',
-        m: 'h-12 rounded-2xl px-[18px] text-[15px]',
-        s: 'h-9 gap-1.5 rounded-xl px-3 text-[13px]',
+        m: 'h-12 rounded-button px-4.5 text-[15px]',
+        s: 'h-9 gap-1.5 rounded-chip px-3 text-[13px]',
       },
       wide: {
         true: 'w-full',

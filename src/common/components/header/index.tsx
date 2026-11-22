@@ -5,17 +5,17 @@ import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/common/utils';
 
-import { BrandMark } from '../ui';
-
-const iconButton =
-  'text-ink active:bg-soft grid size-11 place-items-center rounded-tile transition-colors disabled:cursor-not-allowed';
+import { BrandMark, IconButton } from '../ui';
 
 export const Header = ({ onRefresh, isRefreshing = false, className, ...props }: Header.Props) => {
   const { t } = useTranslation('common');
 
   return (
     <header
-      className={cn('flex h-14 w-full items-center justify-between pr-2.5 pl-5', className)}
+      className={cn(
+        'text-ink flex h-14 w-full items-center justify-between pr-2.5 pl-5',
+        className,
+      )}
       {...props}
     >
       <span className="flex items-center gap-[7px] text-[19px] font-extrabold tracking-[-0.03em]">
@@ -24,20 +24,20 @@ export const Header = ({ onRefresh, isRefreshing = false, className, ...props }:
       </span>
       <div className="flex items-center">
         {onRefresh && (
-          <button
-            type="button"
-            aria-label={t('refresh')}
+          <IconButton
+            label={t('refresh')}
             aria-busy={isRefreshing}
             disabled={isRefreshing}
             onClick={onRefresh}
-            className={iconButton}
           >
             <RefreshCw size={20} className={cn(isRefreshing && 'animate-spin')} aria-hidden />
-          </button>
+          </IconButton>
         )}
-        <Link to="/mypage" aria-label={t('myPage')} className={iconButton}>
-          <UserRound size={20} aria-hidden />
-        </Link>
+        <IconButton asChild label={t('myPage')}>
+          <Link to="/mypage">
+            <UserRound size={20} aria-hidden />
+          </Link>
+        </IconButton>
       </div>
     </header>
   );

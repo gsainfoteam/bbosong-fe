@@ -55,6 +55,8 @@ export const Sizes: Story = {
 
 export const Disabled: Story = { args: { disabled: true } };
 
+export const Loading: Story = { args: { loading: true, children: '등록 중…' } };
+
 export const WideFloat: Story = { args: { wide: true, float: true, size: 'l' } };
 
 export const Inverse: Story = {

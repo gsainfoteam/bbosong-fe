@@ -3,7 +3,7 @@ import { type SubmitEventHandler } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { BrandMark, Button, Checkbox, LanguageButton } from '@/common/components';
+import { BrandMark, Button, Checkbox, IconButton, LanguageButton } from '@/common/components';
 import { cn } from '@/common/utils';
 
 function ConsentRow({
@@ -28,14 +28,9 @@ function ConsentRow({
         {label}
         <span className="text-ink-3 text-[12.5px] font-bold">{t('consent.required')}</span>
       </label>
-      <button
-        type="button"
-        onClick={onView}
-        aria-label={viewLabel}
-        className="text-ink-3 rounded-tile active:bg-soft -mr-2.5 grid size-11 place-items-center"
-      >
+      <IconButton onClick={onView} label={viewLabel} className="text-ink-3 -mr-2.5">
         <ChevronRight size={20} strokeWidth={2.2} aria-hidden />
-      </button>
+      </IconButton>
     </div>
   );
 }

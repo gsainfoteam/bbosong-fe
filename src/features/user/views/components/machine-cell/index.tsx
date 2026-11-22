@@ -8,7 +8,12 @@ export { useMachineText } from './use-machine-text';
 
 const IDLE_TEXT = { washer: 'text-sky-ink', dryer: 'text-orange-ink' } as const;
 
-export function MachineCell({ machine, size = 66, className }: MachineCell.Props) {
+export function MachineCell({
+  machine,
+  size = 66,
+  className,
+  ...props
+}: MachineCell.Props & Omit<React.ComponentProps<'div'>, 'children'>) {
   const text = useMachineText();
   const strong = machine.state === 'running' || machine.state === 'idle';
 
@@ -17,6 +22,7 @@ export function MachineCell({ machine, size = 66, className }: MachineCell.Props
       role="img"
       aria-label={text.aria(machine)}
       className={cn('flex flex-col items-center', className)}
+      {...props}
     >
       <MachineVessel
         type={machine.type}

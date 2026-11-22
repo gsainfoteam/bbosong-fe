@@ -28,7 +28,7 @@ export function PostInstallPermissionSheet() {
       <Button
         type="button"
         onClick={dismiss}
-        className="text-text-secondary mt-3 w-full border-0 py-3 text-sm"
+        className="text-ink-2 mt-3 w-full border-0 py-3 text-sm"
       >
         {t('permission.later')}
       </Button>

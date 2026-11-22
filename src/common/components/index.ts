@@ -5,5 +5,6 @@ export * from './layout/index';
 export * from './modal/index';
 export * from './splash-screen/index';
 export * from './store-download-modal/index';
+export * from './toaster/index';
 export * from './top-bar/index';
 export * from './ui/index';

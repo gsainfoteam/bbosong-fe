@@ -38,27 +38,25 @@ function RoomTypeStats({
   const { t } = useTranslation('admin');
   return (
     <div>
-      <div className="text-text-secondary mb-2 text-sm font-medium dark:text-slate-400">
-        {label}
-      </div>
+      <div className="text-ink-2 mb-2 text-sm font-medium dark:text-slate-400">{label}</div>
       <div className="grid grid-cols-3 gap-2 text-sm">
         <div>
-          <div className="text-text-secondary dark:text-slate-400">{t('IDLE')}</div>
+          <div className="text-ink-2 dark:text-slate-400">{t('IDLE')}</div>
           <div className="mt-2 text-xl font-semibold text-emerald-600 dark:text-emerald-400">
             {available}
           </div>
         </div>
         <div>
-          <div className="text-text-secondary dark:text-slate-400">{t('running')}</div>
-          <div className="text-primary mt-2 text-xl font-semibold">
+          <div className="text-ink-2 dark:text-slate-400">{t('running')}</div>
+          <div className="text-ink mt-2 text-xl font-semibold">
             {running}
-            <span className="text-text-secondary text-base font-medium dark:text-slate-400">
+            <span className="text-ink-2 text-base font-medium dark:text-slate-400">
               ({registered})
             </span>
           </div>
         </div>
         <div>
-          <div className="text-text-secondary dark:text-slate-400">{t('unavailable')}</div>
+          <div className="text-ink-2 dark:text-slate-400">{t('unavailable')}</div>
           <div className="mt-2 text-xl font-semibold text-red-500">{unavailable}</div>
         </div>
       </div>
@@ -91,7 +89,7 @@ export function AdminOverviewScreen() {
   const usageStats = useUsageStats(usageDimension, usageDays, usageFilter);
   const stats = getMachineStats(query.machines);
   const cards = [
-    { label: t('totalMachines'), value: stats.total, icon: WashingMachine, color: 'text-primary' },
+    { label: t('totalMachines'), value: stats.total, icon: WashingMachine, color: 'text-ink' },
     {
       label: t('availableMachines'),
       value: stats.available,
@@ -133,13 +131,13 @@ export function AdminOverviewScreen() {
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         {cards.map(({ label, value, icon: Icon, color }) => (
           <div key={label} className={panelClass}>
-            <div className="text-text-secondary flex items-center justify-between gap-2 text-sm dark:text-slate-400">
+            <div className="text-ink-2 flex items-center justify-between gap-2 text-sm dark:text-slate-400">
               <span>{label}</span>
               <Icon size={20} className={color} />
             </div>
             <div className="mt-5 text-3xl font-bold">
               {value}
-              <span className="text-text-secondary ml-2 text-sm font-normal dark:text-slate-400">
+              <span className="text-ink-2 ml-2 text-sm font-normal dark:text-slate-400">
                 {t('unit')}
               </span>
             </div>
@@ -176,7 +174,7 @@ export function AdminOverviewScreen() {
       <div className={panelClass}>
         <div className="mb-5 flex items-center justify-between">
           <h2 className="font-semibold">{t('roomOverview')}</h2>
-          <Link to="/admin/machines" className="text-primary flex items-center gap-1 text-sm">
+          <Link to="/admin/machines" className="text-ink flex items-center gap-1 text-sm">
             {t('manage')}
             <ArrowUpRight size={16} />
           </Link>
@@ -190,7 +188,7 @@ export function AdminOverviewScreen() {
               return (
                 <div
                   key={`${location}-${gender}`}
-                  className="bg-bg rounded-lg p-4 dark:bg-slate-800"
+                  className="bg-surface rounded-lg p-4 dark:bg-slate-800"
                 >
                   <div className="mb-3 font-medium">
                     {t('building', { location })} · {labels.gender[gender]}
@@ -223,15 +221,12 @@ export function AdminOverviewScreen() {
           <Link2 size={22} className="text-amber-500" />
           <div>
             <h2 className="text-base font-semibold">{t('linkCheck')}</h2>
-            <p className="text-text-secondary mt-2 text-sm dark:text-slate-400">
+            <p className="text-ink-2 mt-2 text-sm dark:text-slate-400">
               {t('missingLinksCount', { count: stats.missingLinks })}
             </p>
           </div>
         </div>
-        <Link
-          to="/admin/links"
-          className="text-primary flex items-center gap-1 text-sm font-medium"
-        >
+        <Link to="/admin/links" className="text-ink flex items-center gap-1 text-sm font-medium">
           {t('links')}
           <ArrowUpRight size={16} />
         </Link>

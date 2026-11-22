@@ -12,7 +12,7 @@ export function MachineFilters({ filters }: MachineFilters.Props) {
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <label className="relative">
         <span className="sr-only">{t('search')}</span>
-        <Search size={16} className="text-text-secondary absolute top-3 left-3" />
+        <Search size={16} className="text-ink-2 absolute top-3 left-3" />
         <input
           className={`${inputClass} pl-9`}
           value={filters.search}

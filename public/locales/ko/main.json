@@ -9,8 +9,8 @@
     "running": "사용 중",
     "title": "세탁실 지도"
   },
-  "qrScan": "QR 코드를 촬영하고 기기를 등록하세요",
-  "qrScanCameraError": "카메라를 사용할 수 없습니다. 브라우저 설정에서 카메라 권한을 허용한 뒤 다시 열어주세요.",
+  "qrScan": "QR 코드를 찍어 기기를 등록하세요",
+  "qrScanCameraError": "카메라를 사용할 수 없어요. 브라우저 설정에서 카메라 권한을 허용한 뒤 다시 열어 주세요.",
   "qrScanCameraErrorTitle": "카메라를 쓸 수 없어요",
   "roomCurrent": "세탁실 바꾸기, 지금 {{room}}",
   "roomFree": "{{room}}, 빈 세탁기 {{washer}}대, 빈 건조기 {{dryer}}대",

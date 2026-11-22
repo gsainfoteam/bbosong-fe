@@ -80,7 +80,7 @@ export function Modal({
               type="button"
               variant={destructive ? 'danger' : 'primary'}
               autoFocus={hideCancel}
-              disabled={isPending}
+              loading={isPending}
               onClick={onConfirm}
             >
               {confirmText ?? t('modal.confirm')}

@@ -1,14 +1,14 @@
 {
-  "badRequest": "잘못된 요청입니다.",
-  "forbidden": "권한이 없습니다.",
-  "genderMismatch": "본인 성별과 다른 세탁실의 기기는 등록할 수 없습니다.",
-  "generic": "오류가 발생했습니다.",
-  "internalServerError": "서버 오류가 발생했습니다.",
-  "loginFailed": "로그인에 실패했습니다.",
-  "logoutFailed": "로그아웃에 실패했습니다.",
+  "badRequest": "요청이 올바르지 않아요.",
+  "forbidden": "권한이 없어요.",
+  "genderMismatch": "내 성별과 다른 세탁실의 기기는 등록할 수 없어요.",
+  "generic": "오류가 발생했어요.",
+  "internalServerError": "서버 오류가 발생했어요.",
+  "loginFailed": "로그인하지 못했어요.",
+  "logoutFailed": "로그아웃하지 못했어요.",
   "noIdpToken": "로그인 오류",
-  "notFound": "찾을 수 없습니다.",
+  "notFound": "찾을 수 없어요.",
   "refetch": "다시 시도",
-  "unauthorized": "로그인이 필요합니다.",
-  "withdrawFailed": "회원 탈퇴에 실패했습니다."
+  "unauthorized": "로그인이 필요해요.",
+  "withdrawFailed": "회원 탈퇴를 하지 못했어요."
 }

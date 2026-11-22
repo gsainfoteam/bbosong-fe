@@ -28,17 +28,15 @@ export function AdminLayout() {
     { to: '/admin/permissions', label: t('permissions'), icon: ShieldCheck },
   ] as const;
   return (
-    <div className="bg-bg text-text-primary min-h-dvh dark:bg-slate-950 dark:text-slate-100">
-      <aside className="border-border border-b bg-white lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-b-0 dark:border-slate-800 dark:bg-slate-900">
+    <div className="bg-surface text-ink min-h-dvh dark:bg-slate-950 dark:text-slate-100">
+      <aside className="border-line border-b bg-white lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-b-0 dark:border-slate-800 dark:bg-slate-900">
         <div className="flex items-center gap-3 px-6 py-7">
-          <span className="bg-primary flex size-10 items-center justify-center rounded-xl text-white">
+          <span className="bg-ink flex size-10 items-center justify-center rounded-xl text-white">
             <WashingMachine size={22} />
           </span>
           <div>
             <div className="text-lg font-bold tracking-tight">BBOSONG</div>
-            <div className="text-text-secondary mt-1 text-xs dark:text-slate-400">
-              {t('administration')}
-            </div>
+            <div className="text-ink-2 mt-1 text-xs dark:text-slate-400">{t('administration')}</div>
           </div>
         </div>
         <nav
@@ -51,12 +49,11 @@ export function AdminLayout() {
               to={to}
               activeOptions={{ exact: to === '/admin' }}
               activeProps={{
-                className: 'bg-primary-light text-primary dark:bg-blue-950 dark:text-blue-300',
+                className: 'bg-soft text-ink dark:bg-blue-950 dark:text-blue-300',
                 'aria-current': 'page',
               }}
               inactiveProps={{
-                className:
-                  'text-text-secondary hover:bg-bg dark:text-slate-400 dark:hover:bg-slate-800',
+                className: 'text-ink-2 hover:bg-soft dark:text-slate-400 dark:hover:bg-slate-800',
               }}
               className="flex shrink-0 items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium"
             >
@@ -65,24 +62,21 @@ export function AdminLayout() {
             </Link>
           ))}
         </nav>
-        <div className="border-border hidden border-t p-5 lg:mt-auto lg:block dark:border-slate-800">
-          <Link
-            to="/"
-            className="text-text-secondary flex items-center gap-2 text-sm dark:text-slate-400"
-          >
+        <div className="border-line hidden border-t p-5 lg:mt-auto lg:block dark:border-slate-800">
+          <Link to="/" className="text-ink-2 flex items-center gap-2 text-sm dark:text-slate-400">
             <ArrowLeft size={16} />
             {t('backToService')}
           </Link>
         </div>
       </aside>
       <div className="lg:ml-64">
-        <header className="border-border flex h-18 items-center justify-between gap-3 border-b bg-white px-5 sm:px-8 dark:border-slate-800 dark:bg-slate-900">
+        <header className="border-line flex h-18 items-center justify-between gap-3 border-b bg-white px-5 sm:px-8 dark:border-slate-800 dark:bg-slate-900">
           <span className="flex items-center gap-2 text-sm font-medium">
-            <ShieldCheck size={18} className="text-primary" />
+            <ShieldCheck size={18} className="text-ink" />
             {t('adminOnly')}
           </span>
           <div className="flex items-center gap-4">
-            <span className="text-text-secondary hidden text-sm sm:block dark:text-slate-400">
+            <span className="text-ink-2 hidden text-sm sm:block dark:text-slate-400">
               {user?.name}
             </span>
             <LanguageToggle />

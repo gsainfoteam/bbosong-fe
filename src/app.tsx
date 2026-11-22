@@ -4,9 +4,8 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from '@tanstack/react-router';
 
 import { AuthProvider, type TAuthConfig } from 'react-oauth2-code-pkce';
-import { Toaster } from 'sonner';
 
-import { SplashScreen, StoreDownloadModal } from '@/common/components';
+import { SplashScreen, StoreDownloadModal, Toaster } from '@/common/components';
 import { subscribeToNativeNotificationTap } from '@/common/lib/native-push';
 import { hideSplashScreen, isNativeApp, NATIVE_AUTH_REDIRECT_URI } from '@/common/lib/platform';
 import { useRestoreSession, useToken } from '@/features/auth';

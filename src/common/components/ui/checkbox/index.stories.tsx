@@ -189,7 +189,7 @@ export const WithRef: Story = {
         <button
           type="button"
           onClick={handleFocus}
-          className="rounded bg-blue-500 px-4 py-2 text-white"
+          className="rounded-chip bg-ink px-4 py-2 text-white"
         >
           포커스하기
         </button>
