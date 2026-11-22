@@ -188,19 +188,27 @@ public final class LiveUpdateNotifier {
         }
     }
 
-    /** 칩에 들어가는 7자 안팎의 문구. 건조기는 남은 분, 그 밖에는 상태 이름 */
-    private static String shortText(Context context, LiveUpdateMessage message, boolean overdue, long now) {
-        boolean running =
-            !LiveUpdateMessage.STATE_PAUSE.equals(message.state) &&
-            !LiveUpdateMessage.STATE_DETECTING.equals(message.state);
-        if (message.hasEndsAt() && running && !overdue) {
-            long minutes = Math.max(1, (message.endsAtSeconds * 1000 - now + 59_999) / 60_000);
-            return context.getString(R.string.live_update_minutes_short, minutes);
-        }
+    /**
+     * 칩에 들어가는 7자 안팎의 문구. 상태 이름이며, 건조 중 남은 시간은 `null`을 돌려준다.
+     * 남은 시간을 문자열로 넣으면 게시 시점 값으로 굳어 버리므로, 그때는 문구를 비워 시스템 카운트다운이 칩에 보이게 한다.
+     */
+    private static String shortText(Context context, LiveUpdateMessage message, boolean overdue) {
         if (LiveUpdateMessage.KIND_WASHER.equals(message.kind)) return context.getString(R.string.live_update_washing);
+
+        // `stateText`와 같은 우선순위: 냉각/일시정지/계산 중이 지연 판단보다 먼저다
+        switch (message.state) {
+            case LiveUpdateMessage.STATE_COOLING:
+                return context.getString(R.string.live_update_cooling);
+            case LiveUpdateMessage.STATE_PAUSE:
+                return context.getString(R.string.live_update_paused);
+            case LiveUpdateMessage.STATE_DETECTING:
+                return context.getString(R.string.live_update_calculating);
+            default:
+                break;
+        }
+
         if (overdue) return context.getString(R.string.live_update_almost_done);
-        if (LiveUpdateMessage.STATE_PAUSE.equals(message.state)) return context.getString(R.string.live_update_paused);
-        if (LiveUpdateMessage.STATE_COOLING.equals(message.state)) return context.getString(R.string.live_update_cooling);
+        if (message.hasEndsAt()) return null;
 
         return context.getString(R.string.live_update_drying);
     }
@@ -225,8 +233,9 @@ public final class LiveUpdateNotifier {
         extras.putLong(EXTRA_STARTED_AT, message.startedAtMillis() / 1000);
         // API 36.1+의 `Builder.setRequestPromotedOngoing(true)`와 같다. compileSdk 36에는 상수가 없어 키를 직접 쓴다
         extras.putBoolean(EXTRA_REQUEST_PROMOTED_ONGOING, true);
-        // 상태바 칩과 삼성 Now Bar(접힌 상태)에 표시되는 짧은 문구. 없으면 Now Bar가 알림을 올리지 않는 기기가 있다
-        extras.putCharSequence(EXTRA_SHORT_CRITICAL_TEXT, shortText(context, message, overdue, now));
+        // 상태바 칩과 삼성 Now Bar(접힌 상태)에 표시되는 짧은 문구. 건조 중 남은 시간은 비워 두어 카운트다운을 쓴다
+        String shortText = shortText(context, message, overdue);
+        if (shortText != null) extras.putCharSequence(EXTRA_SHORT_CRITICAL_TEXT, shortText);
 
         Notification.Builder builder = new Notification.Builder(context, CHANNEL_PROGRESS)
             .setSmallIcon(R.drawable.ic_stat_notification)
