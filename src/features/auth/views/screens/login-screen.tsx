@@ -9,11 +9,11 @@ export function LoginScreen({ onLogin, isPending = false, className }: LoginScre
   const { t } = useTranslation('auth');
 
   return (
-    <div className={cn('bg-surface flex min-h-dvh flex-1 flex-col', className)}>
-      <div className="flex h-12 items-center justify-end px-4">
+    <div className={cn('bg-surface relative flex min-h-dvh flex-1 flex-col', className)}>
+      <div className="absolute inset-x-0 top-0 flex h-12 items-center justify-end px-4">
         <LanguageButton />
       </div>
-      <div className="flex flex-1 flex-col items-center pt-[clamp(40px,17dvh,144px)]">
+      <div className="flex flex-1 flex-col items-center justify-center py-12">
         <BrandMark size={112} />
         <h1 className="mt-6 text-[34px] leading-[1.2] font-extrabold tracking-[-0.035em]">
           {t('bbosong')}
