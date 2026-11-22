@@ -4,7 +4,7 @@ import { createFileRoute, Outlet, useRouter, useRouterState } from '@tanstack/re
 
 import { z } from 'zod';
 
-import { SplashScreen } from '@/common/components';
+import { Layout, SplashScreen } from '@/common/components';
 import { useAuth, useAuthPrompt, useAuthRedirect, useToken } from '@/features/auth';
 
 const redirectSearchSchema = z
@@ -91,10 +91,16 @@ function AuthLayout() {
     }
   }, [idpToken, token, canResumeConsentFlow, logIn, logInMutation.isPending]);
 
+  const content = (
+    <Layout>
+      <Outlet />
+    </Layout>
+  );
+
   if (user === undefined) {
-    if (canResumeConsentFlow) return <Outlet />;
+    if (canResumeConsentFlow) return content;
     return <SplashScreen />;
   }
   if (user !== null) return <Redirect />;
-  return <Outlet />;
+  return content;
 }

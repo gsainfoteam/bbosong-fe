@@ -1,10 +1,44 @@
-import type { SubmitEventHandler } from 'react';
+import { type SubmitEventHandler } from 'react';
 
 import { ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { BrandMark, Button, Checkbox, LanguageToggle } from '@/common/components';
+import { BrandMark, Button, Checkbox, LanguageButton } from '@/common/components';
 import { cn } from '@/common/utils';
+
+function ConsentRow({
+  label,
+  viewLabel,
+  checked,
+  onChange,
+  onView,
+}: {
+  label: string;
+  viewLabel: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  onView: () => void;
+}) {
+  const { t } = useTranslation('auth');
+
+  return (
+    <div className="flex min-h-11 items-center">
+      <label className="flex h-11 min-w-0 flex-1 cursor-pointer items-center gap-3 text-[15px] font-medium">
+        <Checkbox checked={checked} onChange={(e) => onChange(e.target.checked)} />
+        {label}
+        <span className="text-ink-3 text-[12.5px] font-bold">{t('consent.required')}</span>
+      </label>
+      <button
+        type="button"
+        onClick={onView}
+        aria-label={viewLabel}
+        className="text-ink-3 rounded-tile active:bg-soft -mr-2.5 grid size-11 place-items-center"
+      >
+        <ChevronRight size={20} strokeWidth={2.2} aria-hidden />
+      </button>
+    </div>
+  );
+}
 
 export function ConsentScreen({
   allChecked,
@@ -17,78 +51,49 @@ export function ConsentScreen({
   onTosTermsClick,
   onSubmit,
   isSubmitDisabled,
+  className,
 }: ConsentScreen.Props) {
   const { t } = useTranslation('auth');
 
   return (
-    <form onSubmit={onSubmit} className="bg-bg relative flex h-dvh flex-col px-6 pt-8 pb-8">
-      <div className="absolute top-4 right-4">
-        <LanguageToggle />
+    <form
+      onSubmit={onSubmit}
+      className={cn('bg-surface flex min-h-dvh flex-1 flex-col', className)}
+    >
+      <div className="flex h-12 items-center justify-end px-4">
+        <LanguageButton />
       </div>
-      <div className="mx-auto flex h-full w-full max-w-md flex-col">
-        <div className="flex flex-1 flex-col items-center justify-center gap-4">
-          <BrandMark size={120} />
-          <h1 className="text-display text-center leading-tight font-bold whitespace-pre-line">
-            {t('consent.title')}
-          </h1>
+      <div className="px-6">
+        <BrandMark size={44} className="mt-3" />
+        <h1 className="mt-5 text-[26px] leading-[1.3] font-extrabold tracking-[-0.03em] text-balance">
+          {t('consent.title')}
+        </h1>
+        <div className="mt-9">
+          <ConsentRow
+            label={t('consent.privacyPolicy')}
+            viewLabel={t('consent.viewPrivacyPolicy')}
+            checked={privacyChecked}
+            onChange={onPrivacyChange}
+            onView={onPrivacyTermsClick}
+          />
+          <ConsentRow
+            label={t('consent.termsOfService')}
+            viewLabel={t('consent.viewTermsOfService')}
+            checked={tosChecked}
+            onChange={onTosChange}
+            onView={onTosTermsClick}
+          />
+          <label className="border-line mt-2 flex h-16 cursor-pointer items-center gap-3 border-t text-[18px] font-extrabold tracking-[-0.025em]">
+            <Checkbox checked={allChecked} onChange={(e) => onAllChange(e.target.checked)} />
+            {t('consent.agreeAll')}
+          </label>
         </div>
+      </div>
 
-        <div className="flex flex-col gap-6">
-          <div>
-            <label
-              className={cn(
-                'flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition-colors',
-                allChecked ? 'border-primary' : 'border-border',
-              )}
-            >
-              <Checkbox checked={allChecked} onChange={(e) => onAllChange(e.target.checked)} />
-              <span className="text-body-lg font-semibold">{t('consent.agreeAll')}</span>
-            </label>
-
-            <div className="mt-4 flex flex-col gap-2">
-              <label className="flex cursor-pointer items-center gap-3 rounded-lg px-1 py-1">
-                <Checkbox
-                  checked={privacyChecked}
-                  onChange={(e) => onPrivacyChange(e.target.checked)}
-                />
-                <span className="text-body-lg flex-1 font-medium">
-                  {t('consent.privacyPolicy')}
-                  <span className="text-primary ml-1">*</span>
-                </span>
-                <button
-                  type="button"
-                  onClick={onPrivacyTermsClick}
-                  className="flex items-center"
-                  aria-label={t('consent.viewPrivacyPolicy')}
-                >
-                  <ChevronRight size={20} className="text-icon" />
-                </button>
-              </label>
-
-              <label className="flex cursor-pointer items-center gap-3 rounded-lg px-1 py-1">
-                <Checkbox checked={tosChecked} onChange={(e) => onTosChange(e.target.checked)} />
-                <span className="text-body-lg flex-1 font-medium">
-                  {t('consent.termsOfService')}
-                  <span className="text-primary ml-1">*</span>
-                </span>
-                <button
-                  type="button"
-                  onClick={onTosTermsClick}
-                  className="flex items-center"
-                  aria-label={t('consent.viewTermsOfService')}
-                >
-                  <ChevronRight size={20} className="text-icon" />
-                </button>
-              </label>
-            </div>
-          </div>
-
-          <div>
-            <Button type="submit" size="l" wide disabled={isSubmitDisabled}>
-              {t('consent.next')}
-            </Button>
-          </div>
-        </div>
+      <div className="pb-cta mt-auto px-5 pt-6">
+        <Button type="submit" size="l" wide disabled={isSubmitDisabled}>
+          {t('consent.next')}
+        </Button>
       </div>
     </form>
   );
@@ -106,5 +111,6 @@ export namespace ConsentScreen {
     onTosTermsClick: () => void;
     onSubmit: SubmitEventHandler<HTMLFormElement>;
     isSubmitDisabled: boolean;
+    className?: string;
   };
 }
