@@ -2,11 +2,12 @@
   "bbosong": "Bbosong",
   "goBack": "Back",
   "index": "Index",
+  "language": "Language",
   "modal": {
     "cancel": "Cancel",
     "confirm": "Confirm"
   },
-  "myPage": "My Page",
+  "myPage": "My info",
   "refresh": "Refresh",
   "storeDownload": {
     "description": "Get laundry room status alerts in the app.",

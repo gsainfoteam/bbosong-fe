@@ -5,6 +5,7 @@ export function ToggleSelect({
   stateList,
   state,
   onChange,
+  label,
   className,
 }: ToggleSelect.Props) {
   // stateList 및 state의 정합성 가드 검사
@@ -18,6 +19,7 @@ export function ToggleSelect({
   return (
     <div
       role="radiogroup"
+      aria-label={label}
       className={cn(
         'bg-soft rounded-tile relative inline-flex w-full max-w-sm p-1 select-none',
         !available && 'opacity-40',
@@ -64,6 +66,8 @@ export namespace ToggleSelect {
     stateList: string[];
     state: string;
     onChange: (state: string) => void;
+    /** 선택지 묶음의 이름(접근성 라벨) */
+    label?: string;
     className?: string;
   };
 }

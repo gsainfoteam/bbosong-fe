@@ -2,11 +2,12 @@
   "bbosong": "뽀송",
   "goBack": "돌아가기",
   "index": "홈",
+  "language": "언어",
   "modal": {
     "cancel": "취소",
     "confirm": "확인"
   },
-  "myPage": "마이 페이지",
+  "myPage": "내 정보",
   "refresh": "새로고침",
   "storeDownload": {
     "description": "앱에서 세탁실 현황 알림을 받을 수 있어요.",

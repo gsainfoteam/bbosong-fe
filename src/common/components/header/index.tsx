@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 
-import { Menu, RefreshCw, X } from 'lucide-react';
+import { ArrowLeft, RefreshCw, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/common/utils';
@@ -29,7 +29,7 @@ export const Header = ({ onRefresh, isRefreshing = false, className, ...props }:
         )}
         <IconButton asChild label={t('myPage')}>
           <Link to="/mypage">
-            <Menu size={22} aria-hidden />
+            <User size={22} aria-hidden />
           </Link>
         </IconButton>
       </div>
@@ -40,10 +40,10 @@ export const Header = ({ onRefresh, isRefreshing = false, className, ...props }:
 export const MyPageHeader = () => {
   const { t } = useTranslation('common');
   return (
-    <header className="text-ink flex w-full flex-row-reverse px-4 py-2">
+    <header className="text-ink flex h-14 w-full items-center px-2">
       <IconButton asChild label={t('index')}>
         <Link to="/">
-          <X aria-hidden />
+          <ArrowLeft size={22} aria-hidden />
         </Link>
       </IconButton>
     </header>
