@@ -8,6 +8,7 @@ import { AuthProvider, type TAuthConfig } from 'react-oauth2-code-pkce';
 import { SplashScreen, StoreDownloadModal, Toaster } from '@/common/components';
 import { subscribeToNativeNotificationTap } from '@/common/lib/native-push';
 import { hideSplashScreen, isNativeApp, NATIVE_AUTH_REDIRECT_URI } from '@/common/lib/platform';
+import { useButtonHaptic } from '@/common/viewmodels';
 import { useRestoreSession, useToken } from '@/features/auth';
 
 import { queryClient, router } from './router';
@@ -40,6 +41,8 @@ const authConfig: TAuthConfig = {
 };
 
 export function App() {
+  useButtonHaptic();
+
   return (
     <QueryClientProvider client={queryClient}>
       <Toaster />
