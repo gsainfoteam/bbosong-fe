@@ -149,6 +149,13 @@ export function MainFrame() {
   const machines = useMemo<MachineBox.Props['machine'][]>(() => {
     if (!allMachines) return [];
 
+    // 내가 등록한 기기는 아이콘에 표식을 달아 구분한다
+    const mineKeys = new Set(
+      usingMachines
+        .filter((using) => using.location === currentLocation)
+        .map((using) => `${using.machine.type}-${using.machine.id}`),
+    );
+
     return allMachines
       .filter(
         (machine) =>
@@ -166,10 +173,11 @@ export function MainFrame() {
           status,
           elapsedMinutes: getMachineElapsedMinutes(machine.currentUsage?.startedAt, now),
           remainingDisplay: getMachineRemainingDisplay(machine),
+          mine: mineKeys.has(`${type}-${machine.index}`),
         };
       })
       .sort((a, b) => a.id - b.id);
-  }, [allMachines, currentLocation, now, user?.gender]);
+  }, [allMachines, currentLocation, now, user?.gender, usingMachines]);
 
   const usingMachineList = {
     machineList: usingMachines,
