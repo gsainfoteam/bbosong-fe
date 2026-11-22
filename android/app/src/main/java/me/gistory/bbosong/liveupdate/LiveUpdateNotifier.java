@@ -254,7 +254,11 @@ public final class LiveUpdateNotifier {
         // 같은 가동의 같은 종료 이벤트가 재전송되면(완료 알림을 이미 치웠어도) 다시 울리지 않는다
         SharedPreferences prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         String doneKey = message.state + ":" + message.startedAtMillis() / 1000;
-        if (doneKey.equals(prefs.getString(message.machineUuid + ".done", null))) return;
+        if (doneKey.equals(prefs.getString(message.machineUuid + ".done", null))) {
+            // 알림음은 생략하되, 그 사이 다시 게시된 진행 알림이 남지 않게 치운다
+            manager.cancel(message.machineUuid, ID_PROGRESS);
+            return;
+        }
         prefs.edit().putString(message.machineUuid + ".done", doneKey).apply();
 
         ensureChannels(context, manager);
