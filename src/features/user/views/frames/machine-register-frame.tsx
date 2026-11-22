@@ -7,11 +7,19 @@ import { useTranslation } from 'react-i18next';
 import { BottomSheet, Button } from '@/common/components';
 import { PushPermissionCard, usePushPermission } from '@/features/push-notification';
 import { MachineCompletionDialog, MachineRegisterScreen } from '@/features/user';
-import { useFindMachineByUuid, useRegisterMachine } from '@/features/user/viewmodels';
+import {
+  toMachineIdentity,
+  useFindMachineByUuid,
+  useMachineViews,
+  useRegisterMachine,
+} from '@/features/user/viewmodels';
+
+import { useRoomNames } from './use-room-selection';
 
 export function MachineRegisterFrame() {
   const navigate = useNavigate();
-  const { t } = useTranslation('notification');
+  const { t } = useTranslation(['notification', 'main']);
+  const roomNames = useRoomNames();
   const { status } = usePushPermission();
   const [showPermission, setShowPermission] = useState(false);
   const { machineUuid } = useParams({
@@ -19,6 +27,7 @@ export function MachineRegisterFrame() {
   });
 
   const { machine, isNotFound } = useFindMachineByUuid(machineUuid);
+  const { views } = useMachineViews();
   const {
     mutate: registerMachine,
     isPending,
@@ -39,18 +48,17 @@ export function MachineRegisterFrame() {
     }
   }, [navigate, showPermission, status]);
 
-  const closePermission = () => {
+  const goHome = () => {
     void navigate({ to: '/' });
   };
 
   if (isNotFound || !machine) return null;
 
-  const machineData = {
-    type: machine.type.toLowerCase() as 'washer' | 'dryer',
-    id: machine.index,
+  const identity = toMachineIdentity(machine);
+  const view: MachineRegisterScreen.Machine = views.find((item) => item.uuid === machineUuid) ?? {
+    ...identity,
+    state: 'loading',
   };
-
-  const location = machine.location.toLowerCase() as 'a' | 'b';
 
   const register = () => {
     registerMachine({ params: { path: { uuid: machineUuid } } });
@@ -59,9 +67,10 @@ export function MachineRegisterFrame() {
   return (
     <>
       <MachineRegisterScreen
-        machine={machineData}
-        location={location}
+        machine={view}
+        roomTitle={t('main:roomTitle', roomNames(identity.location, identity.gender))}
         onRegister={register}
+        onBack={goHome}
         isPending={isPending}
       />
       {confirmation && (
@@ -73,16 +82,16 @@ export function MachineRegisterFrame() {
       )}
       <BottomSheet
         open={showPermission}
-        onClose={closePermission}
-        aria-label={t('permission.completionTitle')}
+        onClose={goHome}
+        aria-label={t('notification:permission.completionTitle')}
       >
         <PushPermissionCard presentation="sheet" />
         <Button
           type="button"
-          onClick={closePermission}
+          onClick={goHome}
           className="text-text-secondary mt-3 w-full border-0 py-3 text-sm"
         >
-          {t('permission.later')}
+          {t('notification:permission.later')}
         </Button>
       </BottomSheet>
     </>

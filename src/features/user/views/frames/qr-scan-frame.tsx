@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useRouter } from '@tanstack/react-router';
 
 import { useResolveMachineShortlink } from '../../viewmodels';
 import { QrScanScreen } from '../screens';
@@ -15,6 +15,7 @@ import {
 export function QrScanFrame() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const navigate = useNavigate();
+  const router = useRouter();
   const resolveMachineShortlink = useResolveMachineShortlink();
   const [isCameraError, setIsCameraError] = useState(false);
 
@@ -119,5 +120,10 @@ export function QrScanFrame() {
     };
   }, [navigate, resolveMachineShortlink]);
 
-  return <QrScanScreen videoRef={videoRef} isCameraError={isCameraError} />;
+  const onClose = () => {
+    if (router.history.canGoBack()) router.history.back();
+    else void navigate({ to: '/', replace: true });
+  };
+
+  return <QrScanScreen videoRef={videoRef} isCameraError={isCameraError} onClose={onClose} />;
 }

@@ -1,19 +1,20 @@
-import { QrScanScreen } from '.';
+import { QrScanScreen } from './qr-scan-screen';
+import { PHONE } from './story-fixtures';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-const meta: Meta<typeof QrScanScreen> = {
-  title: 'User/QrScanScreen',
+const meta = {
+  title: 'User/Screens/QrScan',
   component: QrScanScreen,
-  tags: ['autodocs'],
-};
+  parameters: { layout: 'fullscreen' },
+  globals: PHONE,
+  args: { videoRef: null, onClose: () => console.log('Close') },
+} satisfies Meta<typeof QrScanScreen>;
 
 export default meta;
-type Story = StoryObj<typeof QrScanScreen>;
+type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: {},
-};
+export const Scanning: Story = {};
 
 export const CameraError: Story = {
   args: { isCameraError: true },

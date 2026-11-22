@@ -4,7 +4,6 @@ export * from './laundry-room-map/index';
 export * from './machine-cell/index';
 export * from './machine-completion-dialog/index';
 export * from './machine-list/index';
-export * from './machine-register-message/index';
 export * from './machine-vessel/index';
 export * from './my-laundry-card/index';
 export * from './room-sheet/index';

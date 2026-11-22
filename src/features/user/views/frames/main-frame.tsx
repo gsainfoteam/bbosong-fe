@@ -1,6 +1,5 @@
-import { useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 
-import { AnimatePresence, motion, type PanInfo } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -25,11 +24,7 @@ import {
 
 import { type GetRoomNotificationButton, RoomSheet } from '../components';
 import { MainScreen } from '../screens';
-import { QrScanFrame } from './qr-scan-frame';
 import { type Location, useRoomSelection } from './use-room-selection';
-
-const SHEET_CLOSE_OFFSET = 120;
-const SHEET_CLOSE_VELOCITY = 500;
 
 const ALERT_LOCATION: Record<Location, AlertLocation> = {
   a: AlertLocation.A,
@@ -93,15 +88,8 @@ export function MainFrame() {
 
   const { isRefreshing, refresh } = useRefreshMainData();
 
-  const [isQrOpen, setIsQrOpen] = useState(false);
-
-  const onOpenQrScan = () => setIsQrOpen(true);
-  const onCloseQrScan = () => setIsQrOpen(false);
-
-  // 일정 거리 이상 끌어내리거나 빠르게 내리면 닫는다
-  const onDragEndQrScan = (_: PointerEvent, { offset, velocity }: PanInfo) => {
-    if (offset.y > SHEET_CLOSE_OFFSET || velocity.y > SHEET_CLOSE_VELOCITY) onCloseQrScan();
-  };
+  const navigate = useNavigate();
+  const onOpenQrScan = () => void navigate({ to: '/machine-register' });
 
   const {
     views,
@@ -224,35 +212,6 @@ export function MainFrame() {
         roomNotification={roomNotification}
       />
       <RoomSheet {...roomSheet} />
-      <AnimatePresence>
-        {isQrOpen && (
-          <>
-            {/* 배경 클릭 시 닫기 */}
-            <motion.div
-              className="fixed inset-0 bg-black/40"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={onCloseQrScan}
-            />
-            {/* QrScanFrame은 마운트 시 카메라를 켜고 언마운트 시 끈다 */}
-            <motion.div
-              className="fixed inset-x-0 bottom-0 mx-auto max-w-120 touch-none"
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              drag="y"
-              dragConstraints={{ top: 0, bottom: 0 }}
-              dragElastic={{ top: 0, bottom: 1 }}
-              onDragEnd={onDragEndQrScan}
-            >
-              <div className="bg-border absolute top-5 left-1/2 h-1.5 w-12 -translate-x-1/2 rounded-full" />
-              <QrScanFrame />
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
     </>
   );
 }
