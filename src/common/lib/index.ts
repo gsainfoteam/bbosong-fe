@@ -8,3 +8,4 @@ export * from './native-storage';
 export * from './native-push';
 export * from './live-activity';
 export * from './native-update';
+export * from './haptic';

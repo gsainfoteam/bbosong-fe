@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useNavigate, useRouter } from '@tanstack/react-router';
 
+import { haptic } from '@/common/lib/haptic';
+
 import { useResolveMachineShortlink } from '../../viewmodels';
 import { QrScanScreen } from '../screens';
 import { createQrDecodeEngine } from './qr-decode-engine';
@@ -74,6 +76,7 @@ export function QrScanFrame() {
                   const machineUuid = await resolveMachineShortlink(data, controller.signal);
                   if (machineUuid && !controller.signal.aborted) {
                     stopQrCamera(video);
+                    haptic.success();
                     await navigate({
                       to: '/machine-register/$machineUuid',
                       params: { machineUuid },

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { SplashScreen } from '@/common/components';
+import { haptic } from '@/common/lib/haptic';
 import { ErrorPage } from '@/common/pages';
 import { type Gender } from '@/features/auth';
 import {
@@ -131,7 +132,7 @@ export function MainFrame() {
   const onMachineLongPress =
     user?.role === 'admin'
       ? ({ uuid }: MachineView) => {
-          navigator.vibrate?.(15);
+          haptic.medium();
           void navigate({ to: '/machine-register/$machineUuid', params: { machineUuid: uuid } });
         }
       : undefined;
