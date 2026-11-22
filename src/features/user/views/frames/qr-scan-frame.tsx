@@ -16,6 +16,10 @@ import {
   waitForStableVideoSize,
 } from './qr-scan-settings';
 
+function nextPaint(): Promise<void> {
+  return new Promise((resolve) => requestAnimationFrame(() => resolve()));
+}
+
 export function QrScanFrame() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const navigate = useNavigate();
@@ -113,6 +117,15 @@ export function QrScanFrame() {
           signal: controller.signal,
           nextFrame: nextVideoFrame(video),
         });
+        if (controller.signal.aborted) return;
+        // iOS가 합성 레이어를 새 크기로 갱신할 때까지 리플로우를 강제하고 두 프레임 더 기다린다.
+        // 레이어가 처음 크기로 굳어 있으면 영상이 박스 폭 띠로만 보이므로 display를 껐다 켜서 레이어를 새로 만든다.
+        video.style.display = 'none';
+        void video.offsetHeight;
+        video.style.display = '';
+        void video.offsetHeight;
+        await nextPaint();
+        await nextPaint();
         if (controller.signal.aborted) return;
         setIsCameraReady(true);
         const engine = await enginePromise;
