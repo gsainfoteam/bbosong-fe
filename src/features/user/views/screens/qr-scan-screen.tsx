@@ -35,9 +35,14 @@ export function QrScanScreen({
             ref={videoRef}
             muted
             playsInline
+            className="absolute inset-0 h-full w-full transform-gpu bg-[#2a2c31] object-cover"
+          />
+          {/* video에 opacity 전환을 걸면 iOS가 합성 레이어를 이전 크기로 남겨 화면이 잘린다. 덮개로 대신 가린다. */}
+          <div
+            aria-hidden
             className={cn(
-              'absolute inset-0 size-full bg-[#2a2c31] object-cover transition-opacity duration-200',
-              isCameraReady ? 'opacity-100' : 'opacity-0',
+              'pointer-events-none absolute inset-0 bg-[#2a2c31] transition-opacity duration-200',
+              isCameraReady ? 'opacity-0' : 'opacity-100',
             )}
           />
           <div
