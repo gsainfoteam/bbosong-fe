@@ -78,6 +78,8 @@ export function shouldApplyUpdate(
   if (manifest.version === context.currentVersion) return false;
   // 새 번들이 쓰는 네이티브 기능이 이 바이너리에 없을 수 있다. 스토어 업데이트가 먼저 필요하다
   if (!isVersionAtLeast(context.nativeVersion, manifest.minNativeVersion)) return false;
+  // 네이티브 버전은 package.json 버전을 따라가므로, 번들의 앱 버전이 더 낮으면 다운그레이드가 된다
+  if (!isVersionAtLeast(manifest.version.split('-')[0], context.nativeVersion)) return false;
   // 이미 받았거나(다음 실행 대기), 받아서 적용했지만 롤백된 버전은 다시 받지 않는다
   if (manifest.version === context.attemptedVersion) return false;
 

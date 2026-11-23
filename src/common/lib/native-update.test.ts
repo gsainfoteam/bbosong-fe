@@ -67,6 +67,10 @@ describe('shouldApplyUpdate', () => {
     expect(shouldApplyUpdate(manifest, { ...context, nativeVersion: '0.3.14' })).toBe(false);
   });
 
+  it('skips when the bundle is older than the native app', () => {
+    expect(shouldApplyUpdate(manifest, { ...context, nativeVersion: '0.3.16' })).toBe(false);
+  });
+
   it('skips a version that was already attempted', () => {
     expect(shouldApplyUpdate(manifest, { ...context, attemptedVersion: manifest.version })).toBe(
       false,
