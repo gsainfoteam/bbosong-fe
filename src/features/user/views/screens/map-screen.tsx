@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react';
+
 import { pick } from 'es-toolkit';
 import { ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +10,63 @@ import { MapMarker, useMachineText } from '@/features/user';
 import { type LaundryRoomLayout, type MachineView } from '@/features/user/viewmodels';
 
 const pct = (ratio: number) => `${ratio * 100}%`;
+
+type Rect = { left: number; top: number; width: number; height: number };
+
+const MARKER = 40;
+const CALLOUT_HEIGHT = 26;
+const CALLOUT_GAP = 12;
+const EDGE = 6;
+
+const overlaps = (a: Rect, b: Rect) =>
+  a.left < b.left + b.width &&
+  b.left < a.left + a.width &&
+  a.top < b.top + b.height &&
+  b.top < a.top + a.height;
+
+// 글자 폭을 대략 추정한다 (한글 12px, 그 외 7px, 좌우 패딩 20px)
+const estimateWidth = (label: string) =>
+  [...label].reduce((sum, char) => sum + (char.charCodeAt(0) > 0x7f ? 12 : 7), 20);
+
+// 말풍선을 옆(기본) → 반대쪽 → 아래 → 위 순서로 시도해, 다른 마커나 지도 밖과 겹치지 않는 첫 위치를 고른다
+function placeCallout(
+  center: { x: number; y: number },
+  width: number,
+  others: { x: number; y: number }[],
+  canvas: { width: number; height: number },
+): Rect {
+  const { x, y } = center;
+  const side = (dir: 1 | -1): Rect => ({
+    left: dir === 1 ? x + MARKER / 2 + CALLOUT_GAP : x - MARKER / 2 - CALLOUT_GAP - width,
+    top: y - CALLOUT_HEIGHT / 2,
+    width,
+    height: CALLOUT_HEIGHT,
+  });
+  const vertical = (dir: 1 | -1): Rect => ({
+    left: x - width / 2,
+    top: dir === 1 ? y + MARKER / 2 + CALLOUT_GAP : y - MARKER / 2 - CALLOUT_GAP - CALLOUT_HEIGHT,
+    width,
+    height: CALLOUT_HEIGHT,
+  });
+
+  const preferred = x < canvas.width / 2 ? 1 : -1;
+  const candidates = [side(preferred), side(preferred === 1 ? -1 : 1), vertical(1), vertical(-1)];
+  const obstacles = others.map((other) => ({
+    left: other.x - MARKER / 2 - 3,
+    top: other.y - MARKER / 2 - 3,
+    width: MARKER + 6,
+    height: MARKER + 6,
+  }));
+
+  const fits = (rect: Rect) =>
+    rect.left >= EDGE &&
+    rect.top >= EDGE &&
+    rect.left + rect.width <= canvas.width - EDGE &&
+    rect.top + rect.height <= canvas.height - EDGE &&
+    obstacles.every((obstacle) => !overlaps(rect, obstacle));
+
+  return candidates.find(fits) ?? candidates[0];
+}
 
 function Legend() {
   const { t } = useTranslation(['main', 'machine']);
@@ -41,6 +100,19 @@ export function MapScreen({ room, layout, spots, onBack, className }: MapScreen.
   const { door, windows, aspect = 350 / 500 } = layout;
   const { t } = useTranslation('main');
   const text = useMachineText();
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const [canvasWidth, setCanvasWidth] = useState(440);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const observer = new ResizeObserver(([entry]) => setCanvasWidth(entry.contentRect.width));
+    observer.observe(canvas);
+    return () => observer.disconnect();
+  }, []);
+
+  const canvas = { width: canvasWidth, height: canvasWidth / aspect };
+
   const mine = spots.filter(({ machine }) => machine.mine).map(({ machine }) => machine);
 
   const remaining = (machine: MachineView) =>
@@ -69,6 +141,7 @@ export function MapScreen({ room, layout, spots, onBack, className }: MapScreen.
         )}
 
         <div
+          ref={canvasRef}
           role="list"
           aria-label={t('map.label', { room: room.title })}
           style={{ aspectRatio: aspect }}
@@ -116,20 +189,29 @@ export function MapScreen({ room, layout, spots, onBack, className }: MapScreen.
 
           {spots
             .filter(({ machine }) => machine.mine)
-            .map(({ machine, x, y }) => (
-              <span
-                key={`${machine.uuid}-callout`}
-                aria-hidden
-                className="bg-ink absolute flex h-[26px] -translate-y-1/2 items-center rounded-full px-2.5 text-[12px] font-bold whitespace-nowrap text-white"
-                style={
-                  x < 0.5
-                    ? { top: pct(y), left: `calc(${pct(x)} + 32px)` }
-                    : { top: pct(y), right: `calc(${pct(1 - x)} + 32px)` }
-                }
-              >
-                {t('map.callout', { time: remaining(machine) })}
-              </span>
-            ))}
+            .map(({ machine, x, y }) => {
+              const label = t('map.callout', { time: remaining(machine) });
+              const others = spots
+                .filter((spot) => spot.machine.uuid !== machine.uuid)
+                .map((spot) => ({ x: spot.x * canvas.width, y: spot.y * canvas.height }));
+              const rect = placeCallout(
+                { x: x * canvas.width, y: y * canvas.height },
+                estimateWidth(label),
+                others,
+                canvas,
+              );
+
+              return (
+                <span
+                  key={`${machine.uuid}-callout`}
+                  aria-hidden
+                  className="bg-ink absolute flex h-[26px] items-center rounded-full px-2.5 text-[12px] font-bold whitespace-nowrap text-white"
+                  style={{ left: rect.left, top: rect.top }}
+                >
+                  {label}
+                </span>
+              );
+            })}
         </div>
 
         <Legend />
