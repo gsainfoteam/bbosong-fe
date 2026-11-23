@@ -38,7 +38,7 @@ function Legend() {
 }
 
 export function MapScreen({ room, layout, spots, onBack, className }: MapScreen.Props) {
-  const { door, windows } = layout;
+  const { door, windows, aspect = 350 / 500 } = layout;
   const { t } = useTranslation('main');
   const text = useMachineText();
   const mine = spots.filter(({ machine }) => machine.mine).map(({ machine }) => machine);
@@ -71,7 +71,8 @@ export function MapScreen({ room, layout, spots, onBack, className }: MapScreen.
         <div
           role="list"
           aria-label={t('map.label', { room: room.title })}
-          className="bg-soft rounded-card relative mt-4.5 aspect-[350/500] w-full bg-[linear-gradient(rgb(27_29_33/0.045)_1px,transparent_1px),linear-gradient(90deg,rgb(27_29_33/0.045)_1px,transparent_1px)] bg-size-[25px_25px] shadow-[inset_0_0_0_6px_#dadce0]"
+          style={{ aspectRatio: aspect }}
+          className="bg-soft rounded-card relative mt-4.5 w-full bg-[linear-gradient(rgb(27_29_33/0.045)_1px,transparent_1px),linear-gradient(90deg,rgb(27_29_33/0.045)_1px,transparent_1px)] bg-size-[25px_25px] shadow-[inset_0_0_0_6px_#dadce0]"
         >
           {windows.map((window) => (
             <span
@@ -88,12 +89,19 @@ export function MapScreen({ room, layout, spots, onBack, className }: MapScreen.
           />
           <span
             className="border-off-rim absolute right-2 aspect-square rounded-bl-full border-b-[1.4px] border-l-[1.4px] border-dashed"
-            style={{ top: pct(door.top), height: pct(door.height) }}
+            style={{ top: pct(door.top), height: pct(door.double ? door.height / 2 : door.height) }}
           >
             <span className="text-ink-3 absolute top-3/4 right-full mr-1.5 -translate-y-1/2 text-[12px] font-bold whitespace-nowrap">
               {t('map.door')}
             </span>
           </span>
+          {door.double && (
+            <span
+              aria-hidden
+              className="border-off-rim absolute right-2 aspect-square rounded-tl-full border-t-[1.4px] border-l-[1.4px] border-dashed"
+              style={{ top: pct(door.top + door.height / 2), height: pct(door.height / 2) }}
+            />
+          )}
 
           {spots.map(({ machine, x, y }) => (
             <MapMarker
@@ -136,7 +144,7 @@ export namespace MapScreen {
   export type Props = {
     room: { title: string; onOpen: () => void };
     spots: Spot[];
-    layout: Pick<LaundryRoomLayout, 'door' | 'windows'>;
+    layout: Pick<LaundryRoomLayout, 'door' | 'windows' | 'aspect'>;
     onBack: () => void;
     className?: string;
   };
