@@ -49,6 +49,7 @@ const buildVersion = resolveBuildVersion();
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
+
   return {
     define: {
       __APP_VERSION__: JSON.stringify(packageJson.version),

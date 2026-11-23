@@ -24,7 +24,7 @@ export function MapFrame() {
   } = useMachineViews(usingMachines);
 
   const { location, current, room, sheet } = useRoomSelection(views, user?.gender);
-  const { layout } = useFindMap(location);
+  const { layout } = useFindMap(location, user?.gender);
 
   const spots = layout.spots.flatMap((spot) => {
     const machine = current.find((view) => view.type === spot.type && view.id === spot.id);

@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 
-import { RefreshCw, UserRound } from 'lucide-react';
+import { Map, RefreshCw, UserRound } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/common/utils';
@@ -33,6 +33,11 @@ export const Header = ({ onRefresh, isRefreshing = false, className, ...props }:
             <RefreshCw size={20} className={cn(isRefreshing && 'animate-spin')} aria-hidden />
           </IconButton>
         )}
+        <IconButton asChild label={t('map')}>
+          <Link to="/map">
+            <Map size={20} aria-hidden />
+          </Link>
+        </IconButton>
         <IconButton asChild label={t('myPage')}>
           <Link to="/mypage">
             <UserRound size={20} aria-hidden />
