@@ -5,9 +5,10 @@ const config: CapacitorConfig = {
   appName: '뽀송',
   webDir: 'dist',
   ios: {
-    // 기본값(never)은 WebView가 상태바/홈 인디케이터 뒤까지 그려져 헤더 탭이 상태바에 가려진다
-    contentInset: 'always',
-    // safe area 바깥(상태바/홈 인디케이터 뒤)에 보이는 색. styles.css의 --color-bg와 맞춘다
+    // WebView가 상태바/홈 인디케이터 뒤까지 그리고, safe area는 웹이 env(safe-area-inset-*)로 채운다.
+    // 'always'는 네이티브 inset 영역이 투명해 스크롤되는 본문이 상태바 뒤로 비친다
+    contentInset: 'never',
+    // WebView가 로드되기 전(스플래시 전환 등)에 보이는 색. styles.css의 --color-bg와 맞춘다
     backgroundColor: '#f7f8fa',
   },
   experimental: {

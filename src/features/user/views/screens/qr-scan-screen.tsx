@@ -43,7 +43,7 @@ export function QrScanScreen({
           )}
           <div
             aria-hidden
-            className="absolute top-[124px] left-1/2 size-[250px] -translate-x-1/2 rounded-[30px] shadow-[0_0_0_200vmax_rgb(12_13_15/0.62)]"
+            className="absolute top-[calc(124px+env(safe-area-inset-top,0px))] left-1/2 size-[250px] -translate-x-1/2 rounded-[30px] shadow-[0_0_0_200vmax_rgb(12_13_15/0.62)]"
           >
             {CORNERS.map((corner) => (
               <i key={corner} className={cn('absolute size-11 border-white', corner)} />

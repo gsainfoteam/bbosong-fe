@@ -53,7 +53,7 @@ export function ConsentScreen({
   return (
     <form
       onSubmit={onSubmit}
-      className={cn('bg-surface flex min-h-dvh flex-1 flex-col', className)}
+      className={cn('bg-surface pt-safe flex min-h-dvh flex-1 flex-col', className)}
     >
       <div className="flex h-12 items-center justify-end px-4">
         <LanguageButton />

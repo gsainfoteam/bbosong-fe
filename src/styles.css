@@ -155,6 +155,16 @@ html::-webkit-scrollbar {
   --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
+/* viewport-fit=cover이므로 WebView가 상태바 뒤까지 그려진다. 상단 safe area는 웹에서 직접 채운다. */
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* 고정 헤더. 상태바 영역까지 헤더 배경으로 덮어, 스크롤되는 본문이 비쳐 보이지 않게 한다. */
+@utility h-header {
+  height: calc(var(--spacing) * 14 + env(safe-area-inset-top, 0px));
+}
+
 @utility pb-cta {
   padding-bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 6px));
 }

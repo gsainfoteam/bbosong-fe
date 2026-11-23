@@ -13,7 +13,7 @@ export const Header = ({ onRefresh, isRefreshing = false, className, ...props }:
   return (
     <header
       className={cn(
-        'text-ink sticky top-0 z-10 flex h-14 w-full items-center justify-between bg-inherit pr-2.5 pl-5',
+        'text-ink pt-safe h-header sticky top-0 z-10 flex w-full items-center justify-between bg-inherit pr-2.5 pl-5',
         className,
       )}
       {...props}
