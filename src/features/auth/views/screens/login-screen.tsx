@@ -9,8 +9,8 @@ export function LoginScreen({ onLogin, isPending = false, className }: LoginScre
   const { t } = useTranslation('auth');
 
   return (
-    <div className={cn('bg-surface relative flex min-h-dvh flex-1 flex-col', className)}>
-      <div className="absolute inset-x-0 top-0 flex h-12 items-center justify-end px-4">
+    <div className={cn('bg-surface pt-safe relative flex min-h-dvh flex-1 flex-col', className)}>
+      <div className="absolute inset-x-0 top-[env(safe-area-inset-top,0px)] flex h-12 items-center justify-end px-4">
         <LanguageButton />
       </div>
       <div className="flex flex-1 flex-col items-center justify-center py-12">

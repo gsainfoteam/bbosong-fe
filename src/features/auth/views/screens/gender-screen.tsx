@@ -8,7 +8,7 @@ export function GenderScreen({ onSelect, isError, className }: GenderScreen.Prop
   const { t } = useTranslation('auth');
 
   return (
-    <div className={cn('bg-surface flex min-h-dvh flex-1 flex-col', className)}>
+    <div className={cn('bg-surface pt-safe flex min-h-dvh flex-1 flex-col', className)}>
       <div className="h-12" />
       <div className="px-6">
         <BrandMark size={44} className="mt-3" />

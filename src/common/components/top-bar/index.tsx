@@ -13,7 +13,10 @@ export function TopBar({ title, onBack, icon = 'back', trailing, className }: To
 
   return (
     <header
-      className={cn('sticky top-0 z-10 flex h-14 w-full items-center bg-inherit px-2', className)}
+      className={cn(
+        'pt-safe h-header sticky top-0 z-10 flex w-full items-center bg-inherit px-2',
+        className,
+      )}
     >
       {onBack && (
         <IconButton onClick={onBack} label={icon === 'close' ? t('close') : t('goBack')}>

@@ -2,7 +2,8 @@ import { useId } from 'react';
 
 import { cn } from '@/common/utils';
 
-const BODY = 'M38,22 L62,22 L78,28 L88,44 L76,50 L72,46 L72,80 L28,80 L28,46 L24,50 L12,44 L22,28 Z';
+const BODY =
+  'M38,22 L62,22 L78,28 L88,44 L76,50 L72,46 L72,80 L28,80 L28,46 L24,50 L12,44 L22,28 Z';
 const BACK = 'M30,17 L38,17 Q50,20.5 62,17 L70,17 V40 H30 Z';
 const NECK = { cx: 50, cy: 15, r: 12 };
 
