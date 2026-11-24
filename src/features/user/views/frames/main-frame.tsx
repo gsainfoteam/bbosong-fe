@@ -76,7 +76,7 @@ export function MainFrame() {
     refetch: refetchUsingMachines,
   } = useFindMyMachine();
 
-  useLiveActivitySync(liveActivityTargets);
+  useLiveActivitySync(liveActivityTargets, refetchUsingMachines);
 
   const { status: pushPermissionStatus } = usePushPermission();
 
