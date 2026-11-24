@@ -8,7 +8,7 @@ const mocks = vi.hoisted(() => ({ supported: vi.fn() }));
 
 vi.mock('@/common/lib', () => ({ isLiveActivitySupported: mocks.supported }));
 
-const STORAGE_KEY = 'bbosong:onboarding-completed';
+const STORAGE_KEY = 'bbosong:onboarding-seen';
 
 const all: UseOnboarding.Options['available'] = {
   machines: true,
@@ -17,6 +17,8 @@ const all: UseOnboarding.Options['available'] = {
   map: true,
   'live-activity': true,
 };
+
+const readSeen = () => JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]') as string[];
 
 // Node의 실험적 localStorage 전역이 jsdom 것을 가려 못 쓰므로 메모리 저장소로 바꾼다
 const createStorage = (): Storage => {
@@ -44,23 +46,28 @@ afterEach(() => {
   document.body.innerHTML = '';
 });
 
+const frame = () => act(() => new Promise((resolve) => requestAnimationFrame(resolve)));
+
 describe('useOnboarding', () => {
   it('데이터가 준비되기 전에는 시작하지 않는다', async () => {
     const { result } = renderHook(() => useOnboarding({ enabled: false, available: all }));
 
-    await act(() => new Promise((resolve) => requestAnimationFrame(resolve)));
+    await frame();
 
     expect(result.current.step).toBeNull();
   });
 
-  it('준비되면 첫 단계부터 순서대로 보여 주고 마지막에서 완료를 저장한다', async () => {
+  it('준비되면 첫 단계부터 순서대로 보여 주고, 넘어갈 때마다 본 단계를 기록한다', async () => {
     const { result } = renderHook(() => useOnboarding({ enabled: true, available: all }));
 
     await waitFor(() => expect(result.current.step).toBe('machines'));
     expect(result.current.total).toBe(5);
+    expect(readSeen()).toEqual([]);
 
     act(() => result.current.next());
     expect(result.current.step).toBe('alert');
+    expect(readSeen()).toEqual(['machines']);
+
     act(() => result.current.next());
     expect(result.current.step).toBe('register');
     act(() => result.current.next());
@@ -71,36 +78,78 @@ describe('useOnboarding', () => {
 
     act(() => result.current.next());
     expect(result.current.step).toBeNull();
-    expect(localStorage.getItem(STORAGE_KEY)).toBe('true');
+    expect(readSeen()).toEqual(['machines', 'alert', 'register', 'map', 'live-activity']);
   });
 
-  it('건너뛰어도 다시 시작하지 않는다', async () => {
+  it('건너뛰면 남은 단계도 본 것으로 기록하고 다시 시작하지 않는다', async () => {
     const first = renderHook(() => useOnboarding({ enabled: true, available: all }));
     await waitFor(() => expect(first.result.current.step).toBe('machines'));
 
+    act(() => first.result.current.next());
     act(() => first.result.current.finish());
     expect(first.result.current.step).toBeNull();
+    expect(readSeen()).toEqual(['machines', 'alert', 'register', 'map', 'live-activity']);
     first.unmount();
 
     const second = renderHook(() => useOnboarding({ enabled: true, available: all }));
-    await act(() => new Promise((resolve) => requestAnimationFrame(resolve)));
+    await frame();
     expect(second.result.current.step).toBeNull();
   });
 
-  it('available가 false인 단계는 건너뛴다', async () => {
+  it('available가 false인 단계는 건너뛰고 기록하지 않는다', async () => {
     const { result } = renderHook(() =>
-      useOnboarding({
-        enabled: true,
-        available: { ...all, machines: false, alert: false, 'live-activity': false },
-      }),
+      useOnboarding({ enabled: true, available: { ...all, alert: false, 'live-activity': false } }),
     );
 
-    await waitFor(() => expect(result.current.step).toBe('register'));
-    expect(result.current.total).toBe(2);
+    await waitFor(() => expect(result.current.step).toBe('machines'));
+    expect(result.current.total).toBe(3);
 
     act(() => result.current.next());
-    expect(result.current.step).toBe('map');
+    expect(result.current.step).toBe('register');
+    act(() => result.current.finish());
+
+    expect(readSeen()).toEqual(['machines', 'register', 'map']);
+  });
+
+  it('이미 본 단계는 빼고, 새로 생기거나 못 본 단계만 보여 준다', async () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(['machines', 'register', 'map', 'live-activity']),
+    );
+
+    const { result } = renderHook(() => useOnboarding({ enabled: true, available: all }));
+
+    await waitFor(() => expect(result.current.step).toBe('alert'));
+    expect(result.current.total).toBe(1);
     expect(result.current.isLast).toBe(true);
+  });
+
+  it('저장된 값이 깨졌거나 모르는 단계가 섞여 있어도 견딘다', async () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(['machines', 'removed-step', 3]));
+
+    const { result } = renderHook(() => useOnboarding({ enabled: true, available: all }));
+
+    await waitFor(() => expect(result.current.step).toBe('alert'));
+
+    localStorage.setItem(STORAGE_KEY, '{broken');
+    const second = renderHook(() => useOnboarding({ enabled: true, available: all }));
+    await waitFor(() => expect(second.result.current.step).toBe('machines'));
+  });
+
+  it('시작한 뒤 available이 바뀌어도 단계 목록은 그대로다', async () => {
+    const { result, rerender } = renderHook(
+      ({ available }) => useOnboarding({ enabled: true, available }),
+      { initialProps: { available: { ...all, alert: false } } },
+    );
+
+    await waitFor(() => expect(result.current.step).toBe('machines'));
+    expect(result.current.total).toBe(4);
+
+    rerender({ available: all });
+    expect(result.current.total).toBe(4);
+
+    act(() => result.current.next());
+    expect(result.current.step).toBe('register');
   });
 
   it('이미 열린 시트가 있으면 시작하지 않는다', async () => {
@@ -110,7 +159,7 @@ describe('useOnboarding', () => {
     document.body.append(dialog);
 
     const { result } = renderHook(() => useOnboarding({ enabled: true, available: all }));
-    await act(() => new Promise((resolve) => requestAnimationFrame(resolve)));
+    await frame();
 
     expect(result.current.step).toBeNull();
   });

@@ -124,11 +124,17 @@ export function MainFrame() {
       ? pushPermissionStatus
       : null;
 
+  // 빈 기기 알림 버튼은 빈 자리가 없는 구역에만 나온다
+  const isFull = (type: MachineView['type']) => {
+    const machines = current.filter((view) => view.type === type);
+    return machines.length > 0 && machines.every((view) => view.state !== 'idle');
+  };
+
   const onboarding = useOnboarding({
     enabled: !isLoading && !isError,
     available: {
       machines: true,
-      alert: true,
+      alert: isFull('washer') || isFull('dryer'),
       register: true,
       map: true,
       'live-activity': livePermission !== null,

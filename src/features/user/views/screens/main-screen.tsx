@@ -13,25 +13,18 @@ function MachineSection({
   machines,
   notification,
   onMachineLongPress,
-  alertCoachMark = false,
 }: {
   type: MachineType;
   machines: MachineView[];
   notification: GetRoomNotificationButton.Props;
   onMachineLongPress?: MachineList.Props['onMachineLongPress'];
-  /** 온보딩이 이 구역의 머리 줄을 빈 기기 알림 자리로 짚는다 */
-  alertCoachMark?: boolean;
 }) {
   const { t } = useTranslation('machine');
   const free = machines.filter((machine) => machine.state === 'idle').length;
 
   return (
     <section className="mt-4.5 [&+&]:mt-6.5">
-      {/* 빈 기기 알림 버튼이 나오는 자리. 버튼은 빈 자리가 없을 때만 나오므로 온보딩은 이 머리 줄을 짚는다. */}
-      <div
-        className="rounded-chip mb-5 flex h-5.5 items-center justify-between"
-        {...(alertCoachMark ? coachMarkTarget('alert') : {})}
-      >
+      <div className="mb-5 flex h-5.5 items-center justify-between">
         <h2 className="text-[16px] font-extrabold tracking-[-0.02em]">
           {type === 'washer' ? t('washer') : t('dryer')}
         </h2>
@@ -44,7 +37,9 @@ function MachineSection({
             ) : (
               <>
                 <span className="text-ink-3 text-[13px] font-medium">{t('noFree')}</span>
-                <GetRoomNotificationButton {...notification} />
+                <span {...coachMarkTarget('alert')} className="inline-flex rounded-full">
+                  <GetRoomNotificationButton {...notification} />
+                </span>
               </>
             )}
           </span>
@@ -116,7 +111,6 @@ export function MainScreen({
             machines={washers}
             notification={roomNotification.washer}
             onMachineLongPress={onMachineLongPress}
-            alertCoachMark
           />
           <MachineSection
             type="dryer"

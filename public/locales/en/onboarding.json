@@ -7,7 +7,7 @@
   },
   "coach": {
     "alert": {
-      "description": "When no machine is free, a “Notify me” button appears here. Tap it and we'll let you know once when one opens up.",
+      "description": "When no machine is free, tap “Notify me”. We'll let you know once when one opens up.",
       "title": "Get notified when one frees up"
     },
     "machines": {

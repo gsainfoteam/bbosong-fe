@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { isLiveActivitySupported } from '@/common/lib';
 
-const STORAGE_KEY = 'bbosong:onboarding-completed';
+/** 사용자가 이미 본 튜토리얼 단계의 id 목록(JSON 배열). 단계가 새로 생기면 그 단계만 다시 보여 주기 위해 단계별로 남긴다. */
+const STORAGE_KEY = 'bbosong:onboarding-seen';
 
 // 이미 열린 시트·다이얼로그가 있으면 그 위에 겹쳐 시작하지 않는다.
 const OPEN_DIALOG = '[role="dialog"][data-open], [role="alertdialog"][data-open]';
@@ -12,34 +13,39 @@ const ORDER = ['machines', 'alert', 'register', 'map', 'live-activity'] as const
 
 export type OnboardingStep = (typeof ORDER)[number];
 
-const readCompleted = () => {
+const isStep = (value: unknown): value is OnboardingStep => ORDER.some((step) => step === value);
+
+const readSeen = (): OnboardingStep[] => {
   try {
-    return localStorage.getItem(STORAGE_KEY) === 'true';
+    const parsed: unknown = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]');
+    return Array.isArray(parsed) ? parsed.filter(isStep) : [];
   } catch {
-    // 저장소를 못 읽으면 본 적 없는 것으로 본다. 한 번 더 보이는 쪽이 아예 못 보는 쪽보다 낫다.
-    return false;
+    // 저장소를 못 읽거나 값이 깨졌으면 본 적 없는 것으로 본다. 한 번 더 보이는 쪽이 아예 못 보는 쪽보다 낫다.
+    return [];
   }
 };
 
-const writeCompleted = () => {
+const writeSeen = (seen: OnboardingStep[]) => {
   try {
-    localStorage.setItem(STORAGE_KEY, 'true');
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(seen));
   } catch {
     // 저장하지 못하면 다음 실행에 다시 보일 뿐이다.
   }
 };
 
 /**
- * 첫 실행 온보딩 튜토리얼의 진행 상태.
+ * 온보딩 튜토리얼의 진행 상태.
  *
- * - `available`에서 true인 단계만 순서대로 보여 준다. (알림을 받을 수 없는
- *   환경은 잠금화면 단계를 건너뛴다.)
- * - 끝까지 봤든 건너뛰었든 한 번 끝나면 다시 시작하지 않는다.
+ * - 시작할 때 `available`이 true이면서 아직 안 본 단계만 모아 순서대로 보여 준다. 그 목록은 시작 시점에 고정해서,
+ *   도중에 목록이 바뀌어도(기기 상태 갱신 등) 단계가 밀리거나 끼어들지 않는다.
+ * - 본 단계는 넘어갈 때마다 기록한다. 건너뛰거나 닫으면 남은 단계도 본 것으로 친다.
+ * - 나중에 단계가 추가되거나, 그때 못 보여 준 단계(예: 빈 자리가 없을 때만 있는 알림 버튼)가 보일 수 있게 되면
+ *   다음 실행에서 그 단계만 보여 준다.
  * - `enabled`가 true가 되고 화면에 열린 시트가 없을 때 한 번만 시작한다.
  */
 export function useOnboarding({ enabled, available }: UseOnboarding.Options) {
-  const [completed, setCompleted] = useState(readCompleted);
-  const [started, setStarted] = useState(false);
+  const [seen, setSeen] = useState(readSeen);
+  const [queue, setQueue] = useState<OnboardingStep[] | null>(null);
   const [index, setIndex] = useState(0);
   const [liveActivitySupported, setLiveActivitySupported] = useState(false);
 
@@ -54,41 +60,49 @@ export function useOnboarding({ enabled, available }: UseOnboarding.Options) {
     };
   }, []);
 
+  // 객체는 렌더마다 새로 만들어지므로, 효과가 불필요하게 다시 돌지 않게 문자열로 줄여 비교한다.
+  const availableKey = ORDER.filter((step) => available[step]).join(',');
+
   useEffect(() => {
-    if (!enabled || completed || started) return;
+    if (!enabled || queue) return;
     // 한 프레임 미룬다. 같은 시점에 열리는 시트가 먼저 그려져야 위 검사에 잡힌다.
     const frame = requestAnimationFrame(() => {
-      if (!document.querySelector(OPEN_DIALOG)) setStarted(true);
+      if (document.querySelector(OPEN_DIALOG)) return;
+      setQueue(
+        ORDER.filter((step) => availableKey.split(',').includes(step) && !seen.includes(step)),
+      );
     });
 
     return () => cancelAnimationFrame(frame);
-  }, [enabled, completed, started]);
+  }, [enabled, queue, availableKey, seen]);
 
-  const steps = ORDER.filter((id) => available[id]);
-  const step = started && !completed ? (steps[index] ?? null) : null;
-
-  const finish = useCallback(() => {
-    writeCompleted();
-    setCompleted(true);
+  const markSeen = useCallback((steps: readonly OnboardingStep[]) => {
+    setSeen((current) => {
+      const next = [...new Set([...current, ...steps])];
+      writeSeen(next);
+      return next;
+    });
   }, []);
 
-  const next = useCallback(() => {
-    if (index + 1 >= steps.length) finish();
-    else setIndex(index + 1);
-  }, [index, steps.length, finish]);
+  const total = queue?.length ?? 0;
+  const step = queue?.[index] ?? null;
 
-  // 진행 중 단계가 사라져(예: 목록이 비어) 더 보여 줄 게 없으면 끝난 것으로 남긴다.
-  const exhausted = started && !completed && !step;
-  useEffect(() => {
-    if (exhausted) writeCompleted();
-  }, [exhausted]);
+  const next = useCallback(() => {
+    if (step) markSeen([step]);
+    setIndex(index + 1);
+  }, [step, index, markSeen]);
+
+  const finish = useCallback(() => {
+    markSeen(queue ?? []);
+    setIndex(total);
+  }, [queue, total, markSeen]);
 
   return {
     step,
     /** 1부터 시작하는 현재 단계 번호 */
     position: index + 1,
-    total: steps.length,
-    isLast: index + 1 >= steps.length,
+    total,
+    isLast: index + 1 >= total,
     liveActivitySupported,
     next,
     finish,
