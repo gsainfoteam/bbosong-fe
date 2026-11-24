@@ -1,6 +1,6 @@
 {
   "name": "bbosong-fe",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "ota": {
     "minNativeVersion": "0.5.0"
   },
