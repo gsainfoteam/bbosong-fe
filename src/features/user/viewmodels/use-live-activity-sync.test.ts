@@ -8,6 +8,8 @@ import { useLiveActivitySync } from './use-live-activity-sync';
 const mocks = vi.hoisted(() => ({
   supported: vi.fn(),
   start: vi.fn(),
+  update: vi.fn(),
+  onResume: undefined as (() => void) | undefined,
   register: vi.fn(),
   unregister: vi.fn(),
   onToken: undefined as ((event: unknown) => void) | undefined,
@@ -22,6 +24,11 @@ vi.mock('@/common/lib', () => ({
   },
   isLiveActivitySupported: mocks.supported,
   startLiveActivity: mocks.start,
+  updateLiveActivity: mocks.update,
+  subscribeToNativeResume: (listener: () => void) => {
+    mocks.onResume = listener;
+    return () => {};
+  },
   subscribeToLiveActivityPushToken: (listener: (event: unknown) => void) => {
     mocks.onToken = listener;
     return () => {};
@@ -54,6 +61,8 @@ beforeEach(() => {
   vi.resetAllMocks();
   mocks.onToken = undefined;
   mocks.onEnded = undefined;
+  mocks.onResume = undefined;
+  mocks.update.mockResolvedValue(undefined);
   mocks.supported.mockResolvedValue(true);
   mocks.start.mockResolvedValue(undefined);
 });
@@ -96,6 +105,28 @@ describe('useLiveActivitySync', () => {
 
     rerender({ items: [{ ...target, remainingMinutes: 10 }] });
     await waitFor(() => expect(mocks.start).toHaveBeenCalledTimes(2));
+  });
+
+  it('refetches and retries starting every target when the app resumes', async () => {
+    const refetch = vi.fn().mockResolvedValue(undefined);
+    renderHook(() => useLiveActivitySync([target], refetch));
+    await waitFor(() => expect(mocks.start).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(mocks.onResume).toBeDefined());
+
+    mocks.onResume?.();
+
+    await waitFor(() => expect(refetch).toHaveBeenCalledOnce());
+    await waitFor(() => expect(mocks.start).toHaveBeenCalledTimes(2));
+  });
+
+  it('only updates finished machines instead of creating a new activity', async () => {
+    renderHook(() => useLiveActivitySync([{ ...target, status: 'IDLE' }]));
+    await waitFor(() => expect(mocks.update).toHaveBeenCalledOnce());
+
+    expect(mocks.update).toHaveBeenCalledWith(
+      expect.objectContaining({ machineUuid: 'machine-1', state: 'END' }),
+    );
+    expect(mocks.start).not.toHaveBeenCalled();
   });
 
   it('swallows start failures such as Live Activities being disabled in Settings', async () => {
