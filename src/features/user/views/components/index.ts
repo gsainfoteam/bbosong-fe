@@ -5,4 +5,6 @@ export * from './machine-list/index';
 export * from './machine-vessel/index';
 export * from './map-marker/index';
 export * from './my-laundry-card/index';
+export * from './onboarding-live-sheet/index';
+export * from './onboarding-tour/index';
 export * from './room-sheet/index';

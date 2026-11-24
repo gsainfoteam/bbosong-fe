@@ -21,11 +21,12 @@ import {
   useFindUserProfile,
   useLiveActivitySync,
   useMachineViews,
+  useOnboarding,
   useRefreshMainData,
   type MachineView,
 } from '@/features/user/viewmodels';
 
-import { type GetRoomNotificationButton, RoomSheet } from '../components';
+import { type GetRoomNotificationButton, OnboardingTour, RoomSheet } from '../components';
 import { MainScreen } from '../screens';
 import { type Location, useRoomSelection } from './use-room-selection';
 
@@ -78,7 +79,12 @@ export function MainFrame() {
 
   useLiveActivitySync(liveActivityTargets, refetchUsingMachines);
 
-  const { status: pushPermissionStatus } = usePushPermission();
+  const {
+    status: pushPermissionStatus,
+    isRequesting: isRequestingPermission,
+    requestPermission,
+    isNative,
+  } = usePushPermission();
 
   const {
     canSubscribe,
@@ -109,6 +115,36 @@ export function MainFrame() {
     room,
     sheet: roomSheet,
   } = useRoomSelection(views, user?.gender);
+
+  // 설치 전이거나 알림을 지원하지 않는 환경에서는 알림 안내 단계를 건너뛴다
+  const livePermission =
+    pushPermissionStatus === 'default' ||
+    pushPermissionStatus === 'granted' ||
+    pushPermissionStatus === 'denied'
+      ? pushPermissionStatus
+      : null;
+
+  // 빈 기기 알림 버튼은 빈 자리가 없는 구역에만 나온다
+  const isFull = (type: MachineView['type']) => {
+    const machines = current.filter((view) => view.type === type);
+    return machines.length > 0 && machines.every((view) => view.state !== 'idle');
+  };
+
+  const onboarding = useOnboarding({
+    enabled: !isLoading && !isError,
+    available: {
+      machines: true,
+      alert: isFull('washer') || isFull('dryer'),
+      register: true,
+      map: true,
+      'live-activity': livePermission !== null,
+    },
+  });
+
+  const onEnableNotification = async () => {
+    await requestPermission();
+    onboarding.finish();
+  };
 
   const myLaundry = {
     items: usingMachines.flatMap((usage) => {
@@ -213,6 +249,21 @@ export function MainFrame() {
         onRegister={onOpenQrScan}
       />
       <RoomSheet {...roomSheet} />
+      <OnboardingTour
+        step={onboarding.step}
+        position={onboarding.position}
+        total={onboarding.total}
+        isLast={onboarding.isLast}
+        liveSheet={{
+          permission: livePermission ?? 'default',
+          liveActivitySupported: onboarding.liveActivitySupported,
+          isNative,
+          isRequesting: isRequestingPermission,
+          onEnable: () => void onEnableNotification(),
+        }}
+        onNext={onboarding.next}
+        onFinish={onboarding.finish}
+      />
     </>
   );
 }

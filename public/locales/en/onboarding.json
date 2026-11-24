@@ -1,0 +1,39 @@
+{
+  "art": {
+    "app": "Bbosong",
+    "done": "Drying is done. Please take out your laundry",
+    "remaining": "8 min left",
+    "running": "Drying · Dryer 2"
+  },
+  "coach": {
+    "alert": {
+      "description": "When no machine is free, tap “Notify me”. We'll let you know once when one opens up.",
+      "title": "Get notified when one frees up"
+    },
+    "machines": {
+      "description": "Dryers show their remaining time in real time. To view another laundry room, tap the room name above.",
+      "title": "Check which machines are free"
+    },
+    "map": {
+      "description": "View the laundry room layout and where your laundry is on the map.",
+      "title": "Find the laundry room"
+    },
+    "register": {
+      "description": "Scan the QR code on the machine you're using and we'll notify you when it finishes.",
+      "title": "Register your laundry"
+    }
+  },
+  "done": "Done",
+  "live": {
+    "description": "See the remaining time live without opening the app, and get notified when it's done.",
+    "descriptionGranted": "See the remaining time live without opening the app. We'll notify you when it's done.",
+    "descriptionUnsupported": "We'll notify you as soon as your laundry is done.",
+    "enable": "Turn on notifications and start",
+    "later": "Maybe later",
+    "start": "Get started",
+    "title": "Check it right from your lock screen",
+    "titleUnsupported": "Get notified when it's done"
+  },
+  "next": "Next",
+  "skip": "Skip"
+}

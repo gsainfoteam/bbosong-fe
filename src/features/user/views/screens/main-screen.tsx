@@ -1,7 +1,7 @@
 import { ChevronDown, QrCode } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Header } from '@/common/components';
+import { Button, coachMarkTarget, Header } from '@/common/components';
 import { cn } from '@/common/utils';
 import { GetRoomNotificationButton, MachineList, MyLaundryCard } from '@/features/user';
 import { type MachineType, type MachineView } from '@/features/user/viewmodels';
@@ -37,7 +37,9 @@ function MachineSection({
             ) : (
               <>
                 <span className="text-ink-3 text-[13px] font-medium">{t('noFree')}</span>
-                <GetRoomNotificationButton {...notification} />
+                <span {...coachMarkTarget('alert')} className="inline-flex rounded-full">
+                  <GetRoomNotificationButton {...notification} />
+                </span>
               </>
             )}
           </span>
@@ -102,18 +104,21 @@ export function MainScreen({
           {room.title}
           <ChevronDown size={20} className="text-ink-3 mt-0.75" aria-hidden />
         </button>
-        <MachineSection
-          type="washer"
-          machines={washers}
-          notification={roomNotification.washer}
-          onMachineLongPress={onMachineLongPress}
-        />
-        <MachineSection
-          type="dryer"
-          machines={dryers}
-          notification={roomNotification.dryer}
-          onMachineLongPress={onMachineLongPress}
-        />
+        {/* 온보딩이 세탁기·건조기 두 구역을 함께 짚는다 */}
+        <div className="rounded-banner" {...coachMarkTarget('machines')}>
+          <MachineSection
+            type="washer"
+            machines={washers}
+            notification={roomNotification.washer}
+            onMachineLongPress={onMachineLongPress}
+          />
+          <MachineSection
+            type="dryer"
+            machines={dryers}
+            notification={roomNotification.dryer}
+            onMachineLongPress={onMachineLongPress}
+          />
+        </div>
       </div>
       <div className="pb-cta from-surface pointer-events-none fixed inset-x-0 bottom-0 mx-auto w-full max-w-120 bg-linear-to-t from-55% to-transparent px-5 pt-10">
         <Button
@@ -123,6 +128,7 @@ export function MainScreen({
           float
           onClick={onRegister}
           className="pointer-events-auto"
+          {...coachMarkTarget('register')}
         >
           <QrCode size={20} aria-hidden />
           {t('common:registerLabel')}
