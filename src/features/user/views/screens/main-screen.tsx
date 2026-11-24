@@ -1,7 +1,7 @@
 import { ChevronDown, QrCode } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Header } from '@/common/components';
+import { Button, coachMarkTarget, Header } from '@/common/components';
 import { cn } from '@/common/utils';
 import { GetRoomNotificationButton, MachineList, MyLaundryCard } from '@/features/user';
 import { type MachineType, type MachineView } from '@/features/user/viewmodels';
@@ -13,18 +13,25 @@ function MachineSection({
   machines,
   notification,
   onMachineLongPress,
+  alertCoachMark = false,
 }: {
   type: MachineType;
   machines: MachineView[];
   notification: GetRoomNotificationButton.Props;
   onMachineLongPress?: MachineList.Props['onMachineLongPress'];
+  /** 온보딩이 이 구역의 머리 줄을 빈 기기 알림 자리로 짚는다 */
+  alertCoachMark?: boolean;
 }) {
   const { t } = useTranslation('machine');
   const free = machines.filter((machine) => machine.state === 'idle').length;
 
   return (
     <section className="mt-4.5 [&+&]:mt-6.5">
-      <div className="mb-5 flex h-5.5 items-center justify-between">
+      {/* 빈 기기 알림 버튼이 나오는 자리. 버튼은 빈 자리가 없을 때만 나오므로 온보딩은 이 머리 줄을 짚는다. */}
+      <div
+        className="rounded-chip mb-5 flex h-5.5 items-center justify-between"
+        {...(alertCoachMark ? coachMarkTarget('alert') : {})}
+      >
         <h2 className="text-[16px] font-extrabold tracking-[-0.02em]">
           {type === 'washer' ? t('washer') : t('dryer')}
         </h2>
@@ -102,18 +109,22 @@ export function MainScreen({
           {room.title}
           <ChevronDown size={20} className="text-ink-3 mt-0.75" aria-hidden />
         </button>
-        <MachineSection
-          type="washer"
-          machines={washers}
-          notification={roomNotification.washer}
-          onMachineLongPress={onMachineLongPress}
-        />
-        <MachineSection
-          type="dryer"
-          machines={dryers}
-          notification={roomNotification.dryer}
-          onMachineLongPress={onMachineLongPress}
-        />
+        {/* 온보딩이 세탁기·건조기 두 구역을 함께 짚는다 */}
+        <div className="rounded-banner" {...coachMarkTarget('machines')}>
+          <MachineSection
+            type="washer"
+            machines={washers}
+            notification={roomNotification.washer}
+            onMachineLongPress={onMachineLongPress}
+            alertCoachMark
+          />
+          <MachineSection
+            type="dryer"
+            machines={dryers}
+            notification={roomNotification.dryer}
+            onMachineLongPress={onMachineLongPress}
+          />
+        </div>
       </div>
       <div className="pb-cta from-surface pointer-events-none fixed inset-x-0 bottom-0 mx-auto w-full max-w-120 bg-linear-to-t from-55% to-transparent px-5 pt-10">
         <Button
@@ -123,6 +134,7 @@ export function MainScreen({
           float
           onClick={onRegister}
           className="pointer-events-auto"
+          {...coachMarkTarget('register')}
         >
           <QrCode size={20} aria-hidden />
           {t('common:registerLabel')}

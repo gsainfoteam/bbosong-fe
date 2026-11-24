@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/common/utils';
 
-import { BrandMark, IconButton } from '../ui';
+import { BrandMark, coachMarkTarget, IconButton } from '../ui';
 
 export const Header = ({ onRefresh, isRefreshing = false, className, ...props }: Header.Props) => {
   const { t } = useTranslation('common');
@@ -33,7 +33,7 @@ export const Header = ({ onRefresh, isRefreshing = false, className, ...props }:
             <RefreshCw size={20} className={cn(isRefreshing && 'animate-spin')} aria-hidden />
           </IconButton>
         )}
-        <IconButton asChild label={t('map')}>
+        <IconButton asChild label={t('map')} {...coachMarkTarget('map')}>
           <Link to="/map">
             <Map size={20} aria-hidden />
           </Link>

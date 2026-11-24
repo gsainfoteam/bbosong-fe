@@ -9,6 +9,7 @@ export * from './use-app-versions';
 export * from './use-find-user-profile';
 export * from './use-live-activity-sync';
 export * from './use-machine-views';
+export * from './use-onboarding';
 export * from './use-refresh-main-data';
 export * from './use-register-machine';
 export * from './use-resolve-machine-shortlink';
