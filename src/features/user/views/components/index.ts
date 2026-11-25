@@ -7,4 +7,5 @@ export * from './map-marker/index';
 export * from './my-laundry-card/index';
 export * from './onboarding-live-sheet/index';
 export * from './onboarding-tour/index';
+export * from './remaining-time-sheet/index';
 export * from './room-sheet/index';

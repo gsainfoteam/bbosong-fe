@@ -1,6 +1,7 @@
 {
   "female": "Women's",
   "male": "Men's",
+  "manageLabel": "{{machine}}, enter time left or unregister",
   "map": {
     "callout": "Mine · {{time}}",
     "door": "Entrance",

@@ -46,6 +46,17 @@ function resolveLiveRemaining(machine: MachineListItem, now: number) {
   return { minutes: Math.max(0, Math.ceil((endsAt - now) / 60_000)), endsAt };
 }
 
+/**
+ * 세탁기는 ThinQ가 없어, 사용자가 직접 입력한 `estimatedEndsAt`으로 남은 시간을 만든다.
+ * 입력이 없거나 이미 지났으면(사이클이 더 걸리는 중) 없는 것으로 보고 경과 시간을 보여준다.
+ */
+function resolveEnteredRemaining(machine: MachineListItem, now: number) {
+  const iso = machine.currentUsage?.estimatedEndsAt;
+  const endsAt = iso ? Date.parse(iso) : Number.NaN;
+  if (!Number.isFinite(endsAt) || endsAt <= now) return undefined;
+  return { minutes: Math.ceil((endsAt - now) / 60_000), endsAt };
+}
+
 export function toMachineIdentity(
   machine: Pick<MachineListItem, 'uuid' | 'type' | 'location' | 'gender' | 'index'>,
 ) {
@@ -75,6 +86,21 @@ export function toMachineView(
   if (machine.status === 'IDLE') return { ...base, state: 'idle' };
 
   const elapsedMinutes = getMachineElapsedMinutes(machine.currentUsage?.startedAt, now);
+  if (identity.type === 'washer') {
+    const entered = resolveEnteredRemaining(machine, now);
+    if (!entered) return { ...base, state: 'elapsed', elapsedMinutes };
+
+    const total = (elapsedMinutes ?? 0) + entered.minutes;
+    return {
+      ...base,
+      state: 'running',
+      level: total > 0 ? entered.minutes / total : 1,
+      remainingMinutes: entered.minutes,
+      elapsedMinutes,
+      endsAt: entered.endsAt,
+    };
+  }
+
   if (isThinqRemainingDetecting(machine)) return { ...base, state: 'detecting', elapsedMinutes };
 
   // ThinQ에 연결되지 않은 기기는 남은 시간이 와도 믿을 수 없어, 지난 시간만 보여 준다.

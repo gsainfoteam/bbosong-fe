@@ -75,17 +75,27 @@ export function MainScreen({
       <Header {...header} />
       {myLaundry.items.length > 0 && (
         <div className={cn('-mt-0.5 grid gap-2.5 px-5', solo ? 'grid-cols-1' : 'grid-cols-2')}>
-          {myLaundry.items.map(({ machine, onUnregister, isUnregistering }) => (
-            <MyLaundryCard
-              key={machine.uuid}
-              machine={machine}
-              solo={solo}
-              isNotificationEnabled={myLaundry.isNotificationEnabled}
-              notificationBlocker={myLaundry.notificationBlocker}
-              onUnregister={onUnregister}
-              isUnregistering={isUnregistering}
-            />
-          ))}
+          {myLaundry.items.map(
+            ({
+              machine,
+              onUnregister,
+              isUnregistering,
+              onSetRemainingTime,
+              isSettingRemainingTime,
+            }) => (
+              <MyLaundryCard
+                key={machine.uuid}
+                machine={machine}
+                solo={solo}
+                isNotificationEnabled={myLaundry.isNotificationEnabled}
+                notificationBlocker={myLaundry.notificationBlocker}
+                onUnregister={onUnregister}
+                isUnregistering={isUnregistering}
+                onSetRemainingTime={onSetRemainingTime}
+                isSettingRemainingTime={isSettingRemainingTime}
+              />
+            ),
+          )}
         </div>
       )}
       <div
@@ -143,6 +153,8 @@ export namespace MainScreen {
     machine: MachineView;
     onUnregister: () => void;
     isUnregistering?: boolean;
+    onSetRemainingTime?: MyLaundryCard.Props['onSetRemainingTime'];
+    isSettingRemainingTime?: boolean;
   };
 
   export type Props = {

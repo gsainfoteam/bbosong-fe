@@ -61,11 +61,28 @@ public class LiveUpdateMessageTest {
     }
 
     @Test
-    public void washerNeverHasEndsAt() {
-        LiveUpdateMessage message = LiveUpdateMessage.fromData(data("kind", "WASHER", "endsAt", "2000"));
+    public void washerHasEndsAtOnlyWhenEntered() {
+        assertFalse(LiveUpdateMessage.fromData(data("kind", "WASHER")).hasEndsAt());
+        assertTrue(LiveUpdateMessage.fromData(data("kind", "WASHER", "endsAt", "2000")).hasEndsAt());
+    }
 
-        assertFalse(message.hasEndsAt());
+    @Test
+    public void washerWithoutEndsAtIsNeverOverdue() {
+        LiveUpdateMessage message = LiveUpdateMessage.fromData(data("kind", "WASHER"));
+
         assertFalse(message.isOverdue(5_000_000));
+        assertEquals(-1, message.progressPercent(5_000_000));
+    }
+
+    @Test
+    public void washerWithEndsAtHasProgressAndGoesOverdue() {
+        LiveUpdateMessage message = LiveUpdateMessage.fromData(
+            data("kind", "WASHER", "startedAt", "1000", "endsAt", "2000")
+        );
+
+        assertEquals(50, message.progressPercent(1_500_000));
+        assertFalse(message.isOverdue(1_999_999));
+        assertTrue(message.isOverdue(2_000_000));
     }
 
     @Test

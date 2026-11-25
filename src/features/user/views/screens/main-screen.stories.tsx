@@ -4,6 +4,10 @@ import { dryers, myDryer, myWasher, PHONE, washers } from './story-fixtures';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const unregister = () => console.log('Unregister');
+const setRemainingTime = (minutes: number, onSuccess: () => void) => {
+  console.log('Set remaining time', minutes);
+  onSuccess();
+};
 
 const meta = {
   title: 'User/Screens/Main',
@@ -15,7 +19,7 @@ const meta = {
     onRegister: () => console.log('Register'),
     myLaundry: {
       items: [
-        { machine: myWasher, onUnregister: unregister },
+        { machine: myWasher, onUnregister: unregister, onSetRemainingTime: setRemainingTime },
         { machine: myDryer, onUnregister: unregister },
       ],
       isNotificationEnabled: true,
@@ -43,7 +47,9 @@ export const Default: Story = {};
 export const OneMachine: Story = {
   args: {
     myLaundry: {
-      items: [{ machine: myWasher, onUnregister: unregister }],
+      items: [
+        { machine: myWasher, onUnregister: unregister, onSetRemainingTime: setRemainingTime },
+      ],
       isNotificationEnabled: true,
     },
   },

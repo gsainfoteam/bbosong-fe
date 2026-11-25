@@ -8,6 +8,7 @@ import { resolveRemainingMinutes } from '@/common/utils';
 
 import { ApiPaths } from '../models';
 import { type LiveActivityTarget } from './live-activity-state';
+import { useSetRemainingTime } from './use-set-remaining-time';
 import { useUnregisterMachine } from './use-unregister-machine';
 
 export function useFindMyMachine() {
@@ -50,6 +51,7 @@ export function useFindMyMachine() {
   }, [error, isError, t]);
 
   const { mutate: unregisterMachine, isPending: isUnregistering } = useUnregisterMachine();
+  const { mutate: setRemainingTime, isPending: isSettingRemainingTime } = useSetRemainingTime();
 
   const mappedMachineList = useMemo(() => {
     if (!usingMachines || !allMachines) return [];
@@ -76,12 +78,25 @@ export function useFindMyMachine() {
           notification: usage.notifyOnCompletion,
           onUnregister: () => unregisterMachine({ params: { path: { uuid: usage.machineUuid } } }),
           isUnregistering,
+          onSetRemainingTime: (remainingMinutes: number, onSuccess: () => void) =>
+            setRemainingTime(
+              { params: { path: { uuid: usage.machineUuid } }, body: { remainingMinutes } },
+              { onSuccess },
+            ),
+          isSettingRemainingTime,
         },
       ];
     });
-  }, [usingMachines, allMachines, unregisterMachine, isUnregistering]);
+  }, [
+    usingMachines,
+    allMachines,
+    unregisterMachine,
+    isUnregistering,
+    setRemainingTime,
+    isSettingRemainingTime,
+  ]);
 
-  // 건조기는 기계 목록의 ThinQ 값으로 남은 시간을 보여주고, 세탁기는 남은 시간이 없어 경과 시간을 보여준다
+  // 건조기는 기계 목록의 ThinQ 값으로, 세탁기는 사용자가 입력한 종료 예정 시각으로 남은 시간을 보여준다. 입력이 없으면 경과 시간을 보여준다
   const liveActivityTargets = useMemo<LiveActivityTarget[]>(() => {
     if (!usingMachines || !allMachines) return [];
 
@@ -107,6 +122,8 @@ export function useFindMyMachine() {
             typeof machine.thinqCurrentState === 'string' ? machine.thinqCurrentState : null,
           remainingMinutes,
           thinqUpdatedAt: machine.thinqUpdatedAt,
+          estimatedEndsAt:
+            kind === 'WASHER' ? (machine.currentUsage?.estimatedEndsAt ?? null) : null,
         },
       ];
     });

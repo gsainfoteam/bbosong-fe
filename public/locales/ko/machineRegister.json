@@ -15,6 +15,23 @@
     "usageChanged": "기기 사용 상태가 바뀌어서 새로고침했어요. 다시 등록해 주세요."
   },
   "registering": "등록 중…",
+  "remainingTime": {
+    "description": "세탁기 화면에 보이는 남은 시간을 입력하면 종료 시각을 알려드려요. 다시 입력해서 고칠 수 있어요.",
+    "error": {
+      "notMine": "내가 등록한 세탁기가 아니에요.",
+      "notRunning": "작동 중인 세탁기가 아니에요.",
+      "notSupported": "세탁기만 남은 시간을 입력할 수 있어요.",
+      "range": "남은 시간은 1분에서 180분 사이로 입력해 주세요."
+    },
+    "hint": "{{min}}~{{max}}분 사이로 입력해 주세요",
+    "label": "남은 시간(분)",
+    "placeholder": "예: 37",
+    "submit": "저장",
+    "success": "남은 시간을 저장했어요.",
+    "title": "남은 시간 입력",
+    "unit": "분",
+    "unregister": "등록 해제"
+  },
   "success": "기기를 등록했어요.",
   "unregister": {
     "confirmation": {
