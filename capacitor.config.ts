@@ -10,6 +10,8 @@ const config: CapacitorConfig = {
     contentInset: 'never',
     // WebView가 로드되기 전(스플래시 전환 등)에 보이는 색. styles.css의 --color-bg와 맞춘다
     backgroundColor: '#f7f8fa',
+    // 링크를 길게 눌렀을 때 뜨는 iOS 미리보기(peek)를 끈다
+    allowsLinkPreview: false,
   },
   experimental: {
     ios: {
