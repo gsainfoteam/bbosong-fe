@@ -130,12 +130,39 @@ export function MainFrame() {
     return machines.length > 0 && machines.every((view) => view.state !== 'idle');
   };
 
+  const myLaundry = {
+    items: usingMachines.flatMap((usage) => {
+      const machine = views.find((view) => view.uuid === usage.machineUuid);
+      return machine
+        ? [
+            {
+              machine,
+              onUnregister: usage.onUnregister,
+              isUnregistering: usage.isUnregistering,
+              onSetRemainingTime: usage.onSetRemainingTime,
+              isSettingRemainingTime: usage.isSettingRemainingTime,
+            },
+          ]
+        : [];
+    }),
+    isNotificationEnabled: pushPermissionStatus === 'granted',
+    notificationBlocker:
+      pushPermissionStatus === 'needs-install' || pushPermissionStatus === 'unsupported'
+        ? pushPermissionStatus
+        : undefined,
+  };
+
   const onboarding = useOnboarding({
     enabled: !isLoading && !isError,
     available: {
       machines: true,
       alert: isFull('washer') || isFull('dryer'),
       register: true,
+      // 세탁기 카드에 연필이 보일 때만(시간을 입력할 수 있는 세탁기가 내 빨래에 있을 때)
+      'washer-time': myLaundry.items.some(
+        ({ machine }) =>
+          machine.type === 'washer' && (machine.state === 'running' || machine.state === 'elapsed'),
+      ),
       map: true,
       'live-activity': livePermission !== null,
     },
@@ -144,20 +171,6 @@ export function MainFrame() {
   const onEnableNotification = async () => {
     await requestPermission();
     onboarding.finish();
-  };
-
-  const myLaundry = {
-    items: usingMachines.flatMap((usage) => {
-      const machine = views.find((view) => view.uuid === usage.machineUuid);
-      return machine
-        ? [{ machine, onUnregister: usage.onUnregister, isUnregistering: usage.isUnregistering }]
-        : [];
-    }),
-    isNotificationEnabled: pushPermissionStatus === 'granted',
-    notificationBlocker:
-      pushPermissionStatus === 'needs-install' || pushPermissionStatus === 'unsupported'
-        ? pushPermissionStatus
-        : undefined,
   };
 
   const header = {

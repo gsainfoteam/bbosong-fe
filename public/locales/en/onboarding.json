@@ -21,6 +21,10 @@
     "register": {
       "description": "Scan the QR code on the machine you're using and we'll notify you when it finishes.",
       "title": "Register your laundry"
+    },
+    "washerTime": {
+      "description": "Enter the estimated time and you can follow the time left in real time. Once the washer display shows it, tap this card to enter it.",
+      "title": "Record the washer's time left"
     }
   },
   "done": "Done",

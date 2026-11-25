@@ -28,6 +28,10 @@ export function OnboardingTour({
     machines: { title: t('coach.machines.title'), description: t('coach.machines.description') },
     alert: { title: t('coach.alert.title'), description: t('coach.alert.description') },
     register: { title: t('coach.register.title'), description: t('coach.register.description') },
+    'washer-time': {
+      title: t('coach.washerTime.title'),
+      description: t('coach.washerTime.description'),
+    },
     map: { title: t('coach.map.title'), description: t('coach.map.description') },
   }[step];
 

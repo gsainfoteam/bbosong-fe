@@ -54,17 +54,25 @@ private extension LaundryActivityAttributes {
 }
 
 private extension LaundryActivityAttributes.ContentState {
-    /// 카운트다운을 보여줄 수 있는 상태인지. 종료 시각을 모르거나 끝난 뒤에는 보여줄 수 없다
+    /// 카운트다운을 보여줄 수 있는 상태인지. 종료 시각을 모르거나 끝난 뒤에는 보여줄 수 없다.
+    /// 종료 시각이 지났는데 아직 안 끝났으면 0:00에 멈춰 보이지 않게 카운트다운을 접는다
     var countdownEnd: Date? {
         switch phase {
         case .running, .cooling:
-            return endDate
+            return isOverdue ? nil : endDate
         case .pause, .detecting, .end, .error:
             return nil
         }
     }
 
-    /// 건조기가 남은 시간을 아직 모르는 상태. 세탁기는 처음부터 경과 시간만 보여주므로 해당하지 않는다
+    /// 종료 시각이 지났는데 아직 안 끝난 가동 상태.
+    /// 건조기는 서버가 지난 뒤 한 번 더 푸시하고, 세탁기는 사용자가 입력한 예상치라 지난 뒤에도 한참 더 돌 수 있다
+    var isOverdue: Bool {
+        guard phase == .running, let end = endDate else { return false }
+        return end <= Date()
+    }
+
+    /// 건조기가 남은 시간을 아직 모르는 상태. 세탁기는 입력 전에는 경과 시간만 보여주므로 해당하지 않는다
     func isCalculating(for kind: LaundryActivityAttributes.Kind) -> Bool {
         switch phase {
         case .detecting: return true
@@ -150,7 +158,8 @@ private struct MachineChip: View {
 // MARK: - 시간
 
 /// 오른쪽에 놓는 시간. 시간이 흐르는 것은 OS가 직접 그리므로 푸시가 없어도 계속 흐른다.
-/// 건조기는 남은 시간, 세탁기는 경과 시간(남은 시간을 모른다)을 보여주고, 모르면 시간 대신 문구를 둔다.
+/// 건조기는 남은 시간, 세탁기는 사용자가 입력했을 때만 남은 시간을 보여준다.
+/// 입력이 없거나 입력한 시각이 지났으면 세탁기는 경과 시간을 보여주고, 모르면 시간 대신 문구를 둔다.
 private struct TimeLabel: View {
     let attributes: LaundryActivityAttributes
     let state: LaundryActivityAttributes.ContentState
@@ -201,7 +210,7 @@ private struct TimeLabel: View {
 // MARK: - 진행 막대
 
 /// 사용 시작부터 종료 예상 시각까지의 막대. 시간이 흐르는 대로 OS가 채운다.
-/// 일시정지에서는 멈춘 채 흐리게 두고, 세탁기·계산 중·끝·오류에서는 막대 자체를 그리지 않는다.
+/// 일시정지에서는 멈춘 채 흐리게 두고, 종료 시각을 모르는 세탁기·계산 중·끝·오류에서는 막대 자체를 그리지 않는다.
 private struct CycleBar: View {
     let attributes: LaundryActivityAttributes
     let state: LaundryActivityAttributes.ContentState
@@ -270,7 +279,9 @@ private struct Subline: View {
     private var label: String {
         switch state.phase {
         case .running:
+            // 세탁기는 입력한 예상 시각이 지나도 계속 돌 수 있어, 끝난다고 단정하지 않고 경과 시간과 함께 "세탁 중"으로 둔다
             if attributes.machineKind == .washer { return tr("세탁 중", "Washing") }
+            if state.isOverdue { return tr("곧 끝나요", "Almost done") }
             return state.endDate == nil ? tr("방금 시작했어요", "Just started") : tr("건조 중", "Drying")
         case .cooling: return tr("냉각 중", "Cooling down")
         case .pause: return tr("일시정지", "Paused")
@@ -532,6 +543,9 @@ private func previewState(
     LaundryLiveActivity()
 } contentStates: {
     previewState("RUNNING")
+    previewState("RUNNING", minutes: 37)
+    // 입력한 종료 시각이 지난 뒤(사이클이 더 걸리는 중)
+    previewState("RUNNING", minutes: 0, updatedAt: Date().addingTimeInterval(-60))
     previewState("END")
     previewState("ERROR")
 }
@@ -567,6 +581,7 @@ private func previewState(
     LaundryLiveActivity()
 } contentStates: {
     previewState("RUNNING")
+    previewState("RUNNING", minutes: 37)
 }
 
 @available(iOS 17.0, *)

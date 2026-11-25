@@ -23,7 +23,10 @@ import me.gistory.bbosong.R;
  *
  * - 승격은 API가 아니라 알림의 성격으로 결정된다. 진행 중(ongoing)이고 제목이 있으며 기본 스타일이나 `ProgressStyle`을 쓰는
  *   알림이 승격 대상이고, 사용자가 설정에서 `POST_PROMOTED_NOTIFICATIONS`를 끄면 일반 진행 알림으로 보인다.
- * - 디자인(DsLive)에 맞춰 건조기만 진행 막대(`ProgressStyle`)를 쓴다. 세탁기와 시간 계산 중에는 막대 없이 기본 스타일로 둔다.
+ * - 디자인(DsLive)에 맞춰 종료 시각을 아는 기계만 진행 막대(`ProgressStyle`)를 쓴다. 건조기는 ThinQ, 세탁기는 사용자가 입력한
+ *   남은 시간이 종료 시각이다. 세탁기를 입력 전이거나 시간 계산 중일 때는 막대 없이 기본 스타일로 두고 경과 시간을 보여준다.
+ * - 종료 시각이 지나면 서버가 한 번 더 보내는 메시지(`endsAt` 이후)로 카운트다운을 접는다. 건조기는 "곧 끝나요"를 보여주고,
+ *   세탁기는 입력한 값이 예상치라 더 돌 수 있으므로 "세탁 중"과 경과 시간으로 둔다. 앱은 그 시각에 스스로 알림을 갱신하지 않는다.
  * - 색은 기기를 따른다. 세탁기는 하늘, 건조기는 주황이고 오류는 회색이다.
  * - 기계마다 알림 하나를 `machineUuid`를 tag로 갱신한다. 같은 메시지가 여러 번 와도 결과는 같다(멱등).
  * - 가동 중에는 소리 없는 진행 알림, 종료/오류에는 별도 알림을 알림음과 함께 한 번 보낸다.
@@ -195,8 +198,12 @@ public final class LiveUpdateNotifier {
 
     /** 알림 본문(제목 아래 줄). 시간이 흐르는 것은 칩/카운트다운이 맡으므로 상태와 종료 시각만 적는다 */
     private static String stateText(Context context, LiveUpdateMessage message, boolean overdue) {
-        boolean washer = LiveUpdateMessage.KIND_WASHER.equals(message.kind);
-        if (washer) return context.getString(R.string.live_update_washing);
+        if (LiveUpdateMessage.KIND_WASHER.equals(message.kind)) {
+            // 입력한 종료 시각은 예상치라 지난 뒤에도 더 돌 수 있다. 끝난다고 단정하지 않고 경과 시간과 함께 "세탁 중"으로 둔다
+            return overdue
+                ? context.getString(R.string.live_update_washing)
+                : stateWithEnd(context, R.string.live_update_washing, message);
+        }
 
         switch (message.state) {
             case LiveUpdateMessage.STATE_COOLING:
@@ -217,11 +224,13 @@ public final class LiveUpdateNotifier {
      * 상태바 칩에 들어가는 짧은 문구. 시간이 흐르는 상태는 `null`을 돌려주어 시스템 타이머가 칩에 보이게 한다.
      * (남은 시간을 문자열로 넣으면 게시 시점 값으로 굳어 버린다)
      *
-     * - 세탁기: 경과 시간, 건조기 가동/냉각: 남은 시간 카운트다운이 칩에 보인다.
-     * - 일시정지·시간 계산 중·곧 끝남: 시간이 의미 없으므로 문구를 보여준다.
+     * - 종료 시각을 아는 가동: 남은 시간 카운트다운이, 세탁기를 입력 전에는 경과 시간이 칩에 보인다.
+     * - 일시정지·시간 계산 중·(건조기가) 곧 끝남: 시간이 의미 없으므로 문구를 보여준다.
      */
     private static String shortText(Context context, LiveUpdateMessage message, boolean overdue) {
-        if (LiveUpdateMessage.KIND_WASHER.equals(message.kind)) return null;
+        if (LiveUpdateMessage.KIND_WASHER.equals(message.kind)) {
+            return null;
+        }
 
         // `stateText`와 같은 우선순위: 냉각/일시정지/계산 중이 지연 판단보다 먼저다
         switch (message.state) {
@@ -276,22 +285,23 @@ public final class LiveUpdateNotifier {
             .setOnlyAlertOnce(true)
             .addExtras(extras);
 
-        if (washer) {
-            // 세탁기는 남은 시간을 모른다. 경과 시간만 보여주고 진행 막대는 두지 않는다
-            builder.setWhen(message.startedAtMillis()).setShowWhen(true).setUsesChronometer(true);
-        } else if (message.hasEndsAt() && !paused && !detecting && !overdue) {
+        if (message.hasEndsAt() && !paused && !detecting && !overdue) {
             builder
                 .setWhen(message.endsAtSeconds * 1000)
                 .setShowWhen(true)
                 .setUsesChronometer(true)
                 .setChronometerCountDown(true);
+        } else if (washer) {
+            // 입력 전이거나 입력한 종료 시각이 지난 세탁기는 경과 시간을 보여준다
+            builder.setWhen(message.startedAtMillis()).setShowWhen(true).setUsesChronometer(true);
         } else {
             builder.setShowWhen(false);
         }
 
-        // 진행 막대는 건조기에서 구간을 알 때만 둔다. 세탁기·시간 계산 중에는 막대 없이 기본 스타일을 쓴다
-        int percent = overdue ? 100 : message.progressPercent(now);
-        if (!washer && !detecting && percent >= 0) {
+        // 진행 막대는 종료 시각을 알아 구간이 정해질 때만 둔다. 세탁기 입력 전·시간 계산 중에는 막대 없이 기본 스타일을 쓴다
+        // 세탁기는 예상 시각이 지나도 더 돌 수 있어 가득 찬 막대를 두지 않는다(막대 없이 경과 시간만 보여준다)
+        int percent = overdue ? (washer ? -1 : 100) : message.progressPercent(now);
+        if (!detecting && percent >= 0) {
             int color = kindColor(context, message);
             // 일시정지 중에는 멈춘 채 흐리게 둔다
             int barColor = paused ? Color.argb(115, Color.red(color), Color.green(color), Color.blue(color)) : color;

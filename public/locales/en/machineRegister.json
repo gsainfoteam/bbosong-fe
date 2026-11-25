@@ -15,6 +15,23 @@
     "usageChanged": "The machine usage has changed. Its status has been refreshed. Please register again."
   },
   "registering": "Registering…",
+  "remainingTime": {
+    "description": "Enter the time left shown on the washer display and we'll show when it finishes. You can enter it again to correct it.",
+    "error": {
+      "notMine": "This isn't a washer you registered.",
+      "notRunning": "This washer isn't running.",
+      "notSupported": "Only washers accept a time left.",
+      "range": "Enter a time between 1 and 180 minutes."
+    },
+    "hint": "Enter {{min}}–{{max}} minutes",
+    "label": "Time left (minutes)",
+    "placeholder": "e.g. 37",
+    "submit": "Save",
+    "success": "Time left saved.",
+    "title": "Enter time left",
+    "unit": "min",
+    "unregister": "Unregister"
+  },
   "success": "Machine registered successfully.",
   "unregister": {
     "confirmation": {

@@ -14,6 +14,7 @@ const all: UseOnboarding.Options['available'] = {
   machines: true,
   alert: true,
   register: true,
+  'washer-time': false,
   map: true,
   'live-activity': true,
 };
@@ -79,6 +80,21 @@ describe('useOnboarding', () => {
     act(() => result.current.next());
     expect(result.current.step).toBeNull();
     expect(readSeen()).toEqual(['machines', 'alert', 'register', 'map', 'live-activity']);
+  });
+
+  it('내 세탁기가 있으면 등록 다음에 남은 시간 기록 단계를 보여 준다', async () => {
+    const { result } = renderHook(() =>
+      useOnboarding({ enabled: true, available: { ...all, 'washer-time': true } }),
+    );
+
+    await waitFor(() => expect(result.current.step).toBe('machines'));
+    expect(result.current.total).toBe(6);
+    act(() => result.current.next());
+    act(() => result.current.next());
+    act(() => result.current.next());
+    expect(result.current.step).toBe('washer-time');
+    act(() => result.current.next());
+    expect(result.current.step).toBe('map');
   });
 
   it('건너뛰면 남은 단계도 본 것으로 기록하고 다시 시작하지 않는다', async () => {

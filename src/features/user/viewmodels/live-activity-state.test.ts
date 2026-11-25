@@ -93,13 +93,61 @@ describe('liveActivityTargetKey', () => {
 });
 
 describe('washer', () => {
-  it('has no time while running, since only the elapsed time is known', () => {
+  it('has no time while running when the user has not entered one', () => {
     expect(
       toLiveActivityContentState(
         target({ kind: 'WASHER', remainingMinutes: null, thinqCurrentState: null }),
         NOW,
       ),
     ).toEqual({ state: 'RUNNING', endsAt: null, remainingMinutes: null, updatedAt: nowSeconds });
+  });
+
+  it('counts down to the time the user entered', () => {
+    // 12:00 기준 12:37 종료 → 37분 남음
+    expect(
+      toLiveActivityContentState(
+        target({
+          kind: 'WASHER',
+          remainingMinutes: null,
+          thinqCurrentState: null,
+          thinqUpdatedAt: null,
+          estimatedEndsAt: '2026-11-21T12:37:00.000Z',
+        }),
+        NOW,
+      ),
+    ).toEqual({
+      state: 'RUNNING',
+      endsAt: Math.floor(Date.parse('2026-11-21T12:37:00.000Z') / 1000),
+      remainingMinutes: 37,
+      updatedAt: nowSeconds,
+    });
+  });
+
+  it.each([null, 'nope', '2026-11-21T12:00:00.000Z', '2026-11-21T11:50:00.000Z'])(
+    'shows the elapsed time when the entered end time is %s',
+    (estimatedEndsAt) => {
+      expect(toLiveActivityContentState(target({ kind: 'WASHER', estimatedEndsAt }), NOW)).toEqual({
+        state: 'RUNNING',
+        endsAt: null,
+        remainingMinutes: null,
+        updatedAt: nowSeconds,
+      });
+    },
+  );
+
+  it('ignores the entered time once the machine is idle', () => {
+    expect(
+      toLiveActivityContentState(
+        target({ kind: 'WASHER', status: 'IDLE', estimatedEndsAt: '2026-11-21T12:37:00.000Z' }),
+        NOW,
+      ).state,
+    ).toBe('END');
+  });
+
+  it('changes key when the entered time changes', () => {
+    expect(liveActivityTargetKey(target({ kind: 'WASHER', estimatedEndsAt: 'a' }))).not.toBe(
+      liveActivityTargetKey(target({ kind: 'WASHER', estimatedEndsAt: 'b' })),
+    );
   });
 
   it('is finished once the machine is idle', () => {

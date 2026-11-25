@@ -58,6 +58,49 @@ describe('toMachineView', () => {
     expect(view).toMatchObject({ state: 'elapsed', elapsedMinutes: 30, phase: 'washing' });
   });
 
+  describe('washer time left entered by the user', () => {
+    const washer = (estimatedEndsAt: string | null) =>
+      machine({
+        type: 'WASHER',
+        thinqDeviceId: null,
+        thinqCurrentState: null,
+        thinqRemainingMinutes: null,
+        thinqUpdatedAt: null,
+        currentUsage: { startedAt: '2026-11-22T12:00:00Z', estimatedEndsAt },
+      });
+
+    it('counts down to the entered end time', () => {
+      const view = toMachineView(washer('2026-11-22T12:55:00Z'), NOW, NONE);
+      expect(view).toMatchObject({
+        state: 'running',
+        remainingMinutes: 25,
+        elapsedMinutes: 30,
+        phase: 'washing',
+      });
+      expect(view.level).toBeCloseTo(25 / 55);
+      expect(view.endsAt).toBe(Date.parse('2026-11-22T12:55:00Z'));
+    });
+
+    it.each([null, '2026-11-22T12:30:00Z', '2026-11-22T12:10:00Z'])(
+      'falls back to elapsed time when the end time is %s',
+      (estimatedEndsAt) => {
+        expect(toMachineView(washer(estimatedEndsAt), NOW, NONE)).toMatchObject({
+          state: 'elapsed',
+          elapsedMinutes: 30,
+        });
+      },
+    );
+
+    it('ignores the entered time for idle machines', () => {
+      const view = toMachineView(
+        { ...washer('2026-11-22T12:55:00Z'), status: 'IDLE' } as MachineListItem,
+        NOW,
+        NONE,
+      );
+      expect(view.state).toBe('idle');
+    });
+  });
+
   it('keeps the remaining time while paused', () => {
     const view = toMachineView(machine({ thinqCurrentState: 'PAUSE' }), NOW, NONE);
     expect(view).toMatchObject({ state: 'paused', remainingMinutes: 30 });

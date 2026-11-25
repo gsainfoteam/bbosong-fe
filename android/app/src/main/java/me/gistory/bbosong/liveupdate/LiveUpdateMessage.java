@@ -30,7 +30,7 @@ public final class LiveUpdateMessage {
     public final long updatedAtSeconds;
     /** 알 때만 */
     public final Long startedAtSeconds;
-    /** 알 때만. 남은 시간을 모르면 null */
+    /** 알 때만. 건조기는 ThinQ, 세탁기는 사용자가 입력했을 때만 있다. 모르면 null */
     public final Long endsAtSeconds;
 
     LiveUpdateMessage(
@@ -83,12 +83,15 @@ public final class LiveUpdateMessage {
         return (startedAtSeconds != null ? startedAtSeconds : updatedAtSeconds) * 1000;
     }
 
-    /** 건조기가 종료 예상 시각을 알고 있는지 */
+    /** 종료 예상 시각을 알고 있는지. 세탁기는 사용자가 남은 시간을 입력했을 때만 true다 */
     public boolean hasEndsAt() {
-        return endsAtSeconds != null && !KIND_WASHER.equals(kind);
+        return endsAtSeconds != null;
     }
 
-    /** `endsAt`이 이미 지난 가동 중 상태. 알림은 카운트다운 대신 "곧 끝나요"를 보여준다 */
+    /**
+     * `endsAt`이 이미 지난 가동 중 상태. 알림은 카운트다운 대신 "곧 끝나요"를 보여준다.
+     * 세탁기는 서버가 마무리 푸시를 보내지 않아 이 상태가 길어질 수 있다.
+     */
     public boolean isOverdue(long nowMillis) {
         return hasEndsAt() && endsAtSeconds * 1000 <= nowMillis;
     }

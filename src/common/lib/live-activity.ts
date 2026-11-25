@@ -18,7 +18,8 @@ export type LiveActivityPhase = 'RUNNING' | 'COOLING' | 'PAUSE' | 'DETECTING' | 
 
 /**
  * Live Activity에 표시할 내용. 서버가 APNs로 보내는 content-state와 같은 모양이다.
- * 시간은 epoch 초이고, 남은 시간을 모르면 `endsAt`, `remainingMinutes`는 null이다.
+ * 시간은 epoch 초이고, 종료 시각을 모르면 `endsAt`, `remainingMinutes`는 null이다.
+ * 건조기는 ThinQ로, 세탁기는 사용자가 남은 시간을 입력했을 때만 값이 있다.
  */
 export type LiveActivityContentState = {
   state: LiveActivityPhase;
@@ -30,7 +31,7 @@ export type LiveActivityContentState = {
 /** APNs 환경. Debug 빌드는 SANDBOX, TestFlight/App Store 빌드는 PRODUCTION이다 */
 export type LiveActivityEnvironment = 'SANDBOX' | 'PRODUCTION';
 
-/** 기계 종류. 건조기만 남은 시간을 알고, 세탁기는 경과 시간을 보여준다 */
+/** 기계 종류. 건조기는 ThinQ 남은 시간, 세탁기는 입력한 남은 시간이 있을 때만 카운트다운하고 없으면 경과 시간을 보여준다 */
 export type LiveActivityKind = 'WASHER' | 'DRYER';
 
 export type LiveActivityStartOptions = {
@@ -38,7 +39,7 @@ export type LiveActivityStartOptions = {
   kind: LiveActivityKind;
   /** "A동 건조기 3번"처럼 화면에 그대로 보여줄 이름 */
   title: string;
-  /** 사용 시작 시각(epoch 초). 건조기는 진행 막대의 시작점, 세탁기는 경과 시간의 기준이며 activity를 처음 만들 때만 쓰인다 */
+  /** 사용 시작 시각(epoch 초). 진행 막대의 시작점이고 세탁기는 종료 시각이 없을 때 경과 시간의 기준이다. activity를 처음 만들 때만 쓰인다 */
   startedAt: number;
 } & LiveActivityContentState;
 

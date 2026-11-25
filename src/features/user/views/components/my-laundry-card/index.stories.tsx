@@ -68,3 +68,30 @@ export const NotificationBlocked: Story = {
     notificationBlocker: 'needs-install',
   },
 };
+
+export const WasherEnterTime: Story = {
+  args: {
+    solo: true,
+    machine: machine('washer', 3, 'elapsed', { elapsedMinutes: 6, mine: true }),
+    onSetRemainingTime: (minutes, onSuccess) => {
+      console.log('Set remaining time', minutes);
+      onSuccess();
+    },
+  },
+};
+
+export const WasherEditTime: Story = {
+  args: {
+    solo: true,
+    machine: machine('washer', 3, 'running', {
+      remainingMinutes: 31,
+      level: 0.55,
+      mine: true,
+      endsAt: Date.parse('2026-11-22T21:41:00+09:00'),
+    }),
+    onSetRemainingTime: (minutes, onSuccess) => {
+      console.log('Set remaining time', minutes);
+      onSuccess();
+    },
+  },
+};

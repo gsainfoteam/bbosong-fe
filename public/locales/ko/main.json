@@ -1,6 +1,7 @@
 {
   "female": "여자",
   "male": "남자",
+  "manageLabel": "{{machine}}, 남은 시간 입력 또는 등록 해제",
   "map": {
     "callout": "내 빨래 · {{time}}",
     "door": "입구",

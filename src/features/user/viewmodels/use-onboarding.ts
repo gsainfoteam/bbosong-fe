@@ -9,7 +9,7 @@ const STORAGE_KEY = 'bbosong:onboarding-seen';
 const OPEN_DIALOG = '[role="dialog"][data-open], [role="alertdialog"][data-open]';
 
 /** 안내 순서. 마지막을 뺀 앞의 단계는 화면 요소를 짚는 코치마크이고, 마지막은 잠금화면 현황을 소개하는 시트다. */
-const ORDER = ['machines', 'alert', 'register', 'map', 'live-activity'] as const;
+const ORDER = ['machines', 'alert', 'register', 'washer-time', 'map', 'live-activity'] as const;
 
 export type OnboardingStep = (typeof ORDER)[number];
 
