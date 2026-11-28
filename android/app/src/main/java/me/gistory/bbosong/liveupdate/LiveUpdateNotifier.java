@@ -7,7 +7,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
@@ -277,7 +279,8 @@ public final class LiveUpdateNotifier {
         Notification.Builder builder = new Notification.Builder(context, CHANNEL_PROGRESS)
             .setSmallIcon(R.drawable.ic_stat_notification)
             .setColor(kindColor(context, message))
-            .setContentTitle(message.title)
+            // 삼성 One UI는 카운트다운을 제목 바로 뒤에 붙여 그려서, 잘리지 않는 공백(NBSP)으로 띄운다
+            .setContentTitle(message.title + "\u00A0")
             .setContentText(stateText(context, message, overdue))
             .setContentIntent(contentIntent(context))
             .setCategory(Notification.CATEGORY_PROGRESS)
@@ -310,6 +313,8 @@ public final class LiveUpdateNotifier {
                 Collections.singletonList(new Notification.ProgressStyle.Segment(100).setColor(barColor))
             );
             style.setProgress(percent);
+            // 투명한 끝 아이콘 자리만큼 막대 오른쪽 끝을 안쪽으로 들인다
+            style.setProgressEndIcon(Icon.createWithBitmap(Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)));
             builder.setStyle(style);
         }
 
