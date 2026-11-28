@@ -277,7 +277,8 @@ public final class LiveUpdateNotifier {
         Notification.Builder builder = new Notification.Builder(context, CHANNEL_PROGRESS)
             .setSmallIcon(R.drawable.ic_stat_notification)
             .setColor(kindColor(context, message))
-            .setContentTitle(message.title)
+            // 삼성 One UI는 카운트다운을 제목 바로 뒤에 붙여 그려서, 잘리지 않는 공백(NBSP)으로 띄운다
+            .setContentTitle(message.title + "\u00A0")
             .setContentText(stateText(context, message, overdue))
             .setContentIntent(contentIntent(context))
             .setCategory(Notification.CATEGORY_PROGRESS)
