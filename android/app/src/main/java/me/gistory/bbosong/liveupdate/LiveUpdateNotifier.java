@@ -7,7 +7,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
@@ -311,6 +313,8 @@ public final class LiveUpdateNotifier {
                 Collections.singletonList(new Notification.ProgressStyle.Segment(100).setColor(barColor))
             );
             style.setProgress(percent);
+            // 투명한 끝 아이콘 자리만큼 막대 오른쪽 끝을 안쪽으로 들인다
+            style.setProgressEndIcon(Icon.createWithBitmap(Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)));
             builder.setStyle(style);
         }
 
