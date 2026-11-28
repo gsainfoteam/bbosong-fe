@@ -1,5 +1,7 @@
 import * as amplitude from '@amplitude/analytics-browser';
 
+import { getNativeAppVersion } from './platform';
+
 const amplitudeApiKey = import.meta.env.VITE_AMPLITUDE_API_KEY;
 
 // 키가 없는 환경(로컬, 스테이징, 테스트)에서는 호출을 모두 무시한다.
@@ -23,8 +25,24 @@ if (isEnabled) {
       elementInteractions: { maskTextRegex },
       frustrationInteractions: { maskTextRegex },
     },
+    // 모든 이벤트에 app_version으로 붙는다. 네이티브 앱에서는 OTA로 교체된 웹 번들 버전이다
+    appVersion: __BUILD_VERSION__,
     logLevel: amplitude.Types.LogLevel.Warn,
   });
+
+  void recordNativeAppVersion();
+}
+
+/**
+ * 설치된 네이티브 바이너리 버전을 사용자 속성(native_app_version)으로 남긴다. 웹이면 아무것도 하지 않는다.
+ * 웹 번들은 OTA로 따로 바뀌므로 이벤트의 app_version과 별개로 기록해야 한다.
+ * 버전 조회가 비동기라 이벤트 속성이 아닌 사용자 속성으로 둔다.
+ */
+async function recordNativeAppVersion() {
+  const version = await getNativeAppVersion();
+  if (!version) return;
+
+  amplitude.identify(new amplitude.Identify().set('native_app_version', version));
 }
 
 export const AnalyticsEvent = {
@@ -119,4 +137,6 @@ export function resetAnalyticsUser(lastEvent?: AnalyticsEventWithoutProperties) 
     amplitude.track(lastEvent, undefined, { user_id: userId, device_id: amplitude.getDeviceId() });
   }
   amplitude.reset();
+  // reset으로 기기 ID가 새로 만들어지므로 새 기기에도 버전 속성을 다시 남긴다
+  void recordNativeAppVersion();
 }
